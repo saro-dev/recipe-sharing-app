@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "passport": "^0.6.0"
+  }
+}

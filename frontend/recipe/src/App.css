@@ -1,0 +1,70 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background-color: #ECF8F9;
+}
+.custom-shadow{
+    box-shadow: 1px 1px 5px black;
+}
+.animate-like {
+    animation: likeAnimation 0.5s ease-in-out;
+  }
+  
+  @keyframes likeAnimation {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.5);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .search-input-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+  }
+  
+  .search-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .no-results {
+    text-align: center;
+    color: #777;
+    margin-top: 20px;
+  }
+  select {
+    background-color: #f7fafc;
+    border-color: #d2e3ee;
+    transition: border-color 0.2s ease-in-out;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: #4a90e2;
+  }
