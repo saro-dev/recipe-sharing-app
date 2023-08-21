@@ -18,7 +18,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/login', loginData);
+      const response = await axios.post('https://recipe-backend-wntf.onrender.com/api/login', loginData);
       console.log('Login successful:', response.data);
       onLoginSuccess(response.data);
       navigate('/profile');

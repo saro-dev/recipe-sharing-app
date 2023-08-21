@@ -19,7 +19,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
   const handleSubmit = async event => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', userData);
+      const response = await axios.post('https://recipe-backend-wntf.onrender.com/api/signup', userData);
       console.log('User created:', response.data);
       onSignupSuccess(response.data); // Pass the user data to the parent component
     } catch (error) {

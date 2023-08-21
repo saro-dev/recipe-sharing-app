@@ -17,13 +17,13 @@ const PostDetails = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/posts/${postId}`);
+        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/posts/${postId}`);
         setPost(response.data);
         //check favourite
         if (loggedInUser) {
-          const response2 = await axios.get(`http://localhost:5000/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`https://recipe-backend-wntf.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
-          const notificationsResponse = await axios.get(`http://localhost:5000/api/user/${loggedInUser._id}`);
+          const notificationsResponse = await axios.get(`https://recipe-backend-wntf.onrender.com/api/user/${loggedInUser._id}`);
           const user = notificationsResponse.data;
           const formattedNotifications = Object.values(user.notifications || {});
           setNotifications(formattedNotifications);
@@ -44,13 +44,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`http://localhost:5000/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`https://recipe-backend-wntf.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`http://localhost:5000/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`https://recipe-backend-wntf.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
@@ -135,7 +135,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`http://localhost:5000/uploads/${post.image}`}
+          src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
           alt={post.title}
           className="max-w-full object-cover"
           style={{ maxWidth: '300px' }}

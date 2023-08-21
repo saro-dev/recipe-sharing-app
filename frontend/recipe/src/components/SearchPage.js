@@ -20,7 +20,7 @@ const SearchPage = ({ loggedInUser }) => {
 
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:5000/api/search?q=${searchQuery}&category=${selectedCategory}`
+          `https://recipe-backend-wntf.onrender.com/api/search?q=${searchQuery}&category=${selectedCategory}`
         );
         setSearchResults(response.data);
         setLoading(false);
@@ -76,7 +76,7 @@ const SearchPage = ({ loggedInUser }) => {
               <div className="w-100 h-100 mt-2">
                 <Link to={`/post-details/${post._id}`}>
                   <img
-                    src={`http://localhost:5000/uploads/${post.image}`}
+                    src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
                     alt={post.title}
                     className="max-w-full max-h-full object-cover"
                     style={{ maxWidth: '150px' }}
