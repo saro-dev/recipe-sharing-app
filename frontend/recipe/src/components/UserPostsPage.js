@@ -15,7 +15,7 @@ const UserPostsPage = () => {
           return;
         }
 
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/user-posts/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user-posts/${userId}`);
         setUserPosts(response.data);
         setIsLoading(false); // Turn off loading animation
       } catch (error) {
@@ -24,7 +24,7 @@ const UserPostsPage = () => {
     };
     const fetchUserName = async () => {
         try {
-          const userResponse = await axios.get(`https://recipe-backend-wntf.onrender.com/author/${userId}`);
+          const userResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/author/${userId}`);
           setUserName(userResponse.data.name);
         } catch (error) {
           console.error('Error fetching user name:', error);
