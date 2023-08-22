@@ -21,9 +21,9 @@ const PostDetails = ({ loggedInUser }) => {
         setPost(response.data);
         //check favourite
         if (loggedInUser) {
-          const response2 = await axios.get(`https://recipe-backend-wntf.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
-          const notificationsResponse = await axios.get(`https://recipe-backend-wntf.onrender.com/api/user/${loggedInUser._id}`);
+          const notificationsResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${loggedInUser._id}`);
           const user = notificationsResponse.data;
           const formattedNotifications = Object.values(user.notifications || {});
           setNotifications(formattedNotifications);
