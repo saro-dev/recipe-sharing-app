@@ -17,7 +17,7 @@ const PostDetails = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/posts/${postId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
         setPost(response.data);
         //check favourite
         if (loggedInUser) {
@@ -44,13 +44,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`https://recipe-backend-wntf.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`https://recipe-backend-wntf.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
