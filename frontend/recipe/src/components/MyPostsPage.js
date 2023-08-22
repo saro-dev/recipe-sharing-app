@@ -12,7 +12,7 @@ const MyPostsPage = ({ userId }) => {
   useEffect(() => {
     const fetchMyPosts = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/myposts/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/myposts/${userId}`);
         setMyPosts(response.data);
         setLoading(false); // Data fetched, loading is done
       } catch (error) {
