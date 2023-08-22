@@ -17,7 +17,7 @@ const ProfileComponent = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
         setUserData(response.data);
         setUpdatedName(response.data.name); // Set the initial value for the updated name
       } catch (error) {
@@ -26,7 +26,7 @@ const ProfileComponent = ({ userId }) => {
     };
     const fetchFollowersCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/user/${userId}/follower-count`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`);
         setFollowersCount(response.data.count);
       } catch (error) {
         console.error('Error fetching followers count:', error);
@@ -35,7 +35,7 @@ const ProfileComponent = ({ userId }) => {
 
     const fetchRecipeCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-wntf.onrender.com/api/recipe/count/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
         setRecipeCount(response.data.count);
       } catch (error) {
         console.error('Error fetching recipe count:', error);
@@ -68,7 +68,7 @@ const ProfileComponent = ({ userId }) => {
   const handleSaveEdit = async () => {
     try {
       // Update the name in the database
-      await axios.patch(`https://recipe-backend-wntf.onrender.com/api/user/${userId}`, { name: updatedName });
+      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { name: updatedName });
       setUserData(prevUserData => ({ ...prevUserData, name: updatedName }));
       setEditingName(false);
     } catch (error) {
