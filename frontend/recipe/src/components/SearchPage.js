@@ -20,7 +20,7 @@ const SearchPage = ({ loggedInUser }) => {
 
         setLoading(true);
         const response = await axios.get(
-          `https://recipe-backend-wntf.onrender.com/api/search?q=${searchQuery}&category=${selectedCategory}`
+          `https://recipe-backend-1e02.onrender.com/api/search?q=${searchQuery}&category=${selectedCategory}`
         );
         setSearchResults(response.data);
         setLoading(false);
