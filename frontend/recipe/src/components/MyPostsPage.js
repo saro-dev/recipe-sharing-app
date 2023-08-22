@@ -25,7 +25,7 @@ const MyPostsPage = ({ userId }) => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`https://recipe-backend-wntf.onrender.com/api/post/${postId}`);
+      await axios.delete(`https://recipe-backend-1e02onrender.com/api/post/${postId}`);
       const updatedPosts = myPosts.filter(post => post._id !== postId);
       setMyPosts(updatedPosts);
       setAlert({ type: 'success', message: 'Post deleted successfully' });
