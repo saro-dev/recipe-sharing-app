@@ -18,7 +18,7 @@ app.use(cors());
 app.use('/uploads/', express.static('uploads'));
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://codersaro:Sarorosy@12@cluster0.av48khu.mongodb.net/recipe-sharing-app', {
+mongoose.connect('mongodb+srv://codersaro:Sarorosy@12@cluster0.av48khu.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
