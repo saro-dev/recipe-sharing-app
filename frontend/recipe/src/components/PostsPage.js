@@ -14,7 +14,7 @@ const PostsPage = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://recipe-backend-wntf.onrender.com/api/posts');
+        const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
         const reversedPosts = response.data.reverse(); // Reverse the order of posts
         setPosts(reversedPosts);
         setLoading(false);
@@ -42,7 +42,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleToggleLike = async (postId) => {
     try {
-      const response = await axios.post(`https://recipe-backend-wntf.onrender.com/api/like/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
@@ -81,7 +81,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleAddComment = async (postId) => {
     try {
-      const response = await axios.post(`https://recipe-backend-wntf.onrender.com/api/comment/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
         userId: loggedInUser._id,
         text: commentTexts[postId], // Use the comment text for the specific post
       });
@@ -102,7 +102,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleDeleteComment = async (postId, commentId) => {
     try {
-      await axios.delete(`https://recipe-backend-wntf.onrender.com/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id } // Send userId in the request body
       });
       setPosts(posts.map(post => {
@@ -128,7 +128,7 @@ const PostsPage = ({ loggedInUser }) => {
           <div className="w-100 h-100 mt-2">
           <Link to={`/post-details/${post._id}`}>
             <img
-              src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
+              src={`https://recipe-backend-1e02.onrender.com/uploads/${post.image}`}
               alt={post.title}
               className="max-w-full max-h-full object-cover"
               style={{ maxWidth: '150px' }}
