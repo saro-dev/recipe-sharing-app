@@ -135,7 +135,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
+          src={`https://recipe-backend-1e02.onrender.com/uploads/${post.image}`}
           alt={post.title}
           className="max-w-full object-cover"
           style={{ maxWidth: '300px' }}
