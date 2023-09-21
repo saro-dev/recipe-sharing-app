@@ -5,7 +5,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); 
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -187,23 +187,19 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
       return console.log('user not found');
     }
 
-     // Convert the image buffer to base64
-     const imageBuffer = req.file.buffer;
-     const imageBase64 = imageBuffer.toString('base64');
- 
-     const newRecipe = await Recipe.create({
-       ...req.body,
-       userId: user._id, // Save user's ID
-       authorName: user.name, // Save user's name
-       image: imageBase64, // Store the image as base64
-     });
- 
-     res.status(201).json(newRecipe);
-     console.log(newRecipe);
-   } catch (error) {
-     res.status(500).json({ error: 'Error creating recipe' });
-   }
- });
+    const newRecipe = await Recipe.create({
+      ...req.body,
+      userId: user._id, // Save user's ID
+      authorName: user.name, // Save user's name
+      image: req.file.filename,
+    });
+
+    res.status(201).json(newRecipe);
+    console.log(newRecipe);
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating recipe' });
+  }
+});
 
 // API endpoint to get user data by ID
 app.get('/api/user/:userId', async (req, res) => {
