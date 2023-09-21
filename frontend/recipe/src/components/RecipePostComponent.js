@@ -26,14 +26,7 @@ const RecipePostComponent = ({ userId }) => {
 
   const handleImageUpload = event => {
     const selectedImage = event.target.files[0];
-
-    // Use FileReader to read the selected image as base64
-    const reader = new FileReader();
-    reader.onload = function () {
-      const base64Image = reader.result;
-      setRecipeData(prevData => ({ ...prevData, image: base64Image }));
-    };
-    reader.readAsDataURL(selectedImage);
+    setRecipeData(prevData => ({ ...prevData, image: selectedImage }));
   };
 
   const handleAddIngredient = () => {
