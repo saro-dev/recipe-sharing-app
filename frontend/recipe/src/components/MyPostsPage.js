@@ -12,7 +12,7 @@ const MyPostsPage = ({ userId }) => {
   useEffect(() => {
     const fetchMyPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/myposts/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/myposts/${userId}`);
         setMyPosts(response.data);
         setLoading(false); // Data fetched, loading is done
       } catch (error) {
@@ -25,7 +25,7 @@ const MyPostsPage = ({ userId }) => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/post/${postId}`);
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/post/${postId}`);
       const updatedPosts = myPosts.filter(post => post._id !== postId);
       setMyPosts(updatedPosts);
       setAlert({ type: 'success', message: 'Post deleted successfully' });
