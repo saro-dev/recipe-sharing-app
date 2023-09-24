@@ -13,7 +13,8 @@ const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use('/uploads/', express.static('uploads'));
 
@@ -30,16 +31,17 @@ mongoose.connect('mongodb+srv://codersaro:Sarorosy12@cluster0.av48khu.mongodb.ne
   });
 
   // Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
+const storage = multer.memoryStorage();
+
+const upload = multer({storage});
+
+const notificationSchema = new mongoose.Schema({
+  type: String,
+  postId: mongoose.Schema.Types.ObjectId,
+  message: String,
+  isRead: Boolean,
+  createdAt: Date,
 });
-
-const upload = multer({ storage });
-
-
 // Mongoose schemas
 const userSchema = new mongoose.Schema({
   name: String,
@@ -52,18 +54,7 @@ const userSchema = new mongoose.Schema({
       ref: 'Recipe', // Reference to the Recipe model
     },
   ],
-  notifications: [
-    {
-      type: String, // 'like' or 'comment'
-      postId: mongoose.Schema.Types.ObjectId, // ID of the post related to the notification
-      message: String,
-      isRead: Boolean,
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
+  notifications: [notificationSchema],
   followerCount: {
     type: Number,
     default: 0,
@@ -76,6 +67,9 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
+  profileImage: {
+    type:Buffer, // Store the content type of the image (e.g., 'image/jpeg', 'image/png', etc.)
+  },
 });
 // Mongoose schema for comments
 const commentSchema = new mongoose.Schema({
@@ -99,7 +93,9 @@ const recipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  image: String,
+  image: {
+    type: Buffer, // Store binary data
+  },
   authorName: String,
   category: String,
   likes: [
@@ -187,17 +183,41 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
       return console.log('user not found');
     }
 
+    const imageBuffer = req.file.buffer;
+    const binaryImageString = imageBuffer.toString('hex');
+
+    console.log(binaryImageString);
+
     const newRecipe = await Recipe.create({
       ...req.body,
       userId: user._id, // Save user's ID
       authorName: user.name, // Save user's name
-      image: req.file.filename,
+      image: imageBuffer, // Save the image as binary data
     });
 
     res.status(201).json(newRecipe);
     console.log(newRecipe);
   } catch (error) {
     res.status(500).json({ error: 'Error creating recipe' });
+  }
+});
+app.get('/api/getRecipeImage/:recipeId', async (req, res) => {
+  try {
+    const recipeId = req.params.recipeId;
+
+    // Fetch the recipe from MongoDB
+    const recipe = await Recipe.findById(recipeId);
+
+    if (!recipe) {
+      res.status(404).json({ error: 'Recipe not found' });
+      return;
+    }
+
+    // Send the image as binary data
+    res.contentType('image/jpeg'); // Adjust the content type as needed
+    res.send(recipe.image);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching image' });
   }
 });
 
@@ -423,7 +443,9 @@ app.get('/api/comments/:postId', async (req, res) => {
   try {
     const postId = req.params.postId;
     const comments = await Comment.find({ postId });
+    console.log('Fetched comments:', comments);
     res.json(comments);
+    
   } catch (error) {
     console.error('Error fetching comments:', error);
     res.status(500).json({ error: 'An error occurred while fetching comments.' });
@@ -742,6 +764,129 @@ app.get('/api/user/:userId/following-count', async (req, res) => {
     res.status(500).json({ error: 'Error fetching following count' });
   }
 });
+
+app.get('/api/user/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId); // Assuming you have a User model
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return the user data as JSON
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// API endpoint to add a notification
+// API endpoint to add a notification
+app.post('/api/addNotification/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { notification } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Add the notification to the user's notifications array
+    user.notifications.push(notification);
+
+    // Check if this is a "like" notification
+    if (notification.type === 'like') {
+      // Extract the post owner's ID from the notification
+      const postOwnerId = notification.postOwnerId;
+
+      // Find the post owner
+      const postOwner = await User.findById(postOwnerId);
+
+      if (postOwner) {
+        // Append the notification to the post owner's notifications array
+        postOwner.notifications.push(notification);
+        await postOwner.save();
+      }
+    }
+
+    await user.save();
+
+    res.status(201).json({ message: 'Notification added successfully' });
+  } catch (error) {
+    console.error('Error adding notification:', error);
+    res.status(500).json({ error: 'Error adding notification' });
+  }
+});
+app.delete('/api/notifications/:userId/:index', async (req, res) => {
+  const { userId, index } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if the index is within the bounds of the notifications array
+    if (index < 0 || index >= user.notifications.length) {
+      return res.status(404).json({ error: 'Invalid notification index' });
+    }
+
+    // Remove the notification at the specified index
+    user.notifications.splice(index, 1);
+    await user.save();
+
+    res.status(200).json({ message: 'Notification deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    res.status(500).json({ error: 'Error deleting notification' });
+  }
+});
+
+
+// API endpoint to get notifications for a user by ID
+app.get('/api/notifications/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return the user's notifications
+    const notifications = user.notifications;
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Error fetching notifications' });
+  }
+});
+
+
+// Add this API endpoint to your Express app.js or server.js
+app.get('/api/liked-post-author/:postId', async (req, res) => {
+  try {
+    const postId = req.params.postId;
+
+    // Find the liked post by its ID
+    const likedPost = await Recipe.findById(postId);
+
+    if (!likedPost) {
+      return res.status(404).json({ error: 'Liked post not found' });
+    }
+
+    // Return the author's ID of the liked post
+    res.status(200).json({ authorId: likedPost.userId });
+  } catch (error) {
+    console.error('Error fetching liked post author ID:', error);
+    res.status(500).json({ error: 'Error fetching liked post author ID' });
+  }
+});
+
 
 
 app.listen(PORT, () => {

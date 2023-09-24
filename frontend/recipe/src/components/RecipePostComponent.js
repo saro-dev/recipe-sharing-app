@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiPlusCircle, FiTrash } from 'react-icons/fi';
 import Alert from './Alert';
 
 const RecipePostComponent = ({ userId }) => {
@@ -74,7 +73,7 @@ const RecipePostComponent = ({ userId }) => {
     formData.append('timestamp', currentTime); // Append the timestamp to the form data
     
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/postRecipe', formData, {
+      const response = await axios.post('http://localhost:5000/api/postRecipe', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

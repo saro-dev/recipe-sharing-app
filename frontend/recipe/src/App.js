@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { FaHome, FaSearch, FaPlus, FaUser, FaBell } from 'react-icons/fa';
 import SignupComponent from './components/SignupComponent';
@@ -10,17 +10,27 @@ import MyPostsPage from './components/MyPostsPage';
 import PostDetails from './components/PostDetails'; 
 import SearchPage from './components/SearchPage';
 import Alert from './components/Alert';
-import NotificationsPage from './components/NotificationsPage';
+import Notifications from './components/Notifications';
 import UserProfile from './components/UserProfile';
 import './App.css';
 import FavouritesPage from './components/FavouritesPage';
 import UserPostsPage from './components/UserPostsPage';
+import axios from 'axios';
+import splash from './splash.png';
+
+const Splash = () => {
+  return (
+    <div className="splash">
+      <img src={splash} alt="Splash" />
+    </div>
+  );
+};
 
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [alert, setAlert] = useState(null); 
+  const [showSplash, setShowSplash] = useState(true);
   
-
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
@@ -37,13 +47,28 @@ const App = () => {
     }, 3000);
 
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   return (
     <Router>
       
         
-        <div className="">
-        <div className='flex justify-center '>{alert && <Alert type={alert.type} message={alert.message} />}</div>
+        <div className="all">
+        {showSplash ? (
+          <Splash />
+        ) : (
+          <div className='flex justify-center '>
+            {alert && <Alert type={alert.type} message={alert.message} />}
+          </div>
+        )}
           <Routes>
             <Route path="/signup" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
             <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
@@ -58,9 +83,9 @@ const App = () => {
                 <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser}/>} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/favourites/:userId" element={<FavouritesPage />} />
-                <Route path="/notifications" element={<NotificationsPage loggedInUser={loggedInUser} />} />
                 <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>
                 <Route path="/user-posts/:userId" element={<UserPostsPage userId={loggedInUser._id}/>} />
+                <Route path="/notifications" element={<Notifications loggedInUser={loggedInUser} userId={loggedInUser._id}/>} />
               </>
             ) : (
               <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
@@ -87,7 +112,11 @@ const App = () => {
                 <FaPlus size={25} />
               </Link>
             </li>
-            
+            <li>
+              <Link to="/notifications" className="text-gray-900">
+                <FaBell size={25} />
+              </Link>
+            </li>
             <li>
               <Link to="/profile" className="text-gray-900 ">
                 <FaUser size={25} />

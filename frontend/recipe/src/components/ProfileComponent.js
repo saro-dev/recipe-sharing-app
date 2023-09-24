@@ -13,11 +13,13 @@ const ProfileComponent = ({ userId }) => {
   const [editingName, setEditingName] = useState(false);
   const [updatedName, setUpdatedName] = useState('');
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}`);
         setUserData(response.data);
         setUpdatedName(response.data.name); // Set the initial value for the updated name
       } catch (error) {
@@ -26,7 +28,7 @@ const ProfileComponent = ({ userId }) => {
     };
     const fetchFollowersCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}/follower-count`);
         setFollowersCount(response.data.count);
       } catch (error) {
         console.error('Error fetching followers count:', error);
@@ -35,7 +37,7 @@ const ProfileComponent = ({ userId }) => {
 
     const fetchRecipeCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/recipe/count/${userId}`);
         setRecipeCount(response.data.count);
       } catch (error) {
         console.error('Error fetching recipe count:', error);
@@ -46,7 +48,7 @@ const ProfileComponent = ({ userId }) => {
     fetchFollowersCount(); 
     fetchRecipeCount();
   }, [userId]);
-
+    
   const handleEditName = () => {
     setEditingName(true);
   };
@@ -68,7 +70,7 @@ const ProfileComponent = ({ userId }) => {
   const handleSaveEdit = async () => {
     try {
       // Update the name in the database
-      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { name: updatedName });
+      await axios.patch(`http://localhost:5000/api/user/${userId}`, { name: updatedName });
       setUserData(prevUserData => ({ ...prevUserData, name: updatedName }));
       setEditingName(false);
     } catch (error) {
@@ -77,10 +79,19 @@ const ProfileComponent = ({ userId }) => {
   };
   //logout
   const handleLogout = () => {
-    // Clear the local storage and redirect to the signup page
-    localStorage.removeItem('loggedInUser');
-    window.location.href = '/signup';
+    setConfirmLogout(true);
   };
+  const confirmLogoutAction = () => {
+    // Clear the local storage and redirect to the login page
+    localStorage.removeItem('loggedInUser');
+    window.location.href = '/login';
+  };
+
+  const cancelLogoutAction = () => {
+    // Close the confirmation dialog
+    setConfirmLogout(false);
+  };
+
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center ">
@@ -173,6 +184,28 @@ const ProfileComponent = ({ userId }) => {
           <p>Website: <a className='text-blue-600' href="https://saravanan.me" target="_blank" rel="noopener noreferrer">saravanan.me</a></p>
         </div>
       </Modal>
+      {confirmLogout && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg custom-shadow w-96">
+            <p className="text-xl font-semibold mb-4">Confirm Logout</p>
+            <p>Are you sure you want to logout?</p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 mr-2"
+                onClick={confirmLogoutAction}
+              >
+                Yes
+              </button>
+              <button
+                className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
+                onClick={cancelLogoutAction}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

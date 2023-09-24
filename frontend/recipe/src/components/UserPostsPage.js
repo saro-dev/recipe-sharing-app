@@ -15,7 +15,7 @@ const UserPostsPage = () => {
           return;
         }
 
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user-posts/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/user-posts/${userId}`);
         setUserPosts(response.data);
         setIsLoading(false); // Turn off loading animation
       } catch (error) {
@@ -24,7 +24,7 @@ const UserPostsPage = () => {
     };
     const fetchUserName = async () => {
         try {
-          const userResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/author/${userId}`);
+          const userResponse = await axios.get(`http://localhost:5000/author/${userId}`);
           setUserName(userResponse.data.name);
         } catch (error) {
           console.error('Error fetching user name:', error);
@@ -64,7 +64,7 @@ const UserPostsPage = () => {
             <div key={post._id} className="border p-4 rounded-lg bg-white shadow-md">
               <Link to={`/post-details/${post._id}`}>
                 <img
-                  src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
+                  src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
                   alt={post.title}
                   className="max-w-full h-40 object-cover mb-2"
                 />

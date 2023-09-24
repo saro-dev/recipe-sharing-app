@@ -9,14 +9,14 @@ const PostsPage = ({ loggedInUser }) => {
   const [showAllComments, setShowAllComments] = useState({});
   const [likedPosts, setLikedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
+        const response = await axios.get('http://localhost:5000/api/posts');
         const reversedPosts = response.data.reverse(); // Reverse the order of posts
         setPosts(reversedPosts);
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -42,34 +42,128 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleToggleLike = async (postId) => {
     try {
-      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
+      const response = await axios.post(`http://localhost:5000/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
-  
-      // Update likedPosts state after getting the updated response
+      console.log('Updated Post:', updatedPost);
+
       setLikedPosts((prevLikedPosts) =>
         updatedPost.isLiked
           ? [...prevLikedPosts, postId]
           : prevLikedPosts.filter((id) => id !== postId)
       );
-  
-      // Update posts with the updated post data
+
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post._id === postId ? updatedPost : post))
       );
-  
-      // Update likedPosts in localStorage
+
       const updatedLikedPosts = updatedPost.isLiked
         ? [...likedPosts, postId]
         : likedPosts.filter((id) => id !== postId);
       localStorage.setItem('likedPosts', JSON.stringify(updatedLikedPosts));
+
+      if (updatedPost.isLiked) {
+        const notificationMessage = `${loggedInUser.name} likes your post`;
+        console.log('Notification Message:', notificationMessage);
+
+        const notification = {
+          type: 'like',
+          postId: updatedPost._id,
+          message: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+        };
+        console.log('Notification:', notification);
+
+        const notificationResponse = await axios.post(
+          `http://localhost:5000/api/addNotification/${updatedPost.userId}`,
+          {
+            notification,
+          }
+        );
+
+        console.log(`Notification sent to post owner ${updatedPost.userId}:`, notificationResponse.data);
+      }
     } catch (error) {
       console.error('Error toggling like:', error);
     }
   };
+  const handleAddComment = async (postId) => {
+    try {
+      const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
+        userId: loggedInUser._id,
+        text: commentTexts[postId], // Use the comment text for the specific post
+      });
+      const newComment = response.data;
+  
+      // Update the post with the new comment
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: [...post.comments, newComment] }
+            : post
+        )
+      );
+  
+      // Clear the comment text for the specific post
+      setCommentTexts((prevState) => ({
+        ...prevState,
+        [postId]: '',
+      }));
+  
+      // Show all comments for this post
+      setShowAllComments((prevState) => ({
+        ...prevState,
+        [postId]: true,
+      }));
+  
+      // Get the post owner's ID from the current post data
+      const post = posts.find((post) => post._id === postId);
+      if (!post) {
+        console.error(`Post with ID ${postId} not found.`);
+        return;
+      }
+  
+      const postOwner = post.userId; // Assuming the user ID is stored in the 'userId' field of the post
+  
+      console.log('Post Owner:', postOwner);
+  
+      if (postOwner && postOwner !== loggedInUser._id) {
+        const notificationMessage = `${loggedInUser.name} commented on your post`;
+        console.log('Notification Message:', notificationMessage);
+  
+        const notification = {
+          type: 'comment',
+          postId: postId,
+          message: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+        };
+        console.log('Notification:', notification);
+  
+        const notificationResponse = await axios.post(
+          `http://localhost:5000/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
+          {
+            notification,
+          }
+        );
+  
+        console.log(
+          `Notification sent to post owner ${postOwner}:`,
+          notificationResponse.data
+        );
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
   
   
+  
+  
+  
+
 
   const handleCommentChange = (postId, event) => {
     const newText = event.target.value;
@@ -78,31 +172,12 @@ const PostsPage = ({ loggedInUser }) => {
       [postId]: newText, // Update comment text for the specific post
     }));
   };
-
-  const handleAddComment = async (postId) => {
-    try {
-      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
-        userId: loggedInUser._id,
-        text: commentTexts[postId], // Use the comment text for the specific post
-      });
-      const newComment = response.data;
-      setPosts(posts.map(post => (post._id === postId ? { ...post, comments: [...post.comments, newComment] } : post)));
-      setCommentTexts(prevState => ({
-        ...prevState,
-        [postId]: '', // Clear the comment text for the specific post
-      }));
-      setShowAllComments(prevState => ({
-        ...prevState,
-        [postId]: true, // Show all comments for this post
-      }));
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
-  };
+  
+  
 
   const handleDeleteComment = async (postId, commentId) => {
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id } // Send userId in the request body
       });
       setPosts(posts.map(post => {
@@ -126,9 +201,12 @@ const PostsPage = ({ loggedInUser }) => {
           <p className="text-gray-500">Posted by: <strong>{post.authorName}</strong></p>
           
           <div className="w-100 h-100 mt-2">
-          <Link to={`/post-details/${post._id}`}>
+          <Link to={{
+            pathname: `/post-details/${post._id}`,
+            state: { comments: post.comments }, // Pass comments as a prop
+          }}>
             <img
-              src={`https://recipe-backend-1e02.onrender.com/uploads/${post.image}`}
+              src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
               alt={post.title}
               className="max-w-full max-h-full object-cover"
               style={{ maxWidth: '150px' }}

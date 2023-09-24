@@ -3,39 +3,55 @@ import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft,FaStar } from 'react-icons/fa';
 import Alert from './Alert';
-import { ClipLoader } from 'react-spinners'; 
+import ReactDOM from 'react-dom';
+
 
 const PostDetails = ({ loggedInUser }) => {
   const [post, setPost] = useState(null);
   const { postId } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [notifications, setNotifications] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState([]);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+
+  // Function to fetch comments for a specific post
+  const fetchPostComments = async () => {
+    try {
+      const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${postId}`);
+
+      setComments(commentsResponse.data);
+      console.log(commentsResponse);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
+        const response = await axios.get(`http://localhost:5000/api/posts/${postId}`);
         setPost(response.data);
-        //check favourite
+
+        // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
-          const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`http://localhost:5000/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
-          const notificationsResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${loggedInUser._id}`);
-          const user = notificationsResponse.data;
-          const formattedNotifications = Object.values(user.notifications || {});
-          setNotifications(formattedNotifications);
-          setLoading(false);
         }
+
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching post details:', error);
       }
     };
 
     fetchPostDetails();
-  }, [postId]);
+    fetchPostComments(); // Call the function to fetch comments
+
+  }, [postId, loggedInUser]);
+
+  
   const handleAddToFavorites = async () => {
     try {
       if (!loggedInUser) {
@@ -44,13 +60,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`http://localhost:5000/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`http://localhost:5000/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
@@ -60,6 +76,56 @@ const PostDetails = ({ loggedInUser }) => {
       setIsFavorite(prevIsFavorite => !prevIsFavorite);
     } catch (error) {
       console.error('Error adding to favorites:', error);
+    }
+  };
+  const handleAddComment = async () => {
+    try {
+      if (!loggedInUser) {
+        // Redirect to login page or show a message
+        return;
+      }
+      if (commentText.trim() === '') {
+        // Prevent posting empty comments
+        return;
+      }
+
+      const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
+        userId: loggedInUser._id,
+        text: commentText,
+      });
+
+      const newComment = response.data;
+
+      setComments((prevComments) => [...prevComments, newComment]);
+      setCommentText('');
+
+      // Send a notification to the post owner
+      if (loggedInUser._id !== post.userId._id) {
+        const notificationMessage = `${loggedInUser.name} commented on your post`;
+        const notification = {
+          type: 'comment',
+          postId: postId,
+          message: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+        };
+
+        await axios.post(`http://localhost:5000/api/addNotification/${post.userId._id}`, {
+          notification,
+        });
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
+        data: { userId: loggedInUser._id },
+      });
+      setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
     }
   };
 
@@ -104,6 +170,72 @@ const PostDetails = ({ loggedInUser }) => {
         navigate(`/user/${post.userId._id}`);
       }
     };
+    const handleConvertToImage = () => {
+      // Convert the ingredient list to a plain text string
+      const ingredientText = ingredientList.map((ingredient, index) => {
+        const ingredientElement = document.createElement('div');
+        ReactDOM.render(ingredient, ingredientElement);
+        return ` ${ingredientElement.textContent}`;
+      }).join('\n');
+    
+      // Create a temporary element to measure the text size
+      const tempElement = document.createElement('div');
+      tempElement.style.font = 'bold 24px Arial'; // Font size and type
+      tempElement.textContent = 'RECIPEEZE';
+    
+      // Get the width and height required for the text
+      const textWidth = tempElement.offsetWidth + 5;
+      const textHeight = tempElement.offsetHeight + 20;
+    
+      // Calculate the canvas dimensions based on text size and content
+      const canvasWidth = Math.max(400, textWidth);
+      const canvasHeight = textHeight + 40 + ingredientText.split('\n').length * 30; // Increased vertical padding
+    
+      // Create a canvas element with dynamic dimensions
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+    
+      // Set canvas dimensions based on content
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+    
+      // Set background color to purple
+      context.fillStyle = 'purple';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    
+      // Define styles for text
+      context.fillStyle = 'white'; // Text color
+      context.font = 'bold 24px Arial'; // Font size and type
+    
+      // Add the heading text "RECIPEEZE" centered horizontally
+      const headingX = (canvas.width - textWidth) /4;
+      const headingY = 30;
+      context.fillText('RECIPEEZE', headingX, headingY);
+    
+      // Define initial position for drawing ingredient text
+      let x = 20; // X-coordinate
+      let y = textHeight + 60; // Increased vertical padding and alignment
+    
+      // Draw the ingredient text on the canvas
+      ingredientText.split('\n').forEach((line) => {
+        context.fillText(line, x, y);
+        y += 30; // Move down for the next line
+      });
+    
+      // Convert the canvas to a data URL (image)
+      const dataUrl = canvas.toDataURL('image/png');
+    
+      // Create a download link for the image
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'shopping-list.png'; // Set the image filename
+      a.click();
+    };
+    
+    
+    
+    
+    
   return (
     <div className="p-4 page-container mb-10">
       {alert && (
@@ -135,7 +267,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`https://recipe-backend-1e02.onrender.com/uploads/${post.image}`}
+          src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
           alt={post.title}
           className="max-w-full object-cover"
           style={{ maxWidth: '300px' }}
@@ -145,6 +277,8 @@ const PostDetails = ({ loggedInUser }) => {
         <h3 className="font-semibold">Ingredients:</h3>
         {ingredientList}
       </div>
+      <button className='bg-blue-600 text-white p-2 rounded mt-3' onClick={handleConvertToImage}>Convert to Shopping List</button>
+
       <div className="mt-2">
         <h3 className="font-semibold">Steps:</h3>
         {stepList}
@@ -152,6 +286,45 @@ const PostDetails = ({ loggedInUser }) => {
       <p className="mt-2">
         <span className="text-blue-600">#Tags:</span> {post.tags}
       </p>
+      <div className="mt-4 mb-4">
+        <h3 className="font-semibold">Comments:</h3>
+        <div>
+          <input
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Enter your comment"
+            className="border rounded p-2 flex-grow"
+          />
+          <button
+    className="text-blue-600 hover:text-blue-700"
+    onClick={() => handleAddComment(post._id)}
+    disabled={!commentText.trim()}>
+    <i className="fas fa-paper-plane"></i> Post
+  </button>
+        </div>
+        <ul>
+    {comments.map((comment) => (
+      <li key={comment._id} className="mt-2">
+        {comment.user ? (
+          <span>
+            <strong>{comment.name}:</strong> {comment.text}
+            {comment.user === loggedInUser._id && (
+              <button
+                className="text-red-500 ml-2"
+                onClick={() => handleDeleteComment(comment._id)}
+              >
+                <i className="fas fa-trash"></i>
+              </button>
+            )}
+          </span>
+        ) : (
+          <span>Unknown User: {comment.text}</span>
+        )}
+      </li>
+    ))}
+  </ul>
+      </div>
     </div>
   );
 };
