@@ -34,8 +34,8 @@ const App = () => {
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
-    setAlert({ type: 'success', message: 'Signup successful! Please login.' });
-    window.location.href = '/login';
+    setAlert({ type: 'success', message: 'Signup successful!' });
+    
   };
 
   const handleLoginSuccess = userData => {
@@ -58,43 +58,41 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
-      
-        
-        <div className="all">
-        {showSplash ? (
-          <Splash />
-        ) : (
-          <div className='flex justify-center '>
-            {alert && <Alert type={alert.type} message={alert.message} />}
-          </div>
-        )}
-          <Routes>
-            <Route path="/signup" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
-            <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
-            {/* Add the route for post details */}
-            
-            {loggedInUser ? (
-              <>
-                <Route path="/" element={<PostsPage loggedInUser={loggedInUser} />} />
-                <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
-                <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
-                <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
-                <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser}/>} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/favourites/:userId" element={<FavouritesPage />} />
-                <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>
-                <Route path="/user-posts/:userId" element={<UserPostsPage userId={loggedInUser._id}/>} />
-                <Route path="/notifications" element={<Notifications loggedInUser={loggedInUser} userId={loggedInUser._id}/>} />
-              </>
-            ) : (
-              <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
-            )}
-          </Routes>
+  <Router>
+    {showSplash ? (
+      <Splash />
+    ) : (
+      <div className="all">
+        <div className='flex justify-center '>
+          {alert && <Alert type={alert.type} message={alert.message} />}
         </div>
-      
-      {loggedInUser && (
-        <div className='mt-10 overflow-x-hidden '>
+        <Routes>
+          <Route path="/signup" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
+          <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
+          {/* Add the route for post details */}
+          
+          {loggedInUser ? (
+            <>
+              <Route path="/" element={<PostsPage loggedInUser={loggedInUser} />} />
+              <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
+              <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
+              <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
+              <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser}/>} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/favourites/:userId" element={<FavouritesPage />} />
+              <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>
+              <Route path="/user-posts/:userId" element={<UserPostsPage userId={loggedInUser._id}/>} />
+              <Route path="/notifications" element={<Notifications loggedInUser={loggedInUser} userId={loggedInUser._id}/>} />
+            </>
+          ) : (
+            <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
+          )}
+        </Routes>
+      </div>
+    )}
+
+    {loggedInUser && (
+      <div className='mt-10 overflow-x-hidden '>
         <nav className="fixed bottom-0 left-0 w-full bg-blue-200 shadow-md ">
           <ul className="flex justify-evenly mb-5 mt-3">
             <li >
@@ -124,10 +122,11 @@ const App = () => {
             </li>
           </ul>
         </nav>
-        </div>
-      )}
-    </Router>
-  );
+      </div>
+    )}
+  </Router>
+);
+
 };
 
 export default App;

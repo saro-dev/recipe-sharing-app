@@ -8,20 +8,38 @@ const SignupComponent = ({ onSignupSuccess }) => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
     setUserData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async event => {
     event.preventDefault();
+
+    const phoneNumberPattern = /^\d{10}$/;
+    if (!phoneNumberPattern.test(userData.phone)) {
+      setErrorMessage('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    if (userData.password !== userData.confirmPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+
     try {
       const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/signup', userData);
       console.log('User created:', response.data);
-      onSignupSuccess(response.data); // Pass the user data to the parent component
+      onSignupSuccess(response.data);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
         setErrorMessage(error.response.data.error);
@@ -62,13 +80,35 @@ const SignupComponent = ({ onSignupSuccess }) => {
             onChange={handleInputChange}
             className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleInputChange}
-            className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              onChange={handleInputChange}
+              className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute top-0 right-0 mt-3 mr-3 cursor-pointer"
+            >
+              {showPassword ? (
+                <i className="fa fa-eye-slash" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-eye" aria-hidden="true"></i>
+              )}
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              onChange={handleInputChange}
+              className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
+            />
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
