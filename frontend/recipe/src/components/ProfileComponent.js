@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
 import { FaInfoCircle, FaStar, FaHome } from 'react-icons/fa';
+import BadgeDescriptionModal from './BadgeDescriptionModal';
 import two from './two.jpg'
+import ironIcon from '../iron.png';
+import bronzeIcon from '../bronze.png';
+import silverIcon from '../silver.png';
+import goldIcon from '../gold.png';
 import '../App.css';
 
 const ProfileComponent = ({ userId }) => {
@@ -14,12 +19,12 @@ const ProfileComponent = ({ userId }) => {
   const [updatedName, setUpdatedName] = useState('');
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
-
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}`);
         setUserData(response.data);
         setUpdatedName(response.data.name); // Set the initial value for the updated name
       } catch (error) {
@@ -28,7 +33,7 @@ const ProfileComponent = ({ userId }) => {
     };
     const fetchFollowersCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}/follower-count`);
         setFollowersCount(response.data.count);
       } catch (error) {
         console.error('Error fetching followers count:', error);
@@ -37,7 +42,7 @@ const ProfileComponent = ({ userId }) => {
 
     const fetchRecipeCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/recipe/count/${userId}`);
         setRecipeCount(response.data.count);
       } catch (error) {
         console.error('Error fetching recipe count:', error);
@@ -70,7 +75,7 @@ const ProfileComponent = ({ userId }) => {
   const handleSaveEdit = async () => {
     try {
       // Update the name in the database
-      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { name: updatedName });
+      await axios.patch(`http://localhost:5000/api/user/${userId}`, { name: updatedName });
       setUserData(prevUserData => ({ ...prevUserData, name: updatedName }));
       setEditingName(false);
     } catch (error) {
@@ -91,7 +96,15 @@ const ProfileComponent = ({ userId }) => {
     // Close the confirmation dialog
     setConfirmLogout(false);
   };
+// Function to open the badge description modal
+const openBadgeModal = () => {
+  setIsBadgeModalOpen(true);
+};
 
+// Function to close the badge description modal
+const closeBadgeModal = () => {
+  setIsBadgeModalOpen(false);
+};
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center ">
@@ -106,9 +119,33 @@ const ProfileComponent = ({ userId }) => {
         {userData ? (
           <div>
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
-            <div className="mb-4">
-              <p className="text-lg font-semibold">Name: {userData.name} <i className='fas fa-check-circle text-green-500 ml-1'></i></p>
-              {editingName ? (
+            <div className="mb-4 flex">
+              <p className="text-lg font-semibold mr-3">Name: {userData.name} </p>
+              <button
+                className="text-blue-600 mt-1 block hover:underline"
+                onClick={openBadgeModal} // Open the badge description modal
+              >
+                {recipeCount >= 0 && recipeCount <= 25 && (
+                  <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 26 && recipeCount <= 50 && (
+                  <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 51 && recipeCount <= 75 && (
+                  <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 76 && recipeCount <= 100 && (
+                  <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                
+              </button>
+              <BadgeDescriptionModal
+        isOpen={isBadgeModalOpen}
+        onClose={closeBadgeModal}
+        recipeCount={recipeCount} // Pass recipeCount as needed
+      />
+            </div>
+            {editingName ? (
                 <div className="mt-1 flex space-x-2">
                   <input
                     type="text"
@@ -137,7 +174,6 @@ const ProfileComponent = ({ userId }) => {
                   Edit<i className='fas fa-edit ml-2'></i>
                 </button>
               )}
-            </div>
             <p className="mt-1">Email: {userData.email}</p>
             <p className="mt-1">Recipe Posts: {recipeCount}</p>
             <p className="mt-1">Followers: {followersCount}</p>

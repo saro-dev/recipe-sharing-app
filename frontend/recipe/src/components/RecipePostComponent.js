@@ -11,11 +11,15 @@ const RecipePostComponent = ({ userId }) => {
     tags: '',
     image: null,
     category: '',
+    cookingTime: '',
+    notesAndTips: '',
     timestamp: new Date().toISOString(),
   });
   const navigate = useNavigate();
   const [alert, setAlert] = useState(null);
   const [category, setCategory] = useState(''); // State for selected category
+  const [loading, setLoading] = useState(false);
+  const [cookingTime, setCookingTime] = useState('');
   const categories = ['Breakfast', 'Lunch', 'Dinner'];
 
   const handleInputChange = event => {
@@ -57,11 +61,17 @@ const RecipePostComponent = ({ userId }) => {
   const handleAddStep = () => {
     setRecipeData(prevData => ({ ...prevData, steps: [...prevData.steps, ''] }));
   };
+
+  const handleCookingTimeChange = event => {
+    const { value } = event.target;
+    setCookingTime(value);
+  };
+
+
   const handleSubmit = async event => {
     event.preventDefault();
-    
     const currentTime = new Date().toISOString(); // Get the current time as an ISO string
-    
+
     const formData = new FormData();
     formData.append('title', recipeData.title);
     formData.append('ingredients', recipeData.ingredients.join('\n'));
@@ -70,10 +80,13 @@ const RecipePostComponent = ({ userId }) => {
     formData.append('userId', userId);
     formData.append('image', recipeData.image);
     formData.append('category', recipeData.category);
+    formData.append('cookingTime', cookingTime);
+    formData.append('notesAndTips', recipeData.notesAndTips);
     formData.append('timestamp', currentTime); // Append the timestamp to the form data
-    
+
+    setLoading(true);
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/postRecipe', formData, {
+      const response = await axios.post('http://localhost:5000/api/postRecipe', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -84,6 +97,8 @@ const RecipePostComponent = ({ userId }) => {
       setTimeout(() => navigate('/'), 2000);
     } catch (error) {
       console.error('Error posting recipe:', error);
+    } finally {
+      setLoading(false); // Disable loading state
     }
   };
 
@@ -102,22 +117,22 @@ const RecipePostComponent = ({ userId }) => {
             className="w-full border rounded p-2"
           />
           <div className="relative">
-  <input
-    type="file"
-    name="image"
-    required
-    onChange={handleImageUpload}
-    className="sr-only" // Hide the default input appearance
-    id="image-upload" // Add an ID for the label to associate with
-  />
-  <label
-    htmlFor="image-upload" // Use the ID of the input
-    className="bg-blue-500 text-white py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center"
-  >
-    <span className="mr-2">Upload Image</span>
-    <i className="fas fa-upload mr-2"></i>
-  </label>
-</div>
+            <input
+              type="file"
+              name="image"
+              required
+              onChange={handleImageUpload}
+              className="sr-only" // Hide the default input appearance
+              id="image-upload" // Add an ID for the label to associate with
+            />
+            <label
+              htmlFor="image-upload" // Use the ID of the input
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center"
+            >
+              <span className="mr-2">Upload Image</span>
+              <i className="fas fa-upload mr-2"></i>
+            </label>
+          </div>
 
           {recipeData.ingredients.map((ingredient, index) => (
             <div key={index} className="flex space-x-2 items-center">
@@ -130,12 +145,12 @@ const RecipePostComponent = ({ userId }) => {
               />
               {index > 0 && (
                 <button
-                type="button"
-                onClick={() => handleRemoveIngredient(index)}
-                className="text-red-500 hover:text-red-600 focus:outline-none"
-              >
-                <i className="fas fa-trash-alt"></i>
-              </button>
+                  type="button"
+                  onClick={() => handleRemoveIngredient(index)}
+                  className="text-red-500 hover:text-red-600 focus:outline-none"
+                >
+                  <i className="fas fa-trash-alt"></i>
+                </button>
               )}
             </div>
           ))}
@@ -148,47 +163,65 @@ const RecipePostComponent = ({ userId }) => {
             Add Ingredient
           </button>
           {recipeData.steps.map((step, index) => (
-  <div key={index} className="flex space-x-2 items-center">
-    <input
-      type="text"
-      placeholder={`Step ${index + 1}`}
-      value={step}
-      onChange={e => handleStepChange(index, e.target.value)}
-      className="flex-1 border rounded p-2"
-    />
-    {index > 0 && (
-    <button
-      type="button"
-      onClick={() => handleRemoveStep(index)}
-      className="text-red-500 hover:text-red-600 focus:outline-none"
-    >
-      <i className="fas fa-trash-alt"></i>
-    </button>
-    )}
-  </div>
-))}
-<button
-  type="button"
-  onClick={handleAddStep}
-  className="w-full bg-blue-500 text-white py-1 px-2 rounded mt-2 hover:bg-blue-600"
->
-  <i className="fas fa-plus-circle mr-2"></i> Add Step
-</button>
-<div className="relative">
-  <select
-    name="category"
-    value={category}
-    onChange={handleInputChange}
-    className="w-full border rounded p-2 appearance-none"
-  >
-    <option value="">Select Category</option>
-    {categories.map(cat => (
-      <option key={cat} value={cat}>
-        {cat}
-      </option>
-    ))}
-  </select>
-</div>
+            <div key={index} className="flex space-x-2 items-center">
+              <input
+                type="text"
+                placeholder={`Step ${index + 1}`}
+                value={step}
+                onChange={e => handleStepChange(index, e.target.value)}
+                className="flex-1 border rounded p-2"
+              />
+              {index > 0 && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveStep(index)}
+                  className="text-red-500 hover:text-red-600 focus:outline-none"
+                >
+                  <i className="fas fa-trash-alt"></i>
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={handleAddStep}
+            className="w-full bg-blue-500 text-white py-1 px-2 rounded mt-2 hover:bg-blue-600"
+          >
+            <i className="fas fa-plus-circle mr-2"></i> Add Step
+          </button>
+          <div className="relative">
+            <select
+              name="category"
+              value={category}
+              onChange={handleInputChange}
+              className="w-full border rounded p-2 appearance-none"
+            >
+              <option value="">Select Category</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            type="number"
+            name="cookingTime"
+            placeholder="Cooking Time (minutes)"
+            value={cookingTime}
+            onChange={handleCookingTimeChange}
+            className="w-full border rounded p-2"
+          />
+          <div className="scrollable-textarea-container">
+            <textarea
+              name="notesAndTips"
+              placeholder="Notes and Tips while cooking"
+              value={recipeData.notesAndTips}
+              onChange={handleInputChange}
+              className="scrollable-textarea"
+              rows="4"
+            />
+          </div>
           <input
             type="text"
             name="tags"
@@ -199,11 +232,12 @@ const RecipePostComponent = ({ userId }) => {
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 px-4 font-bold rounded hover:bg-blue-600"
+            disabled={loading}
           >
-            Post Recipe 
+            {loading ? 'Posting...' : 'Post Recipe'}
           </button>
         </form>
-        
+
       </div>
     </div>
   );

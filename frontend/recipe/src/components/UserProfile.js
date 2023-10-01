@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import BadgeDescriptionModal from './BadgeDescriptionModal';
+import ironIcon from '../iron.png';
+import bronzeIcon from '../bronze.png';
+import silverIcon from '../silver.png';
+import goldIcon from '../gold.png';
 import axios from 'axios';
 
 const UserProfile = ({ loggedInUser }) => {
@@ -11,18 +16,19 @@ const UserProfile = ({ loggedInUser }) => {
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [loadingUnfollow, setLoadingUnfollow] = useState(false);
   const [userFollowers, setUserFollowers] = useState([]);
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}`);
         setUserData(response.data);
         setFollowerCount(response.data.followers.length);
         setFollowingCount(response.data.following.length);
         setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
         // Move the fetchRecipeCount logic here
         try {
-            const countResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
+            const countResponse = await axios.get(`http://localhost:5000/api/recipe/count/${userId}`);
             setRecipeCount(countResponse.data.count);
           } catch (error) {
             console.error('Error fetching recipe count:', error);
@@ -38,7 +44,7 @@ const UserProfile = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/followers`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}/followers`);
         setUserFollowers(response.data.followers);
       } catch (error) {
         console.error('Error fetching followers:', error);
@@ -53,7 +59,7 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingFollow(true);
 
     try {
-      await axios.post(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`, { followerId: loggedInUser._id });
+      await axios.post(`http://localhost:5000/api/user/${userId}/follow`, { followerId: loggedInUser._id });
       setUserFollowers(prevFollowers => [...prevFollowers, loggedInUser]); // Add logged-in user to followers list
       setFollowerCount(prevCount => prevCount + 1);
     } catch (error) {
@@ -68,7 +74,7 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingUnfollow(true);
 
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/unfollow`, { data: { followerId: loggedInUser._id } });
+      await axios.delete(`http://localhost:5000/api/user/${userId}/unfollow`, { data: { followerId: loggedInUser._id } });
       setUserFollowers(prevFollowers => prevFollowers.filter(follower => follower._id !== loggedInUser._id)); // Remove logged-in user from followers list
       setFollowerCount(prevCount => prevCount - 1);
     } catch (error) {
@@ -77,6 +83,15 @@ const UserProfile = ({ loggedInUser }) => {
       setLoadingUnfollow(false);
     }
   };
+  // Function to open the badge description modal
+const openBadgeModal = () => {
+  setIsBadgeModalOpen(true);
+};
+
+// Function to close the badge description modal
+const closeBadgeModal = () => {
+  setIsBadgeModalOpen(false);
+};
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
@@ -85,10 +100,35 @@ const UserProfile = ({ loggedInUser }) => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
             <div className="mb-4">
-              <p className="text-lg font-semibold">
+              <div className='flex'>
+              <p className="text-lg font-semibold mr-2">
                 Name: {userData.name}
-                <i className="fas fa-check-circle text-green-500 ml-1"></i>
-              </p>
+                </p>
+                <button
+                className="text-blue-600 mt-1 block hover:underline"
+                onClick={openBadgeModal} // Open the badge description modal
+              >
+                {recipeCount >= 0 && recipeCount <= 25 && (
+                  <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 26 && recipeCount <= 50 && (
+                  <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 51 && recipeCount <= 75 && (
+                  <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                {recipeCount >= 76 && recipeCount <= 100 && (
+                  <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
+                )}
+                
+              </button>
+              </div>
+              <BadgeDescriptionModal
+        isOpen={isBadgeModalOpen}
+        onClose={closeBadgeModal}
+        recipeCount={recipeCount} // Pass recipeCount as needed
+      />
+              
               <p className="mt-1">Followers: {followerCount}</p>
               <p className="mt-1">Recipe Posts: {recipeCount}</p>
               <Link to={`/user-posts/${userId}`} className="text-blue-700 border-blue-700 border-2 px-2 py-2 rounded font-bold hover:underline">

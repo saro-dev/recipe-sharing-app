@@ -98,3 +98,21 @@ body{
     transform: scale(0.9);
   }
 }
+
+/* Assuming you have a className of "scrollable-textarea" */
+.scrollable-textarea-container {
+  /* Set a fixed height for the container */
+  height: 100px; /* Adjust the height as needed */
+
+  /* Create a scrollable view for the textarea */
+  overflow: auto;
+}
+
+.scrollable-textarea {
+  /* Disable textarea resizing */
+  resize: none;
+  padding: 5px;
+  border-radius: 2px;
+  /* Set a fixed width for the textarea if needed */
+  width: 100%; /* Adjust the width as needed */
+}

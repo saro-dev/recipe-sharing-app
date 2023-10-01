@@ -8,7 +8,7 @@ const NotificationsPage = ({ loggedInUser }) => {
     const fetchNotifications = async () => {
       try {
         if (loggedInUser) {
-          const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${loggedInUser._id}`);
+          const response = await axios.get(`http://localhost:5000/api/user/${loggedInUser._id}`);
           const user = response.data;
           const formattedNotifications = Object.values(user.notifications || {});
           setNotifications(formattedNotifications);

@@ -37,7 +37,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
     }
 
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/signup', userData);
+      const response = await axios.post('http://localhost:5000/api/signup', userData);
       console.log('User created:', response.data);
       onSignupSuccess(response.data);
     } catch (error) {
@@ -88,17 +88,19 @@ const SignupComponent = ({ onSignupSuccess }) => {
               onChange={handleInputChange}
               className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
             />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute top-0 right-0 mt-3 mr-3 cursor-pointer"
-            >
-              {showPassword ? (
-                <i className="fa fa-eye-slash" aria-hidden="true"></i>
-              ) : (
-                <i className="fa fa-eye" aria-hidden="true"></i>
-              )}
-            </button>
+            {userData.password && ( // Only render the eye icon if password has a value
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute top-0 right-0 mt-3 mr-3 cursor-pointer"
+              >
+                {showPassword ? (
+                  <i className="fa fa-eye-slash" aria-hidden="true"></i>
+                ) : (
+                  <i className="fa fa-eye" aria-hidden="true"></i>
+                )}
+              </button>
+            )}
           </div>
           <div className="relative">
             <input

@@ -13,7 +13,7 @@ const Notifications = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}`);
         setUserData(response.data);
         setLoading(false);
       } catch (error) {
@@ -33,7 +33,7 @@ const Notifications = ({ userId }) => {
 
   const handleDeleteNotification = async (notificationId) => {
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/notifications/${userId}/${notificationId}`);
+      await axios.delete(`http://localhost:5000/api/notifications/${userId}/${notificationId}`);
       // Remove the deleted notification from the state
       setUserData((prevUserData) => ({
         ...prevUserData,

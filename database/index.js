@@ -97,6 +97,8 @@ const recipeSchema = new mongoose.Schema({
     type: Buffer, // Store binary data
   },
   authorName: String,
+  cookingTime: Number,
+  notesAndTips: String,
   category: String,
   likes: [
     {

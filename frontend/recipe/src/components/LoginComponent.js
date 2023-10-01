@@ -10,15 +10,20 @@ const LoginComponent = ({ onLoginSuccess }) => {
     password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
     setLoginData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/login', loginData);
+      const response = await axios.post('http://localhost:5000/api/login', loginData);
       console.log('Login successful:', response.data);
       onLoginSuccess(response.data);
       navigate('/profile');
@@ -48,13 +53,26 @@ const LoginComponent = ({ onLoginSuccess }) => {
             onChange={handleInputChange}
             className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleInputChange}
-            className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              onChange={handleInputChange}
+              className="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-400"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute top-0 right-0 mt-3 mr-3 cursor-pointer"
+            >
+              {showPassword ? (
+                <i className="fa fa-eye-slash" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-eye" aria-hidden="true"></i>
+              )}
+            </button>
+          </div>
           <button
             type="button"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
