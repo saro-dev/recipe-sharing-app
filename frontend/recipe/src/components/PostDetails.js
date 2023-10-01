@@ -18,7 +18,7 @@ const PostDetails = ({ loggedInUser }) => {
   // Function to fetch comments for a specific post
   const fetchPostComments = async () => {
     try {
-      const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${postId}`);
+      const commentsResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/comments/${postId}`);
 
       setComments(commentsResponse.data);
       console.log(commentsResponse);
@@ -30,12 +30,12 @@ const PostDetails = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/posts/${postId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
         setPost(response.data);
 
         // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
-          const response2 = await axios.get(`http://localhost:5000/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
         }
 
@@ -59,13 +59,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`http://localhost:5000/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`http://localhost:5000/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
@@ -88,7 +88,7 @@ const PostDetails = ({ loggedInUser }) => {
         return;
       }
 
-      const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
         userId: loggedInUser._id,
         text: commentText,
       });
@@ -109,7 +109,7 @@ const PostDetails = ({ loggedInUser }) => {
           createdAt: new Date(),
         };
 
-        await axios.post(`http://localhost:5000/api/addNotification/${post.userId._id}`, {
+        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addNotification/${post.userId._id}`, {
           notification,
         });
       }
@@ -119,7 +119,7 @@ const PostDetails = ({ loggedInUser }) => {
   };
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id },
       });
       setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
@@ -266,7 +266,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
+          src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
           alt={post.title}
           className="max-w-full object-cover"
           style={{ maxWidth: '300px' }}

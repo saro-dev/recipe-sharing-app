@@ -8,7 +8,7 @@ const FavouritesPage = () => {
   useEffect(() => {
     const fetchFavoritePosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/favorite-posts/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/favorite-posts/${userId}`);
         setFavoritePosts(response.data);
       } catch (error) {
         console.error('Error fetching favorite posts:', error);

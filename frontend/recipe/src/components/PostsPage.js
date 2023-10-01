@@ -13,7 +13,7 @@ const PostsPage = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/posts');
+        const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
         const reversedPosts = response.data.reverse(); // Reverse the order of posts
         setPosts(reversedPosts);
         
@@ -42,7 +42,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleToggleLike = async (postId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/like/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
@@ -77,7 +77,7 @@ const PostsPage = ({ loggedInUser }) => {
         console.log('Notification:', notification);
 
         const notificationResponse = await axios.post(
-          `http://localhost:5000/api/addNotification/${updatedPost.userId}`,
+          `https://recipe-backend-1e02.onrender.com/api/addNotification/${updatedPost.userId}`,
           {
             notification,
           }
@@ -91,7 +91,7 @@ const PostsPage = ({ loggedInUser }) => {
   };
   const handleAddComment = async (postId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
         userId: loggedInUser._id,
         text: commentTexts[postId], // Use the comment text for the specific post
       });
@@ -143,7 +143,7 @@ const PostsPage = ({ loggedInUser }) => {
         console.log('Notification:', notification);
   
         const notificationResponse = await axios.post(
-          `http://localhost:5000/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
+          `https://recipe-backend-1e02.onrender.com/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
           {
             notification,
           }
@@ -177,7 +177,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleDeleteComment = async (postId, commentId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id } // Send userId in the request body
       });
       setPosts(posts.map(post => {
@@ -206,7 +206,7 @@ const PostsPage = ({ loggedInUser }) => {
             state: { comments: post.comments }, // Pass comments as a prop
           }}>
             <img
-              src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
+              src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
               alt={post.title}
               className="max-w-full max-h-full object-cover"
               style={{ maxWidth: '150px' }}
