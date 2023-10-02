@@ -76,7 +76,7 @@ const SearchPage = ({ loggedInUser }) => {
               <div className="w-100 h-100 mt-2">
                 <Link to={`/post-details/${post._id}`}>
                   <img
-                    src={`https://recipe-backend-wntf.onrender.com/uploads/${post.image}`}
+                    src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                     alt={post.title}
                     className="max-w-full max-h-full object-cover"
                     style={{ maxWidth: '150px' }}

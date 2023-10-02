@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
-import { FaInfoCircle, FaStar, FaHome } from 'react-icons/fa';
+import { FaInfoCircle, FaStar } from 'react-icons/fa';
 import BadgeDescriptionModal from './BadgeDescriptionModal';
 import two from './two.jpg'
 import ironIcon from '../iron.png';
@@ -50,10 +50,10 @@ const ProfileComponent = ({ userId }) => {
     };
 
     fetchUserData();
-    fetchFollowersCount(); 
+    fetchFollowersCount();
     fetchRecipeCount();
   }, [userId]);
-    
+
   const handleEditName = () => {
     setEditingName(true);
   };
@@ -96,20 +96,20 @@ const ProfileComponent = ({ userId }) => {
     // Close the confirmation dialog
     setConfirmLogout(false);
   };
-// Function to open the badge description modal
-const openBadgeModal = () => {
-  setIsBadgeModalOpen(true);
-};
+  // Function to open the badge description modal
+  const openBadgeModal = () => {
+    setIsBadgeModalOpen(true);
+  };
 
-// Function to close the badge description modal
-const closeBadgeModal = () => {
-  setIsBadgeModalOpen(false);
-};
+  // Function to close the badge description modal
+  const closeBadgeModal = () => {
+    setIsBadgeModalOpen(false);
+  };
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center ">
       <div className="bg-white p-6 rounded-lg custom-shadow w-full sm:w-96">
-      <div className="flex justify-end">
+        <div className="flex justify-end">
           <FaInfoCircle
             className="text-blue-500 cursor-pointer"
             size={20}
@@ -137,61 +137,60 @@ const closeBadgeModal = () => {
                 {recipeCount >= 76 && recipeCount <= 100 && (
                   <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
                 )}
-                
+
               </button>
               <BadgeDescriptionModal
-        isOpen={isBadgeModalOpen}
-        onClose={closeBadgeModal}
-        recipeCount={recipeCount} // Pass recipeCount as needed
-      />
+                isOpen={isBadgeModalOpen}
+                onClose={closeBadgeModal}
+                recipeCount={recipeCount} // Pass recipeCount as needed
+              />
             </div>
             {editingName ? (
-                <div className="mt-1 flex space-x-2">
-                  <input
-                    type="text"
-                    value={updatedName}
-                    onChange={e => setUpdatedName(e.target.value)}
-                    className="border rounded py-1 w-9/12 px-2 flex-grow focus:outline-none focus:border-blue-400"
-                  />
-                  <button
-                    className="bg-green-600 text-white py-1 px-2 rounded hover:bg-blue-700"
-                    onClick={handleSaveEdit}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400"
-                    onClick={handleCancelEdit}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
+              <div className="mt-1 flex space-x-2">
+                <input
+                  type="text"
+                  value={updatedName}
+                  onChange={e => setUpdatedName(e.target.value)}
+                  className="border rounded py-1 w-9/12 px-2 flex-grow focus:outline-none focus:border-blue-400"
+                />
                 <button
-                  className="text-blue-600 mt-1 block hover:underline"
-                  onClick={handleEditName}
+                  className="bg-green-600 text-white py-1 px-2 rounded hover:bg-blue-700"
+                  onClick={handleSaveEdit}
                 >
-                  Edit<i className='fas fa-edit ml-2'></i>
+                  Save
                 </button>
-              )}
+                <button
+                  className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                className="text-blue-600 mt-1 block hover:underline"
+                onClick={handleEditName}
+              >
+                Edit<i className='fas fa-edit ml-2'></i>
+              </button>
+            )}
             <p className="mt-1">Email: {userData.email}</p>
             <p className="mt-1">Recipe Posts: {recipeCount}</p>
             <p className="mt-1">Followers: {followersCount}</p>
-            
-            <Link to="/" className="flex items-center text-blue-900 mt-4 mb-4 hover:underline">
-              <FaHome className="mr-1 text-blue-900 cursor-pointer" size={20} />
-              Go to Homepage
-            </Link>
-            <Link to="/myposts" className="text-gray-600 font-bold">
+
+
+            <div className='flex justify-around'>
+              <Link to="/myposts" className="flex items-center mt-4 text-gray-600 font-bold bg-blue-300 p-2 rounded">
                 My Posts
-            </Link>
-            <br></br>
-            <button className="text-yellow-600 mt-4 block hover:underline">
-            <Link to={`/favourites/${userId}`} className="flex items-center text-yellow-600 mt-4 hover:underline">
-                <FaStar className="mr-1" />
-                View Favorites
-            </Link>
-            </button>
+              </Link>
+              <button className="text-yellow-600 mt-4 ml-4 hover:underline bg-yellow-100 p-2 rounded">
+                <Link to={`/favourites/${userId}`} className="flex items-center text-yellow-600 hover:underline">
+                  <FaStar className="mr-1" />
+                  View Favorites
+                </Link>
+              </button>
+            </div>
+
             <br></br>
             <button
               className="mt-10 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"

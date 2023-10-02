@@ -25,6 +25,9 @@ const RecipePostComponent = ({ userId }) => {
   const handleInputChange = event => {
     const { name, value } = event.target;
     setRecipeData(prevData => ({ ...prevData, [name]: value }));
+    if (name === 'category') {
+      setCategory(value);
+    }
   };
 
   const handleImageUpload = event => {
@@ -208,6 +211,7 @@ const RecipePostComponent = ({ userId }) => {
             type="number"
             name="cookingTime"
             placeholder="Cooking Time (minutes)"
+            required
             value={cookingTime}
             onChange={handleCookingTimeChange}
             className="w-full border rounded p-2"
@@ -216,6 +220,7 @@ const RecipePostComponent = ({ userId }) => {
             <textarea
               name="notesAndTips"
               placeholder="Notes and Tips while cooking"
+              required
               value={recipeData.notesAndTips}
               onChange={handleInputChange}
               className="scrollable-textarea"

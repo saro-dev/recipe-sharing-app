@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -55,43 +56,49 @@ const Notifications = ({ userId }) => {
   // Sort notifications by createdAt in descending order
   const sortedNotifications = userData.notifications.slice().sort((a, b) => b.createdAt - a.createdAt);
 
-  return (
-    <div className="notifications-container">
-      <h2 className='h2'>Notifications</h2>
-      {showAlert && (
-        <div className="fixed top-0 left-0 w-full h-20 flex justify-center z-999">
-          <Alert type="success" message={alertMessage} />
-        </div>
-      )}
-      {loading ? (
-        <p>Loading notifications...</p>
-      ) : (
-        <div>
-          {sortedNotifications.length === 0 ? (
-            <p>No notifications available.</p>
+  const reversedNotifications = sortedNotifications.slice().reverse();
+
+return (
+  <div className="notifications-container">
+    <h2 className='h2'>Notifications</h2>
+    {showAlert && (
+      <div className="fixed top-0 left-0 w-full h-20 flex justify-center z-999">
+        <Alert type="success" message={alertMessage} />
+      </div>
+    )}
+    {loading ? (
+      <p>Loading notifications...</p>
+    ) : (
+      <div>
+        {reversedNotifications.length === 0 ? (
+  <p>No notifications available.</p>
+) : (
+  <ul className="notifications-list">
+    {reversedNotifications.map((notification, index) => (
+      <li key={notification._id} className="notification-item">
+        <Link to={`/post-details/${notification.postId}`} className="notification-link">
+          {notification.type === 'like' ? (
+            <span className="heart-icon">❤️</span>
           ) : (
-            <ul className="notifications-list">
-              {sortedNotifications.map((notification, index) => (
-                <li key={notification._id} className="notification-item">
-                  <Link to={`/post-details/${notification.postId}`} className="notification-link">
-                    <span className="heart-icon">❤️</span>
-                    {notification.message}
-                  </Link>
-                  <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
-                  <button
-                    className="delete-button ml-5"
-                    onClick={() => handleDeleteNotification(notification._id)}
-                  >
-                    <i className="fas fa-trash text-red-700"></i>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <span className="comment-icon">💬</span>
           )}
-        </div>
-      )}
-    </div>
-  );
+          {notification.message}
+        </Link>
+        <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
+        <button
+          className="delete-button ml-5"
+          onClick={() => handleDeleteNotification(notification._id)}
+        >
+          <i className="fas fa-trash text-red-700"></i>
+        </button>
+      </li>
+    ))}
+  </ul>
+)}
+      </div>
+    )}
+  </div>
+);
 };
 
 export default Notifications;

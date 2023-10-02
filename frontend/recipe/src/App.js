@@ -27,7 +27,8 @@ const Splash = () => {
 };
 
 const App = () => {
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  const [loggedInUser, setLoggedInUser] = useState(storedUser);
   const [alert, setAlert] = useState(null); 
   const [showSplash, setShowSplash] = useState(true);
   
