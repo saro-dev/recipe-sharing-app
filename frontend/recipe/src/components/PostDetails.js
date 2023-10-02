@@ -18,7 +18,9 @@ const PostDetails = ({ loggedInUser }) => {
   const [comments, setComments] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+
   const postURL = window.location.href;
+  const customMessage = "Hey, check out this amazing dish on Recipeeze!";
 
   // Function to fetch comments for a specific post
   const fetchPostComments = async () => {
@@ -311,13 +313,13 @@ const PostDetails = ({ loggedInUser }) => {
       <hr className='m-2'></hr>
       <div className='bg-white p-2 rounded'>
       <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
-      <WhatsappShareButton url={postURL} title={post.title}>
+      <WhatsappShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
           <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
         </WhatsappShareButton>
-        <FacebookShareButton url={postURL} quote={post.title}>
+        <FacebookShareButton url={postURL} quote={`${customMessage}\n${post.title}`}>
           <FacebookIcon size={30} className="ml-4 cursor-pointer text-blue-600 hover:text-blue-700" />
         </FacebookShareButton>
-        <TwitterShareButton url={postURL} title={post.title}>
+        <TwitterShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
           <TwitterIcon size={30} className="ml-4 cursor-pointer text-blue-400 hover:text-blue-500" />
         </TwitterShareButton>
       </div>
