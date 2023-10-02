@@ -5,7 +5,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
-
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -137,7 +138,88 @@ app.get('/api/notifications/:userId', async (req, res) => {
 });
 
 
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Use SSL/TLS
+  auth: {
+    user: 'recipeeze.contact@gmail.com',
+    pass: 'fnjl wmoq licf ogtb', // Use an App Password or your account password
+  },
+});
+const PasswordReset = mongoose.model('PasswordReset', {
+  email: String,
+  token: String,
+  expires: Date,
+});
+// POST route for sending reset password email
+app.post('/api/forgot-password', async (req, res) => {
+  const { email } = req.body;
 
+  try {
+    // Check if the user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Access the user's password field
+    const password = user.password;
+
+
+    // Compose the email
+    const mailOptions = {
+      from: 'Saro from recipeeze',
+      to: email,
+      subject: 'Password Reset Request',
+      text: `Your password is  ${password}`,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email: ', error);
+        res.status(500).json({ error: 'Failed to send reset email' });
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.json({ message: 'Password sent to your email successfully' });
+      }
+    });
+  } catch (error) {
+    console.error('Error processing password reset request:', error);
+    res.status(500).json({ error: 'Error processing password reset request' });
+  }
+});
+
+app.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Retrieve the user based on the token
+    const user = await User.findOne({ resetPasswordToken: token });
+
+    // Check if the user exists and the token is valid
+    if (!user || !user.resetPasswordToken || user.resetPasswordToken !== token) {
+      return res.status(400).json({ message: 'Invalid token. Please request a new password reset link.' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password and clear the reset token
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+
+    // Save the updated user
+    await user.save();
+
+    return res.status(200).json({ message: 'Password reset successfully.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred while resetting the password.' });
+  }
+});
 // API endpoint for user signup
 // API endpoint for user signup
 app.post('/api/signup', async (req, res) => {
@@ -163,7 +245,7 @@ app.post('/api/signup', async (req, res) => {
       name,
       email,
       phone,
-      password: hashedPassword,
+      password
     });
 
     res.status(201).json(newUser);
@@ -171,7 +253,31 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'Error creating user' });
   }
 });
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
 
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Compare the provided password with the stored password (plain text)
+    if (password === user.password) {
+      res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        // ... other user data you want to send to the client
+      });
+    } else {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error logging in' });
+  }
+});
 // API endpoint for posting a recipe
 app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
   try {
@@ -268,32 +374,7 @@ app.get('/author/:userId', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      // ... other user data you want to send to the client
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Error logging in' });
-  }
-});
 
 app.get('/api/posts', async (req, res) => {
   try {

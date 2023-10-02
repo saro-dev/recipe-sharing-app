@@ -20,7 +20,7 @@ const SearchPage = ({ loggedInUser }) => {
 
         setLoading(true);
         const response = await axios.get(
-          `https://recipe-backend-1e02.onrender.com/api/search?q=${searchQuery}&category=${selectedCategory}`
+          `http://localhost:5000/api/search?q=${searchQuery}&category=${selectedCategory}`
         );
         setSearchResults(response.data);
         setLoading(false);
@@ -76,7 +76,7 @@ const SearchPage = ({ loggedInUser }) => {
               <div className="w-100 h-100 mt-2">
                 <Link to={`/post-details/${post._id}`}>
                   <img
-                    src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+                    src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
                     alt={post.title}
                     className="max-w-full max-h-full object-cover"
                     style={{ maxWidth: '150px' }}

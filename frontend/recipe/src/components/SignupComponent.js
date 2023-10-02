@@ -12,17 +12,18 @@ const SignupComponent = ({ onSignupSuccess }) => {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false); // Initialize the button state
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setUserData(prevData => ({ ...prevData, [name]: value }));
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const phoneNumberPattern = /^\d{10}$/;
@@ -37,7 +38,8 @@ const SignupComponent = ({ onSignupSuccess }) => {
     }
 
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/signup', userData);
+      setIsSigningUp(true); // Disable the button and show "Signing up..." message
+      const response = await axios.post('http://localhost:5000/api/signup', userData);
       console.log('User created:', response.data);
       onSignupSuccess(response.data);
     } catch (error) {
@@ -46,11 +48,13 @@ const SignupComponent = ({ onSignupSuccess }) => {
       } else {
         setErrorMessage('An error occurred while signing up. Please try again later.');
       }
+    } finally {
+      setIsSigningUp(false); // Re-enable the button and hide "Signing up..." message
     }
   };
 
   return (
-    <div className="p-4 bg-gray-100 h-screen flex items-center justify-center">
+    <div className="p-4 bg-blue-100 h-screen flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-md w-full sm:w-96">
         <h2 className="text-xl font-semibold mb-4 text-center">Sign Up</h2>
         {errorMessage && (
@@ -82,7 +86,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
           />
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
               onChange={handleInputChange}
@@ -104,7 +108,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
           </div>
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               name="confirmPassword"
               placeholder="Confirm Password"
               onChange={handleInputChange}
@@ -113,9 +117,12 @@ const SignupComponent = ({ onSignupSuccess }) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className={`w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 ${
+              isSigningUp ? 'cursor-not-allowed opacity-50' : ''
+            }`}
+            disabled={isSigningUp} // Add the 'disabled' attribute based on the state
           >
-            Sign Up
+            {isSigningUp ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
         <p className="mt-4 text-center">

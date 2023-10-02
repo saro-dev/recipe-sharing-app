@@ -15,6 +15,8 @@ import UserProfile from './components/UserProfile';
 import './App.css';
 import FavouritesPage from './components/FavouritesPage';
 import UserPostsPage from './components/UserPostsPage';
+import ForgotPasswordComponent from './components/ForgotPasswordComponent';
+import PasswordResetComponent from './components/PasswordResetComponent';
 import axios from 'axios';
 import splash from './splash.png';
 
@@ -70,6 +72,10 @@ const App = () => {
         <Routes>
           <Route path="/signup" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
           <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/forgot-password" element={<ForgotPasswordComponent loggedInUser={loggedInUser}/>} />
+          <Route path="/password-reset/:token" element={<PasswordResetComponent />} />
+          <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser} />} />
+  
           {/* Add the route for post details */}
           
           {loggedInUser ? (
@@ -78,7 +84,7 @@ const App = () => {
               <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
               <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
               <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
-              <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser}/>} />
+              
               <Route path="/search" element={<SearchPage />} />
               <Route path="/favourites/:userId" element={<FavouritesPage />} />
               <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>

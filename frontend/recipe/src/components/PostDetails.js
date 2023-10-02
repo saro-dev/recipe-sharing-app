@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaStar } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
+import { WhatsappShareButton,FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
+import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
+import { FacebookIcon, TwitterIcon } from 'react-share';
 
 
 const PostDetails = ({ loggedInUser }) => {
@@ -15,11 +18,12 @@ const PostDetails = ({ loggedInUser }) => {
   const [comments, setComments] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const postURL = window.location.href;
 
   // Function to fetch comments for a specific post
   const fetchPostComments = async () => {
     try {
-      const commentsResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/comments/${postId}`);
+      const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${postId}`);
 
       setComments(commentsResponse.data);
       console.log(commentsResponse);
@@ -31,12 +35,12 @@ const PostDetails = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
+        const response = await axios.get(`http://localhost:5000/api/posts/${postId}`);
         setPost(response.data);
 
         // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
-          const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`http://localhost:5000/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
         }
 
@@ -60,13 +64,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`http://localhost:5000/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`http://localhost:5000/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
@@ -89,7 +93,7 @@ const PostDetails = ({ loggedInUser }) => {
       return;
     }
 
-    const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
+    const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
       userId: loggedInUser._id,
       text: commentText,
     });
@@ -110,7 +114,7 @@ const PostDetails = ({ loggedInUser }) => {
         createdAt: new Date(),
       };
 
-      await axios.post(`https://recipe-backend-1e02.onrender.com/api/addNotification/${post.userId._id}`, {
+      await axios.post(`http://localhost:5000/api/addNotification/${post.userId._id}`, {
         notification,
       });
     }
@@ -121,7 +125,7 @@ const PostDetails = ({ loggedInUser }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id },
       });
       setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
@@ -271,7 +275,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+          src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
           alt={post.title}
           className="max-w-full object-cover"
           style={{ maxWidth: '300px' }}
@@ -305,6 +309,18 @@ const PostDetails = ({ loggedInUser }) => {
         <span className="text-blue-600">#Tags:</span> {post.tags}
       </p>
       <hr className='m-2'></hr>
+      <div className='bg-white p-2 rounded'>
+      <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
+      <WhatsappShareButton url={postURL} title={post.title}>
+          <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
+        </WhatsappShareButton>
+        <FacebookShareButton url={postURL} quote={post.title}>
+          <FacebookIcon size={30} className="ml-4 cursor-pointer text-blue-600 hover:text-blue-700" />
+        </FacebookShareButton>
+        <TwitterShareButton url={postURL} title={post.title}>
+          <TwitterIcon size={30} className="ml-4 cursor-pointer text-blue-400 hover:text-blue-500" />
+        </TwitterShareButton>
+      </div>
       <div className="mt-4 mb-4">
         <h3 className="font-semibold">Comments:</h3>
         <div>
