@@ -14,7 +14,7 @@ const ForgotPasswordComponent = () => {
   const handleResetPassword = async () => {
     try {
       setButtonDisabled(true); // Disable the button when clicked
-      const response = await axios.post('http://localhost:5000/api/forgot-password', { email });
+      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/forgot-password', { email });
       setMessage(response.data.message);
     } catch (error) {
       setError('An error occurred. Please try again later.');
