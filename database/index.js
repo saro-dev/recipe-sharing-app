@@ -170,11 +170,40 @@ app.post('/api/forgot-password', async (req, res) => {
 
     // Compose the email
      const mailOptions = {
-      from: 'Saro from recipeeze',
-      to: email,
-      subject: 'Password Reset Request',
-      text: `Your password is  ${password}`,
-    };
+  from: 'Saro from recipeeze',
+  to: email,
+  subject: 'Password Reset Request',
+  html: `
+    <html>
+      <head>
+        <style>
+          /* Add your custom styles here */
+          body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+          }
+          .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          }
+          h1 {
+            color: #3498db;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Recipeeze Password Reset</h1>
+          <p>Here's your password:</p>
+          <p><strong>${password}</strong></p>
+        </div>
+      </body>
+    </html>
+  `,
+};
+
 
 
     // Send the email
