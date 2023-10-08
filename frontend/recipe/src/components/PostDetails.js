@@ -274,7 +274,7 @@ const handleToggleLike = async () => {
       <hr></hr>
           {!loggedInUser && (
         <div className="fixed top-0 left-0 right-0 z-999 bg-red-100 p-2 rounded text-red-600 mb-4">
-          Signup to view more dishes! Please <Link to="/login">Log In</Link> or <Link to="/signup">Sign Up</Link> to access additional features.
+          Signup to view more dishes!<br> Please <Link className="font-bold" to="/login">Log In</Link> or <Link className="font-bold" to="/signup">Sign Up</Link> to access additional features.
         </div>
       )}
 
