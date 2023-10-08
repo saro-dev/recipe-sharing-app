@@ -61,6 +61,12 @@ const PostDetails = ({ loggedInUser }) => {
     fetchPostComments(); // Call the function to fetch comments
   }, [postId, loggedInUser]);
   
+  const renderSignUpDiv = !loggedInUser && (
+    <div className="fixed top-0 left-0 right-0 z-999 bg-white p-3 text-center">
+      <p>Sign-up to view more Dishes</p>
+      <Link to="/signup" className="text-blue-600 hover:underline">Sign-up</Link>
+    </div>
+  );
 
 const handleToggleLike = async () => {
     try {
@@ -270,6 +276,7 @@ const handleToggleLike = async () => {
           <FaStar size={25} />
         </button>
       </div>
+      {renderSignUpDiv}
       <hr></hr>
       <h2 className="text-xl font-semibold mb-4 mt-2 ">
         Post By{' '}
