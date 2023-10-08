@@ -71,6 +71,7 @@ const userSchema = new mongoose.Schema({
   profileImage: {
     type:Buffer, // Store the content type of the image (e.g., 'image/jpeg', 'image/png', etc.)
   },
+  bio: String,
 });
 // Mongoose schema for comments
 const commentSchema = new mongoose.Schema({
@@ -381,15 +382,36 @@ app.get('/api/recipe/count/:userId', async (req, res) => {
   }
 });
 
+app.get('/api/searchUsers', async (req, res) => {
+  try {
+    const searchQuery = req.query.q; // Get the search query from the request query parameters
+    // Perform a database query to search for users based on the search query
+    // Replace the following line with your actual database query
+    const users = await User.find({ name: { $regex: searchQuery, $options: 'i' } });
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching user search results:', error);
+    res.status(500).json({ error: 'Error fetching user search results' });
+  }
+});
+
 // API endpoint to update user data by ID
 app.patch('/api/user/:userId', async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.userId, { name: req.body.name }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      { 
+        name: req.body.name,
+        bio: req.body.bio  // Include the bio field as well
+      },
+      { new: true }
+    );
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: 'Error updating user data' });
   }
 });
+
 app.get('/author/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
