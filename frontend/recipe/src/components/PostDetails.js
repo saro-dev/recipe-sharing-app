@@ -257,6 +257,11 @@ const handleToggleLike = async () => {
 
   return (
     <div className="p-4 page-container mb-10">
+    {!loggedInUser && (
+        <div className="z-999 bg-red-100 p-4 rounded text-red-600 mb-4">
+          Signup to view more dishes! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to access additional features.
+        </div>
+      )}
       {alert && (
         <div className={`p-2 mb-4 text-white bg-${alert.type === 'success' ? 'green' : 'red'}-500`}>
           {alert.message}</div>)}
@@ -272,11 +277,6 @@ const handleToggleLike = async () => {
         </button>
       </div>
       <hr></hr>
-          {!loggedInUser && (
-        <div className="fixed top-0 left-0 right-0 z-999 bg-red-100 p-2 rounded text-red-600 mb-4">
-          Signup to view more dishes!<br> Please <Link className="font-bold" to="/login">Log In</Link> or <Link className="font-bold" to="/signup">Sign Up</Link> to access additional features.
-        </div>
-      )}
 
       <h2 className="text-xl font-semibold mb-4 mt-2 ">
         Post By{' '}
