@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Notifications.css';
-import Alert from './Alert'; 
+import Alert from './Alert';
 
 const Notifications = ({ userId }) => {
   const [userData, setUserData] = useState({ notifications: [] });
@@ -58,47 +57,52 @@ const Notifications = ({ userId }) => {
 
   const reversedNotifications = sortedNotifications.slice().reverse();
 
-return (
-  <div className="notifications-container">
-    <h2 className='h2'>Notifications</h2>
-    {showAlert && (
-      <div className="fixed top-0 left-0 w-full h-20 flex justify-center z-999">
-        <Alert type="success" message={alertMessage} />
-      </div>
-    )}
-    {loading ? (
-      <p>Loading notifications...</p>
-    ) : (
-      <div>
-        {reversedNotifications.length === 0 ? (
-  <p>No notifications available.</p>
-) : (
-  <ul className="notifications-list">
-    {reversedNotifications.map((notification, index) => (
-      <li key={notification._id} className="notification-item">
-        <Link to={`/post-details/${notification.postId}`} className="notification-link">
-          {notification.type === 'like' ? (
-            <span className="heart-icon">❤️</span>
+  return (
+    <div className="notifications-container">
+      <h2 className='h2'>Notifications</h2>
+      {showAlert && (
+        <div className="fixed top-0 left-0 w-full h-20 flex justify-center z-999">
+          <Alert type="success" message={alertMessage} />
+        </div>
+      )}
+      {loading ? (
+        <div className="loading-skeleton">
+          {/* Skeleton loading effect */}
+          <div className="skeleton-item"></div>
+          <div className="skeleton-item"></div>
+          <div className="skeleton-item"></div>
+        </div>
+      ) : (
+        <div>
+          {reversedNotifications.length === 0 ? (
+            <p>No notifications available.</p>
           ) : (
-            <span className="comment-icon">💬</span>
+            <ul className="notifications-list">
+              {reversedNotifications.map((notification, index) => (
+                <li key={notification._id} className="notification-item">
+                  <Link to={`/post-details/${notification.postId}`} className="notification-link">
+                    {notification.type === 'like' ? (
+                      <span className="heart-icon">❤️</span>
+                    ) : (
+                      <span className="comment-icon">💬</span>
+                    )}
+                    {notification.message}
+                  </Link>
+                  <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
+                  <button
+                    className="delete-button ml-5"
+                    onClick={() => handleDeleteNotification(notification._id)}
+                  >
+                    <i className="fas fa-trash text-red-700"></i>
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
-          {notification.message}
-        </Link>
-        <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
-        <button
-          className="delete-button ml-5"
-          onClick={() => handleDeleteNotification(notification._id)}
-        >
-          <i className="fas fa-trash text-red-700"></i>
-        </button>
-      </li>
-    ))}
-  </ul>
-)}
-      </div>
-    )}
-  </div>
-);
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Notifications;

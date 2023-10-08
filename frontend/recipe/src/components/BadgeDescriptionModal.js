@@ -26,7 +26,7 @@ const BadgeDescriptionModal = ({ isOpen, onClose, recipeCount }) => {
         <p className='flex justify-space'>
           
               <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
-              <span className='text-blue-300 font-bold'>Silver Badge</span>: Experienced Poster (51-75 posts).
+              <span className='text-blue-300 font-bold'>Silver Badge</span>: Expert Poster (51-75 posts).
             
         </p>
         <p className='flex justify-space'>

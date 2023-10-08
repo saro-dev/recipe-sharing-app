@@ -33,7 +33,7 @@ const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(storedUser);
   const [alert, setAlert] = useState(null); 
   const [showSplash, setShowSplash] = useState(true);
-  
+
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
@@ -80,7 +80,7 @@ const App = () => {
           
           {loggedInUser ? (
             <>
-              <Route path="/" element={<PostsPage loggedInUser={loggedInUser} />} />
+            <Route path="/" element={<PostsPage loggedInUser={loggedInUser}  />} />
               <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
               <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
               <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />

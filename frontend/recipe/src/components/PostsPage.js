@@ -32,11 +32,21 @@ const PostsPage = ({ loggedInUser }) => {
       setLikedPosts(likedPostIds);
     }
   }, []);
+  
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-20 w-20 mt-5 border-t-2 border-blue-500"></div>
-        </div>
+      <div className="p-4">
+        <h2 className="text-2xl font-semibold mb-4">Posts</h2>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="border p-4 mb-4 rounded-lg bg-white shadow-md skeleton-loading">
+            <div className="w-full h-40 mb-4 bg-gray-300 rounded-lg text-center flex justify-center items-center text-xl text-gray-500">loading..</div> {/* Placeholder image */}
+            <h3 className="text-lg font-semibold mb-2 bg-gray-300 h-8 rounded"></h3> {/* Placeholder heading */}
+            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+          </div>
+        ))}
+      </div>
     );
   }
 
@@ -193,117 +203,94 @@ const PostsPage = ({ loggedInUser }) => {
   };
 
   return (
-    <div className="p-4 ">
+    <div className="p-4">
       <h2 className="text-2xl font-semibold mb-4">Posts</h2>
-      {posts.map(post => (
-        
-        <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
+      {posts.map((post) => (
+        <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
           <p className="text-gray-500">Posted by: <strong>{post.authorName}</strong></p>
-          
-          <div className="w-100 h-100 mt-2">
-          <Link to={{
-            pathname: `/post-details/${post._id}`,
-            state: { comments: post.comments }, // Pass comments as a prop
-          }}>
-            <img
-              src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
-              alt={post.title}
-              className="max-w-full max-h-full object-cover"
-              style={{ maxWidth: '150px' }}
-            />
-            <h3 className="text-lg font-semibold mt-2">{post.title}</h3>
+          <div className="w-full h-auto mt-2">
+            <Link to={{
+              pathname: `/post-details/${post._id}`,
+              state: { comments: post.comments },
+            }}>
+              <img
+                src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+                alt={post.title}
+                className="max-w-full max-h-full object-cover rounded-lg"
+                style={{ height: '200px' }}
+              />
+              <h3 className="text-lg font-semibold mt-2">{post.title}</h3>
             </Link>
           </div>
-          
           <button
-  className={`text-${likedPosts.includes(post._id) ? 'red' : 'red'}-500 hover:text-${likedPosts.includes(
-    post._id
-  )
-    ? 'red'
-    : 'red'}-700`}
-  onClick={() => handleToggleLike(post._id)}
->
-  <i
-    className={`fas fa-heart${
-      likedPosts.includes(post._id) ? ' text-red-700 animate-like' : ''
-    }`}
-  ></i>{' '}
-  {likedPosts.includes(post._id) ? (
-    <span>
-      Liked{' '}
-      <i
-        className={`fas fa-check-circle text-green-500 ml-1 ${
-          likedPosts.includes(post._id) ? 'animate-pulse' : ''
-        }`}
-      ></i>
-    </span>
-  ) : (
-    'Like'
-  )}
-</button>
-
-          
+            className={`like-button ${likedPosts.includes(post._id) ? 'liked' : ''}`}
+            onClick={() => handleToggleLike(post._id)}
+          >
+            <i className="fas fa-heart heart-icon"></i> {likedPosts.includes(post._id) ? 'Liked' : 'Like'}
+          </button>
           <div className="mt-2">
-            <p>{post.likes.length} likes</p>
+            <p className="text-gray-600">{post.likes.length} likes</p>
             <hr />
             <div className="flex mt-2">
-            <div className="flex mt-2">
-  <input
-    type="text"
-    value={commentTexts[post._id] || ''} // Use comment text from state or empty string
-    onChange={event => handleCommentChange(post._id, event)} // Pass postId and event
-    placeholder="Enter your comment"
-    className="border rounded p-2 flex-grow mr-2 w-9/12"
-  />
-  <button
-    className="text-blue-600 hover:text-blue-700"
-    onClick={() => handleAddComment(post._id)}
-    disabled={!commentTexts[post._id]}
-  >
-    <i className="fas fa-paper-plane"></i> Post
-  </button>
-</div>
-          </div>
-          <div className='max-h-40 overflow-y-scroll'>
-            <ul>
-              <strong className='border-b border-blue-600 mb-3 text-blue-800'>Comments:</strong>
-              {post.comments.slice(0, showAllComments[post._id] ? post.comments.length : 3).map(comment => (
-  <li key={comment._id}>
-    {comment.user ? (
-      <span>
-        <strong >{comment.name}:</strong> {comment.text}
-        {comment.user === loggedInUser._id && (
-          <button
-            className="text-red-500 ml-2"
-            onClick={() => handleDeleteComment(post._id, comment._id)}
-          >
-            <i className="fas fa-trash"></i>
-          </button>
-        )}
-      </span>
-    ) : (
-      <span>Unknown User: {comment.text}</span>
-    )}
-  </li>
-))}
-{!showAllComments[post._id] && post.comments.length > 3 && (
-  <button
-    className="text-blue-500 mt-2"
-    onClick={() => setShowAllComments(prevState => ({ ...prevState, [post._id]: true }))}
-  >
-    Show all comments ({post.comments.length})
-  </button>
-)}
-            </ul>
+              <div className="flex mt-2">
+                <input
+                  type="text"
+                  value={commentTexts[post._id] || ''}
+                  onChange={(event) => handleCommentChange(post._id, event)}
+                  placeholder="Enter your comment"
+                  className="border rounded p-2 flex-grow mr-2 w-9/12"
+                />
+                <button
+                  className="text-blue-600 hover:text-blue-700"
+                  onClick={() => handleAddComment(post._id)}
+                  disabled={!commentTexts[post._id]}
+                >
+                  <i className="fas fa-paper-plane"></i> Post
+                </button>
+              </div>
+            </div>
+            <div className="mt-4">
+              <strong className="border-b border-blue-600 mb-3 text-blue-800">Comments:</strong>
+              <ul>
+                {post.comments.slice(0, showAllComments[post._id] ? post.comments.length : 3).map((comment) => (
+                  <li key={comment._id} className="mb-2">
+                    {comment.user ? (
+                      <span className="text-gray-800">
+                        <strong>{comment.name}:</strong> {comment.text}
+                        {comment.user === loggedInUser._id && (
+                          <button
+                            className="text-red-500 ml-2"
+                            onClick={() => handleDeleteComment(post._id, comment._id)}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-gray-800">Unknown User: {comment.text}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {!showAllComments[post._id] && post.comments.length > 3 && (
+                <button
+                  className="text-blue-500 mt-2"
+                  onClick={() =>
+                    setShowAllComments((prevState) => ({
+                      ...prevState,
+                      [post._id]: true,
+                    }))
+                  }
+                >
+                  Show all comments ({post.comments.length})
+                </button>
+              )}
             </div>
           </div>
         </div>
-        
       ))}
     </div>
   );
 };
 
 export default PostsPage;
-
-//all ok

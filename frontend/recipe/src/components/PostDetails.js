@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaStar } from 'react-icons/fa';
+import { FaArrowLeft, FaStar, FaHeart } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
 import { WhatsappShareButton,FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
 import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
@@ -18,6 +18,7 @@ const PostDetails = ({ loggedInUser }) => {
   const [comments, setComments] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [likes, setLikes] = useState(0);
 
   const postURL = window.location.href;
   const customMessage = "Hey, check out this amazing dish on Recipeeze!";
@@ -38,26 +39,45 @@ const PostDetails = ({ loggedInUser }) => {
     const fetchPostDetails = async () => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
-        setPost(response.data);
-
+        const postData = response.data;
+        setPost(postData);
+  
         // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
           const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
         }
-
+  
+        // Set the number of likes after setting the post state
+        setLikes(postData.likes.length);
+  
         setLoading(false);
       } catch (error) {
         console.error('Error fetching post details:', error);
       }
     };
-
+  
     fetchPostDetails();
     fetchPostComments(); // Call the function to fetch comments
-
   }, [postId, loggedInUser]);
+  
 
+const handleToggleLike = async () => {
+    try {
+      // Send a request to toggle the like status of the post
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
+        userId: loggedInUser._id,
+      });
+      const updatedPost = response.data;
 
+      // Update the number of likes based on the response
+      setLikes(updatedPost.likes.length);
+
+      // ... (other logic for updating isFavorite, local storage, and notifications)
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
   const handleAddToFavorites = async () => {
     try {
       if (!loggedInUser) {
@@ -84,57 +104,45 @@ const PostDetails = ({ loggedInUser }) => {
       console.error('Error adding to favorites:', error);
     }
   };
+  
   const handleAddComment = async () => {
-  try {
-    if (!loggedInUser) {
-      // Redirect to login page or show a message
-      return;
-    }
-    if (commentText.trim() === '') {
-      // Prevent posting empty comments
-      return;
-    }
-
-    const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
-      userId: loggedInUser._id,
-      text: commentText,
-    });
-
-    const newComment = response.data;
-
-    setComments((prevComments) => [newComment, ...prevComments]); // Add the new comment to the beginning of the list
-    setCommentText('');
-
-    // Send a notification to the post owner
-    if (loggedInUser._id !== post.userId._id) {
-      const notificationMessage = `${loggedInUser.name} commented on your post`;
-      const notification = {
-        type: 'comment',
-        postId: postId,
-        message: notificationMessage,
-        isRead: false,
-        createdAt: new Date(),
-      };
-
-      await axios.post(`https://recipe-backend-1e02.onrender.com/api/addNotification/${post.userId._id}`, {
-        notification,
+    try {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
+        userId: loggedInUser._id,
+        text: commentText,
       });
+      const newComment = response.data;
+
+      // Update the post with the new comment
+      setPost((prevPost) => ({
+        ...prevPost,
+        comments: [...prevPost.comments, newComment],
+      }));
+
+      // Clear the comment text
+      setCommentText('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
     }
-  } catch (error) {
-    console.error('Error adding comment:', error);
-  }
-};
+  };
 
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id },
       });
-      setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
+
+      // Update the post by filtering out the deleted comment
+      setPost((prevPost) => ({
+        ...prevPost,
+        comments: prevPost.comments.filter((comment) => comment._id !== commentId),
+      }));
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
   };
+
+  
 
   if (loading) {
     return (
@@ -279,10 +287,17 @@ const PostDetails = ({ loggedInUser }) => {
         <img
           src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
           alt={post.title}
-          className="max-w-full object-cover"
+          className="max-w-full object-cover mb-2 rounded"
           style={{ maxWidth: '300px' }}
         />
       </div>
+      <button
+        className={`like-button2 ${isFavorite ? 'text-white' : 'text-red-600 hover:text-white'}`}
+        onClick={handleToggleLike}
+      >
+        <FaHeart size={25} />
+        {likes} Likes
+      </button>
       <div className="mt-2 bg-white w-40 rounded">
         <div className='ml-5'>
           <h3 className="font-semibold ">Cooking Time:</h3>
@@ -341,49 +356,26 @@ const PostDetails = ({ loggedInUser }) => {
           </button>
         </div>
         <ul>
-          <strong className="border-b border-blue-600 mb-3 text-blue-800">
-            Comments:
-          </strong>
-          {showAllComments
-            ? post.comments.map((comment) => (
-              <li key={comment._id}>
-                {comment.user ? (
-                  <span>
-                    <strong>{comment.name}:</strong> {comment.text}
-                    {comment.user === loggedInUser._id && (
-                      <button
-                        className="text-red-500 ml-2"
-                        onClick={() => handleDeleteComment(comment._id)}
-                      >
-                        <i className="fas fa-trash"></i>
-                      </button>
-                    )}
-                  </span>
-                ) : (
-                  <span>Unknown User: {comment.text}</span>
-                )}
-              </li>
-            ))
-            : post.comments.slice(0, 3).map((comment) => (
-              <li key={comment._id}>
-                {comment.user ? (
-                  <span>
-                    <strong>{comment.name}:</strong> {comment.text}
-                    {comment.user === loggedInUser._id && (
-                      <button
-                        className="text-red-500 ml-2"
-                        onClick={() => handleDeleteComment(comment._id)}
-                      >
-                        <i className="fas fa-trash"></i>
-                      </button>
-                    )}
-                  </span>
-                ) : (
-                  <span>Unknown User: {comment.text}</span>
-                )}
-              </li>
-            ))}
-        </ul>
+              {post.comments.slice(0, showAllComments ? post.comments.length : 3).map((comment) => (
+                <li key={comment._id} className="mb-2">
+                  {comment.user ? (
+                    <span className="text-gray-800">
+                      <strong>{comment.name}:</strong> {comment.text}
+                      {comment.user === loggedInUser._id && (
+                        <button
+                          className="text-red-500 ml-2"
+                          onClick={() => handleDeleteComment(comment._id)}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-gray-800">Unknown User: {comment.text}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
 
       </div>
       <button

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Modal from './Modal';
 import { FaInfoCircle, FaStar } from 'react-icons/fa';
 import BadgeDescriptionModal from './BadgeDescriptionModal';
+import EditProfileModal from './EditProfileModal';
 import two from './two.jpg'
 import ironIcon from '../iron.png';
 import bronzeIcon from '../bronze.png';
@@ -20,13 +21,17 @@ const ProfileComponent = ({ userId }) => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
+  const [editingBio, setEditingBio] = useState(false); // Add state for editing bio
+  const [updatedBio, setUpdatedBio] = useState('');
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
         setUserData(response.data);
-        setUpdatedName(response.data.name); // Set the initial value for the updated name
+        setUpdatedName(response.data.name);
+        setUpdatedBio(response.data.bio); // Set the initial value for the updated name
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -82,6 +87,26 @@ const ProfileComponent = ({ userId }) => {
       console.error('Error updating name:', error);
     }
   };
+  //bio
+  const handleEditBio = () => {
+    setEditingBio(true);
+  };
+
+  const handleCancelEditBio = () => {
+    setEditingBio(false);
+    setUpdatedBio(userData.bio); // Reset the updated bio to the original bio
+  };
+
+  const handleSaveEditBio = async () => {
+    try {
+      // Update the bio in the database
+      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { bio: updatedBio });
+      setUserData((prevUserData) => ({ ...prevUserData, bio: updatedBio }));
+      setEditingBio(false);
+    } catch (error) {
+      console.error('Error updating bio:', error);
+    }
+  };
   //logout
   const handleLogout = () => {
     setConfirmLogout(true);
@@ -105,6 +130,31 @@ const ProfileComponent = ({ userId }) => {
   const closeBadgeModal = () => {
     setIsBadgeModalOpen(false);
   };
+  const openEditProfileModal = () => {
+    setIsEditProfileModalOpen(true);
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditProfileModalOpen(false);
+  };
+  const handleSaveProfileChanges = async (updatedName, updatedBio) => {
+    try {
+      // Update the name and bio in the database
+      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, {
+        name: updatedName,
+        bio: updatedBio,
+      });
+      // Update the local state with the changes
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        name: updatedName,
+        bio: updatedBio,
+      }));
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center ">
@@ -119,61 +169,41 @@ const ProfileComponent = ({ userId }) => {
         {userData ? (
           <div>
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
-            <div className="mb-4 flex">
-              <p className="text-lg font-semibold mr-3">Name: {userData.name} </p>
-              <button
-                className="text-blue-600 mt-1 block hover:underline"
-                onClick={openBadgeModal} // Open the badge description modal
-              >
-                {recipeCount >= 0 && recipeCount <= 25 && (
-                  <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 26 && recipeCount <= 50 && (
-                  <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 51 && recipeCount <= 75 && (
-                  <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 76 && recipeCount <= 100 && (
-                  <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
+            <div className='bg-blue-100 p-2 rounded'>
+              <div className="mb-2 flex">
+                <p className="text-lg font-semibold mr-3">Name: {userData.name} </p>
+                <button
+                  className="text-blue-600 mt-1 block hover:underline"
+                  onClick={openBadgeModal} // Open the badge description modal
+                >
+                  {recipeCount >= 0 && recipeCount <= 25 && (
+                    <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 26 && recipeCount <= 50 && (
+                    <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 51 && recipeCount <= 75 && (
+                    <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 76 && recipeCount <= 100 && (
+                    <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
 
-              </button>
-              <BadgeDescriptionModal
-                isOpen={isBadgeModalOpen}
-                onClose={closeBadgeModal}
-                recipeCount={recipeCount} // Pass recipeCount as needed
-              />
-            </div>
-            {editingName ? (
-              <div className="mt-1 flex space-x-2">
-                <input
-                  type="text"
-                  value={updatedName}
-                  onChange={e => setUpdatedName(e.target.value)}
-                  className="border rounded py-1 w-9/12 px-2 flex-grow focus:outline-none focus:border-blue-400"
+                </button>
+                <BadgeDescriptionModal
+                  isOpen={isBadgeModalOpen}
+                  onClose={closeBadgeModal}
+                  recipeCount={recipeCount} // Pass recipeCount as needed
                 />
-                <button
-                  className="bg-green-600 text-white py-1 px-2 rounded hover:bg-blue-700"
-                  onClick={handleSaveEdit}
-                >
-                  Save
-                </button>
-                <button
-                  className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400"
-                  onClick={handleCancelEdit}
-                >
-                  Cancel
-                </button>
               </div>
-            ) : (
-              <button
-                className="text-blue-600 mt-1 block hover:underline"
-                onClick={handleEditName}
-              >
-                Edit<i className='fas fa-edit ml-2'></i>
-              </button>
-            )}
+
+              <div className="mt-4">
+                <p className="text-lg font-semibold mb-2">Bio:</p>
+                <p>{userData.bio}</p>
+
+              </div>
+            </div>
+
             <p className="mt-1">Email: {userData.email}</p>
             <p className="mt-1">Recipe Posts: {recipeCount}</p>
             <p className="mt-1">Followers: {followersCount}</p>
@@ -192,15 +222,39 @@ const ProfileComponent = ({ userId }) => {
             </div>
 
             <br></br>
+            <div className='flex justify-between'>
             <button
               className="mt-10 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
               onClick={handleLogout}
             >
               Logout
             </button>
+            <button
+              className="mt-10 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              onClick={openEditProfileModal}
+            >
+              Edit Profile
+            </button>
+            </div>
+            <EditProfileModal
+              isOpen={isEditProfileModalOpen}
+              onClose={closeEditProfileModal}
+              userData={userData}
+              onSave={handleSaveProfileChanges} // Define this function to handle saving changes
+            />
+            
           </div>
         ) : (
-          <p>Loading user data...</p>
+          <div>
+            <div className="mb-4 animate-pulse">
+              <div className="bg-gray-200 h-6 w-2/3 rounded-lg mb-2"></div>
+              <div className="bg-gray-200 h-4 w-1/2 rounded-lg"></div>
+            </div>
+            <div className="mb-4 flex animate-pulse">
+              <div className="bg-gray-200 h-6 w-1/3 rounded-lg mr-2"></div>
+              <div className="bg-gray-200 h-4 w-1/4 rounded-lg"></div>
+            </div>
+          </div>
         )}
       </div>
       <Modal isOpen={isInfoModalOpen} onRequestClose={closeInfoModal}>
@@ -219,6 +273,7 @@ const ProfileComponent = ({ userId }) => {
           <p>Website: <a className='text-blue-600' href="https://saravanan.me" target="_blank" rel="noopener noreferrer">saravanan.me</a></p>
         </div>
       </Modal>
+
       {confirmLogout && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg custom-shadow w-96">

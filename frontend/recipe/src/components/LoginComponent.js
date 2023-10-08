@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import WOW from 'wowjs';
+import 'animate.css/animate.css';
+
 
 const LoginComponent = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
@@ -12,6 +15,11 @@ const LoginComponent = ({ onLoginSuccess }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Initialize the button state
+
+  useEffect(() => {
+    const wow = new WOW.WOW();
+    wow.init();
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -49,7 +57,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
             {errorMessage}
           </p>
         )}
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+        <form onSubmit={(e) => e.preventDefault()}  className="space-y-4 wow fadeInUp" data-wow-delay="0.2s">
           <input
             type="email"
             name="email"

@@ -116,3 +116,85 @@ body{
   /* Set a fixed width for the textarea if needed */
   width: 100%; /* Adjust the width as needed */
 }
+
+/* Rounded like button */
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  background-color: #e9e9e9; /* Change to your desired hover color */
+  color: #ff1a1a;
+}
+.like-button2 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  background-color: #ff1a1a; /* Change to your desired hover color */
+  color: white;
+}
+
+.like-button:hover {
+  background-color: #ff1a1a; /* Change to your desired hover color */
+  color: #fff; /* Change to your desired text color on hover */
+}
+
+.like-button .heart-icon {
+  font-size: 18px;
+  color: inherit;
+}
+
+.liked {
+  background-color: #ff1a1a; /* Change to your desired hover color */
+  color: #fff; /* Change to your desired liked color */
+}
+
+
+.skeleton-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+
+}
+.loading-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+}
+
+.skeleton-item {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  height: 40px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spin-animation {
+  animation: spin 2s linear infinite; /* You can adjust the duration and timing here */
+  transition: transform 0.2s ease-in-out; /* Smooth transition when animation starts and stops */
+}
