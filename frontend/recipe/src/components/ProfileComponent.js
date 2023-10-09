@@ -86,7 +86,6 @@ const ProfileComponent = ({ userId }) => {
         },
       });
 
-      // Update the user data with the new profile image URL
       setUserData({ ...userData, profileImage: response.data.profileImage });
       console.log("uploaded!!")
 
@@ -177,6 +176,7 @@ const ProfileComponent = ({ userId }) => {
               <label
                 htmlFor="profile-image-upload"
                 className="text-blue-500 cursor-pointer block mt-2 text-center"
+                onClick={handleProfileImageUpload}
               >
                 Change Profile Image
               </label>
@@ -187,7 +187,7 @@ const ProfileComponent = ({ userId }) => {
                 id="profile-image-upload"
                 className="sr-only"
               />
-
+                
               </div>
             <div className='bg-blue-100 p-2 rounded'>
               <div className="mb-2 flex">
