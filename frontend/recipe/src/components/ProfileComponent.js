@@ -25,7 +25,9 @@ const ProfileComponent = ({ userId }) => {
   const [updatedBio, setUpdatedBio] = useState('');
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(null); // State to store the profile image
-  const [isProfileImageModalOpen, setIsProfileImageModalOpen] = useState(false); // Modal for profile image preview
+  const [uploadingProfileImage, setUploadingProfileImage] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+
 
 
   useEffect(() => {
@@ -80,6 +82,7 @@ const ProfileComponent = ({ userId }) => {
 
     try {
       // Upload the profile image
+      setUploadingProfileImage(true);
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/uploadProfileImage/${userId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -87,14 +90,18 @@ const ProfileComponent = ({ userId }) => {
       });
 
       setUserData({ ...userData, profileImage: response.data.profileImage });
+      setUploadSuccess(true);
+      setTimeout(() => {
+        setUploadSuccess(false);
+        
+      }, 3000);
       console.log("uploaded!!")
 
-      // Close the modal
-      setIsProfileImageModalOpen(false);
     } catch (error) {
       console.error('Error uploading profile image:', error.response.data); // Log the error
-      // You can also display an error message to the user
-      // Example: setErrorMessage('Error uploading profile image');
+      
+    } finally {
+      setUploadingProfileImage(false);
     }
   };
 
@@ -189,6 +196,26 @@ const ProfileComponent = ({ userId }) => {
               />
                 
               </div>
+              {uploadingProfileImage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
+          <div className="bg-white p-6 rounded-lg custom-shadow">
+            <p className="text-xl font-semibold mb-4">Uploading Profile Image...</p>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          </div>
+        </div>
+      )}
+      {uploadSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
+          <div className="bg-white p-6 rounded-lg custom-shadow">
+            <p className="text-xl font-semibold mb-4">Upload Successful</p>
+            <p>Your profile image has been uploaded.</p>
+          </div>
+        </div>
+      )}
             <div className='bg-blue-100 p-2 rounded'>
               <div className="mb-2 flex">
                 <p className="text-lg font-semibold mr-3">Name: {userData.name} </p>
