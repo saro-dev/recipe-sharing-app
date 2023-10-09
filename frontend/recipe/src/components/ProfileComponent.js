@@ -93,11 +93,10 @@ const ProfileComponent = ({ userId }) => {
       setUploadSuccess(true);
       setTimeout(() => {
         setUploadSuccess(false);
-        
+        window.location.reload();
       }, 3000);
       console.log("uploaded!!")
-      window.location.reload();
-      
+
     } catch (error) {
       console.error('Error uploading profile image:', error.response.data); // Log the error
       
