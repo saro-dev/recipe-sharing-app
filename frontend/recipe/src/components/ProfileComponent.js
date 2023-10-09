@@ -24,6 +24,9 @@ const ProfileComponent = ({ userId }) => {
   const [editingBio, setEditingBio] = useState(false); // Add state for editing bio
   const [updatedBio, setUpdatedBio] = useState('');
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState(null); // State to store the profile image
+  const [isProfileImageModalOpen, setIsProfileImageModalOpen] = useState(false); // Modal for profile image preview
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,14 +57,13 @@ const ProfileComponent = ({ userId }) => {
       }
     };
 
+
     fetchUserData();
     fetchFollowersCount();
     fetchRecipeCount();
   }, [userId]);
 
-  const handleEditName = () => {
-    setEditingName(true);
-  };
+
   // Function to open the info modal
   const openInfoModal = () => {
     setIsInfoModalOpen(true);
@@ -72,41 +74,34 @@ const ProfileComponent = ({ userId }) => {
     setIsInfoModalOpen(false);
   };
 
-  const handleCancelEdit = () => {
-    setEditingName(false);
-    setUpdatedName(userData.name); // Reset the updated name to the original name
-  };
+  const handleProfileImageUpload = async () => {
+    const formData = new FormData();
+    formData.append('image', profileImage);
 
-  const handleSaveEdit = async () => {
     try {
-      // Update the name in the database
-      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { name: updatedName });
-      setUserData(prevUserData => ({ ...prevUserData, name: updatedName }));
-      setEditingName(false);
+      // Upload the profile image
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/uploadProfileImage/${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Update the user data with the new profile image URL
+      setUserData({ ...userData, profileImage: response.data.profileImage });
+      console.log("uploaded!!")
+
+      // Close the modal
+      setIsProfileImageModalOpen(false);
     } catch (error) {
-      console.error('Error updating name:', error);
+      console.error('Error uploading profile image:', error.response.data); // Log the error
+      // You can also display an error message to the user
+      // Example: setErrorMessage('Error uploading profile image');
     }
   };
-  //bio
-  const handleEditBio = () => {
-    setEditingBio(true);
-  };
 
-  const handleCancelEditBio = () => {
-    setEditingBio(false);
-    setUpdatedBio(userData.bio); // Reset the updated bio to the original bio
-  };
 
-  const handleSaveEditBio = async () => {
-    try {
-      // Update the bio in the database
-      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, { bio: updatedBio });
-      setUserData((prevUserData) => ({ ...prevUserData, bio: updatedBio }));
-      setEditingBio(false);
-    } catch (error) {
-      console.error('Error updating bio:', error);
-    }
-  };
+
+
   //logout
   const handleLogout = () => {
     setConfirmLogout(true);
@@ -169,6 +164,31 @@ const ProfileComponent = ({ userId }) => {
         {userData ? (
           <div>
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
+            <div className="bg-blue-100 p-2 rounded">
+              
+              <div className="flex items-center justify-center">
+                <img
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
+                  alt="Profile"
+                  className="max-w-full max-h-full object-cover "
+                  style={{ height: '100px', width: '100px', borderRadius:'50%' }}
+                />
+              </div>
+              <label
+                htmlFor="profile-image-upload"
+                className="text-blue-500 cursor-pointer block mt-2 text-center"
+              >
+                Change Profile Image
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setProfileImage(e.target.files[0])}
+                id="profile-image-upload"
+                className="sr-only"
+              />
+
+              </div>
             <div className='bg-blue-100 p-2 rounded'>
               <div className="mb-2 flex">
                 <p className="text-lg font-semibold mr-3">Name: {userData.name} </p>
@@ -203,7 +223,7 @@ const ProfileComponent = ({ userId }) => {
 
               </div>
             </div>
-
+            
             <p className="mt-1">Email: {userData.email}</p>
             <p className="mt-1">Recipe Posts: {recipeCount}</p>
             <p className="mt-1">Followers: {followersCount}</p>
@@ -223,18 +243,18 @@ const ProfileComponent = ({ userId }) => {
 
             <br></br>
             <div className='flex justify-between'>
-            <button
-              className="mt-10 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-            <button
-              className="mt-10 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-              onClick={openEditProfileModal}
-            >
-              Edit Profile
-            </button>
+              <button
+                className="mt-10 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+              <button
+                className="mt-10 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                onClick={openEditProfileModal}
+              >
+                Edit Profile
+              </button>
             </div>
             <EditProfileModal
               isOpen={isEditProfileModalOpen}
@@ -242,7 +262,7 @@ const ProfileComponent = ({ userId }) => {
               userData={userData}
               onSave={handleSaveProfileChanges} // Define this function to handle saving changes
             />
-            
+
           </div>
         ) : (
           <div>

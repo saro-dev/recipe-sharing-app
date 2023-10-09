@@ -86,6 +86,12 @@ const Notifications = ({ userId }) => {
                     ) : (
                       <span className="comment-icon">💬</span>
                     )}
+                    <img
+                      src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
+                      alt=""
+                      className="max-w-full max-h-full object-cover mr-2"
+                      style={{ height: '30px', width: '35px', borderRadius:'50%' }}
+                    />
                     {notification.message}
                   </Link>
                   <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>

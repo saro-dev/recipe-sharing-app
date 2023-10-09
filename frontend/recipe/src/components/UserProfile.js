@@ -11,7 +11,6 @@ const UserProfile = ({ loggedInUser }) => {
   const { userId } = useParams();
   const [userData, setUserData] = useState(null);
   const [followerCount, setFollowerCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
   const [recipeCount, setRecipeCount] = useState(0);
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [loadingUnfollow, setLoadingUnfollow] = useState(false);
@@ -24,7 +23,6 @@ const UserProfile = ({ loggedInUser }) => {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
         setUserData(response.data);
         setFollowerCount(response.data.followers.length);
-        setFollowingCount(response.data.following.length);
         setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
         // Move the fetchRecipeCount logic here
         try {
@@ -101,8 +99,14 @@ const closeBadgeModal = () => {
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
             <div className="mb-4">
               <div className='flex'>
+              <img
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+          />
               <p className="text-lg font-semibold mr-2">
-                Name: {userData.name}
+                 {userData.name}
                 </p>
                 <button
                 className="text-blue-600 mt-1 block hover:underline"

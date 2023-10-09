@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaStar, FaHeart } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
-import { WhatsappShareButton,FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
+import { WhatsappShareButton, FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
 import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
 import { FacebookIcon, TwitterIcon } from 'react-share';
 
@@ -41,29 +41,29 @@ const PostDetails = ({ loggedInUser }) => {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
         const postData = response.data;
         setPost(postData);
-  
+
         // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
           const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
         }
-  
+
         // Set the number of likes after setting the post state
         setLikes(postData.likes.length);
-  
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching post details:', error);
       }
     };
-  
+
     fetchPostDetails();
     fetchPostComments(); // Call the function to fetch comments
   }, [postId, loggedInUser]);
-  
-  
 
-const handleToggleLike = async () => {
+
+
+  const handleToggleLike = async () => {
     try {
       // Send a request to toggle the like status of the post
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
@@ -105,7 +105,7 @@ const handleToggleLike = async () => {
       console.error('Error adding to favorites:', error);
     }
   };
-  
+
   const handleAddComment = async () => {
     try {
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
@@ -143,7 +143,7 @@ const handleToggleLike = async () => {
     }
   };
 
-  
+
 
   if (loading) {
     return (
@@ -257,7 +257,7 @@ const handleToggleLike = async () => {
 
   return (
     <div className="p-4 page-container mb-10">
-    {!loggedInUser && (
+      {!loggedInUser && (
         <div className="z-999 bg-red-100 p-4 rounded text-red-600 mb-4">
           Signup to view more dishes! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to access additional features.
         </div>
@@ -278,15 +278,20 @@ const handleToggleLike = async () => {
       </div>
       <hr></hr>
 
-      <h2 className="text-xl font-semibold mb-4 mt-2 ">
+      <h2 className="text-xl font-semibold mb-4 mt-2 flex">
         Post By{' '}
         <button
-          className="text-blue-600 hover:underline"
+          className="ml-2 text-blue-600 hover:underline flex"
           onClick={handleProfileClick}
-        >
+        ><img
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+          />
           {post.userId.name}
         </button>
-        <i className="fas fa-check-circle text-green-500 ml-1"></i>
+
       </h2>
       <hr></hr>
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
@@ -334,8 +339,8 @@ const handleToggleLike = async () => {
       </p>
       <hr className='m-2'></hr>
       <div className='bg-white p-2 rounded'>
-      <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
-      <WhatsappShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
+        <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
+        <WhatsappShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
           <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
         </WhatsappShareButton>
         <FacebookShareButton url={postURL} quote={`${customMessage}\n${post.title}`}>
@@ -363,26 +368,26 @@ const handleToggleLike = async () => {
           </button>
         </div>
         <ul>
-              {post.comments.slice(0, showAllComments ? post.comments.length : 3).map((comment) => (
-                <li key={comment._id} className="mb-2">
-                  {comment.user ? (
-                    <span className="text-gray-800">
-                      <strong>{comment.name}:</strong> {comment.text}
-                      {comment.user === loggedInUser._id && (
-                        <button
-                          className="text-red-500 ml-2"
-                          onClick={() => handleDeleteComment(comment._id)}
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      )}
-                    </span>
-                  ) : (
-                    <span className="text-gray-800">Unknown User: {comment.text}</span>
+          {post.comments.slice(0, showAllComments ? post.comments.length : 3).map((comment) => (
+            <li key={comment._id} className="mb-2">
+              {comment.user ? (
+                <span className="text-gray-800">
+                  <strong>{comment.name}:</strong> {comment.text}
+                  {comment.user === loggedInUser._id && (
+                    <button
+                      className="text-red-500 ml-2"
+                      onClick={() => handleDeleteComment(comment._id)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </button>
                   )}
-                </li>
-              ))}
-            </ul>
+                </span>
+              ) : (
+                <span className="text-gray-800">Unknown User: {comment.text}</span>
+              )}
+            </li>
+          ))}
+        </ul>
 
       </div>
       <button

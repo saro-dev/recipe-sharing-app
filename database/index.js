@@ -42,6 +42,10 @@ const notificationSchema = new mongoose.Schema({
   message: String,
   isRead: Boolean,
   createdAt: Date,
+  UserId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 // Mongoose schemas
 const userSchema = new mongoose.Schema({
@@ -392,6 +396,55 @@ app.get('/api/searchUsers', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user search results:', error);
     res.status(500).json({ error: 'Error fetching user search results' });
+  }
+});
+
+app.post('/api/uploadProfileImage/:userId', upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch user from MongoDB
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Save the uploaded image data to the user's profileImage field
+    user.profileImage = req.file.buffer;
+    await user.save();
+
+    res.status(201).json({ profileImage: `data:image/jpeg;base64,${user.profileImage.toString('base64')}` });
+  } catch (error) {
+    res.status(500).json({ error: 'Error uploading profile image' });
+  }
+});
+
+app.get('/api/getProfileImage/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch the user from MongoDB by user ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Ensure the user has a profile image
+    if (!user.profileImage) {
+      res.status(404).json({ error: 'Profile image not found' });
+      return;
+    }
+
+    // Send the profile image as binary data
+    res.contentType('image/jpeg'); // Adjust the content type as needed
+    res.send(user.profileImage);
+  } catch (error) {
+    console.error('Error fetching profile image:', error);
+    res.status(500).json({ error: 'Error fetching profile image' });
   }
 });
 

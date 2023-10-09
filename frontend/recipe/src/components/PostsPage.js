@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../App.css'
@@ -9,6 +9,9 @@ const PostsPage = ({ loggedInUser }) => {
   const [showAllComments, setShowAllComments] = useState({});
   const [likedPosts, setLikedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 3;
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -16,6 +19,7 @@ const PostsPage = ({ loggedInUser }) => {
         const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
         const reversedPosts = response.data.reverse(); // Reverse the order of posts
         setPosts(reversedPosts);
+        console.log('Post Data:', reversedPosts);
         
         setLoading(false);
       } catch (error) {
@@ -24,7 +28,27 @@ const PostsPage = ({ loggedInUser }) => {
     };
 
     fetchPosts();
+  }, [currentPage]);
+  useEffect(() => {
+    const container = containerRef.current;
+    const handleScroll = () => {
+      if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 20) {
+        // Reached the bottom, load more posts
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
   }, []);
+
   useEffect(() => {
     const storedLikedPosts = localStorage.getItem('likedPosts');
     if (storedLikedPosts) {
@@ -83,6 +107,7 @@ const PostsPage = ({ loggedInUser }) => {
           message: notificationMessage,
           isRead: false,
           createdAt: new Date(),
+          UserId: loggedInUser._id,
         };
         console.log('Notification:', notification);
 
@@ -149,6 +174,7 @@ const PostsPage = ({ loggedInUser }) => {
           message: notificationMessage,
           isRead: false,
           createdAt: new Date(),
+          UserId: loggedInUser._id,
         };
         console.log('Notification:', notification);
   
@@ -201,13 +227,30 @@ const PostsPage = ({ loggedInUser }) => {
       console.error('Error deleting comment:', error);
     }
   };
+  const getProfileImage = async (userId) => {
+    try {
+      const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`);
+      return response.data.profileImage;
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+      return ''; // Return an empty string or a default image URL if there's an error
+    }
+  };
 
   return (
-    <div className="p-4">
+    <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
       <h2 className="text-2xl font-semibold mb-4">Posts</h2>
       {posts.map((post) => (
         <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
-          <p className="text-gray-500">Posted by: <strong>{post.authorName}</strong></p>
+        <div className="flex items-center mt-2">
+            <img
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius:'50%' }}
+                />
+                <strong>{post.authorName}</strong>
+          </div>
           <div className="w-full h-auto mt-2">
             <Link to={{
               pathname: `/post-details/${post._id}`,
@@ -216,7 +259,7 @@ const PostsPage = ({ loggedInUser }) => {
               <img
                 src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                 alt={post.title}
-                className="max-w-full max-h-full object-cover rounded-lg"
+                className="max-w-full max-h-full object-cover rounded-lg skeleton-item"
                 style={{ height: '200px' }}
               />
               <h3 className="text-lg font-semibold mt-2">{post.title}</h3>

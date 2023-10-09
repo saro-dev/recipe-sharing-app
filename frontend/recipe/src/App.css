@@ -186,15 +186,25 @@ body{
   }
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+/* Add this CSS to your stylesheet */
+.scrollable-container {
+  max-height: 500px; /* Set the desired max height */
+  overflow-y: scroll;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-face-color: transparent; /* IE and Edge */
 }
-.spin-animation {
-  animation: spin 2s linear infinite; /* You can adjust the duration and timing here */
-  transition: transform 0.2s ease-in-out; /* Smooth transition when animation starts and stops */
+
+.scrollable-container::-webkit-scrollbar {
+  width: 6px; /* Set the desired scrollbar width */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Make the thumb transparent */
+  border: 2px solid transparent; /* Add a transparent border to the thumb */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background-color: transparent; /* Make the scrollbar track transparent */
 }

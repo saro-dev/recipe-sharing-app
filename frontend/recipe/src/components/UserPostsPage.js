@@ -53,7 +53,15 @@ const UserPostsPage = () => {
           </svg>
         </button>
         </div>
-      <h2 className="text-xl font-semibold mb-4"><span className='font-bold text-blue-800 text-2xl'>{userName} </span>'s Posts</h2>
+      <h2 className="text-xl font-semibold mb-4 flex">
+      <img
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+          />
+        <span className='font-bold text-blue-800 text-2xl'>{userName} </span>'s Posts
+      </h2>
       {isLoading ? (
         <p>Loading...</p> // Show loading animation
       ) : userPosts.length === 0 ? (
