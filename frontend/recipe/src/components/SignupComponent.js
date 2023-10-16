@@ -39,7 +39,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
 
     try {
       setIsSigningUp(true); // Disable the button and show "Signing up..." message
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/signup', userData);
+      const response = await axios.post('https://recipe-dbs.vercel.app/api/signup', userData);
       console.log('User created:', response.data);
       onSignupSuccess(response.data);
     } catch (error) {

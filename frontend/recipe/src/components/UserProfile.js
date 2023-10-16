@@ -20,13 +20,13 @@ const UserProfile = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user/${userId}`);
         setUserData(response.data);
         setFollowerCount(response.data.followers.length);
         setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
         // Move the fetchRecipeCount logic here
         try {
-            const countResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
+            const countResponse = await axios.get(`https://recipe-dbs.vercel.app/api/recipe/count/${userId}`);
             setRecipeCount(countResponse.data.count);
           } catch (error) {
             console.error('Error fetching recipe count:', error);
@@ -42,7 +42,7 @@ const UserProfile = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/followers`);
+        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user/${userId}/followers`);
         setUserFollowers(response.data.followers);
       } catch (error) {
         console.error('Error fetching followers:', error);
@@ -57,7 +57,7 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingFollow(true);
 
     try {
-      await axios.post(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`, { followerId: loggedInUser._id });
+      await axios.post(`https://recipe-dbs.vercel.app/api/user/${userId}/follow`, { followerId: loggedInUser._id });
       setUserFollowers(prevFollowers => [...prevFollowers, loggedInUser]); // Add logged-in user to followers list
       setFollowerCount(prevCount => prevCount + 1);
     } catch (error) {
@@ -72,7 +72,7 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingUnfollow(true);
 
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/unfollow`, { data: { followerId: loggedInUser._id } });
+      await axios.delete(`https://recipe-dbs.vercel.app/api/user/${userId}/unfollow`, { data: { followerId: loggedInUser._id } });
       setUserFollowers(prevFollowers => prevFollowers.filter(follower => follower._id !== loggedInUser._id)); // Remove logged-in user from followers list
       setFollowerCount(prevCount => prevCount - 1);
     } catch (error) {
@@ -100,7 +100,7 @@ const closeBadgeModal = () => {
             <div className="mb-4">
               <div className='flex'>
               <img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+            src={`https://recipe-dbs.vercel.app/api/getProfileImage/${userData._id}`}
             alt=""
             className="max-w-full max-h-full object-cover mr-2"
             style={{ height: '30px', width: '30px', borderRadius: '50%' }}

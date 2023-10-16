@@ -26,7 +26,7 @@ const PostDetails = ({ loggedInUser }) => {
   // Function to fetch comments for a specific post
   const fetchPostComments = async () => {
     try {
-      const commentsResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/comments/${postId}`);
+      const commentsResponse = await axios.get(`https://recipe-dbs.vercel.app/api/comments/${postId}`);
 
       setComments(commentsResponse.data);
       console.log(commentsResponse);
@@ -38,13 +38,13 @@ const PostDetails = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts/${postId}`);
+        const response = await axios.get(`https://recipe-dbs.vercel.app/api/posts/${postId}`);
         const postData = response.data;
         setPost(postData);
 
         // Check if the logged-in user has this post in favorites
         if (loggedInUser) {
-          const response2 = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
+          const response2 = await axios.get(`https://recipe-dbs.vercel.app/api/isFavorite/${loggedInUser._id}/${postId}`);
           setIsFavorite(response2.data.isFavorite);
         }
 
@@ -66,7 +66,7 @@ const PostDetails = ({ loggedInUser }) => {
   const handleToggleLike = async () => {
     try {
       // Send a request to toggle the like status of the post
-      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
+      const response = await axios.post(`https://recipe-dbs.vercel.app/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
@@ -87,13 +87,13 @@ const PostDetails = ({ loggedInUser }) => {
       }
 
       if (isFavorite) {
-        await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeFavorite/${loggedInUser._id}/${postId}`);
+        await axios.delete(`https://recipe-dbs.vercel.app/api/removeFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Removed from favorites successfully' });
         setTimeout(() => {
           setAlert(null);
         }, 3000);
       } else {
-        await axios.post(`https://recipe-backend-1e02.onrender.com/api/addFavorite/${loggedInUser._id}/${postId}`);
+        await axios.post(`https://recipe-dbs.vercel.app/api/addFavorite/${loggedInUser._id}/${postId}`);
         setAlert({ type: 'success', message: 'Added to favorites successfully' });
         setTimeout(() => {
           setAlert(null);
@@ -108,7 +108,7 @@ const PostDetails = ({ loggedInUser }) => {
 
   const handleAddComment = async () => {
     try {
-      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
+      const response = await axios.post(`https://recipe-dbs.vercel.app/api/comment/${postId}`, {
         userId: loggedInUser._id,
         text: commentText,
       });
@@ -129,7 +129,7 @@ const PostDetails = ({ loggedInUser }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-dbs.vercel.app/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id },
       });
 
@@ -284,7 +284,7 @@ const PostDetails = ({ loggedInUser }) => {
           className="ml-2 text-blue-600 hover:underline flex"
           onClick={handleProfileClick}
         ><img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+            src={`https://recipe-dbs.vercel.app/api/getProfileImage/${post.userId._id}`}
             alt=""
             className="max-w-full max-h-full object-cover mr-2"
             style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -297,7 +297,7 @@ const PostDetails = ({ loggedInUser }) => {
       <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
       <div>
         <img
-          src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+          src={`https://recipe-dbs.vercel.app/api/getRecipeImage/${post._id}`}
           alt={post.title}
           className="max-w-full object-cover mb-2 rounded"
           style={{ maxWidth: '300px' }}

@@ -15,7 +15,7 @@ const UserPostsPage = () => {
           return;
         }
 
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user-posts/${userId}`);
+        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user-posts/${userId}`);
         setUserPosts(response.data);
         setIsLoading(false); // Turn off loading animation
       } catch (error) {
@@ -24,7 +24,7 @@ const UserPostsPage = () => {
     };
     const fetchUserName = async () => {
         try {
-          const userResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/author/${userId}`);
+          const userResponse = await axios.get(`https://recipe-dbs.vercel.app/author/${userId}`);
           setUserName(userResponse.data.name);
         } catch (error) {
           console.error('Error fetching user name:', error);
@@ -55,7 +55,7 @@ const UserPostsPage = () => {
         </div>
       <h2 className="text-xl font-semibold mb-4 flex">
       <img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
+            src={`https://recipe-dbs.vercel.app/api/getProfileImage/${userId}`}
             alt=""
             className="max-w-full max-h-full object-cover mr-2"
             style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -72,7 +72,7 @@ const UserPostsPage = () => {
             <div key={post._id} className="border p-4 rounded-lg bg-white shadow-md">
               <Link to={`/post-details/${post._id}`}>
                 <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+                  src={`https://recipe-dbs.vercel.app/api/getRecipeImage/${post._id}`}
                   alt={post.title}
                   className="max-w-full h-40 object-cover mb-2"
                 />
