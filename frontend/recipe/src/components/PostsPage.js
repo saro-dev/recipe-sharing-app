@@ -16,7 +16,7 @@ const PostsPage = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://recipe-dbs.vercel.app/api/posts');
+        const response = await axios.get('https://recipe-db-r1zs.onrender.com/api/posts');
         const reversedPosts = response.data.reverse(); // Reverse the order of posts
         setPosts(reversedPosts);
         console.log('Post Data:', reversedPosts);
