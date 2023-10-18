@@ -33,7 +33,7 @@ const ProfileComponent = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
         setUserData(response.data);
         setUpdatedName(response.data.name);
         setUpdatedBio(response.data.bio); // Set the initial value for the updated name
@@ -43,7 +43,7 @@ const ProfileComponent = ({ userId }) => {
     };
     const fetchFollowersCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user/${userId}/follower-count`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`);
         setFollowersCount(response.data.count);
       } catch (error) {
         console.error('Error fetching followers count:', error);
@@ -52,7 +52,7 @@ const ProfileComponent = ({ userId }) => {
 
     const fetchRecipeCount = async () => {
       try {
-        const response = await axios.get(`https://recipe-dbs.vercel.app/api/recipe/count/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
         setRecipeCount(response.data.count);
       } catch (error) {
         console.error('Error fetching recipe count:', error);
@@ -83,7 +83,7 @@ const ProfileComponent = ({ userId }) => {
     try {
       // Upload the profile image
       setUploadingProfileImage(true);
-      const response = await axios.post(`https://recipe-dbs.vercel.app/api/uploadProfileImage/${userId}`, formData, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/uploadProfileImage/${userId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -141,7 +141,7 @@ const ProfileComponent = ({ userId }) => {
   const handleSaveProfileChanges = async (updatedName, updatedBio) => {
     try {
       // Update the name and bio in the database
-      await axios.patch(`https://recipe-dbs.vercel.app/api/user/${userId}`, {
+      await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, {
         name: updatedName,
         bio: updatedBio,
       });
@@ -174,7 +174,7 @@ const ProfileComponent = ({ userId }) => {
               
               <div className="flex items-center justify-center">
                 <img
-                  src={`https://recipe-dbs.vercel.app/api/getProfileImage/${userId}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
                   alt="Profile"
                   className="max-w-full max-h-full object-cover "
                   style={{ height: '100px', width: '100px', borderRadius:'50%' }}

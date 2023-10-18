@@ -76,7 +76,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleToggleLike = async (postId) => {
     try {
-      const response = await axios.post(`https://recipe-dbs.vercel.app/api/like/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
@@ -112,7 +112,7 @@ const PostsPage = ({ loggedInUser }) => {
         console.log('Notification:', notification);
 
         const notificationResponse = await axios.post(
-          `https://recipe-dbs.vercel.app/api/addNotification/${updatedPost.userId}`,
+          `https://recipe-backend-1e02.onrender.com/api/addNotification/${updatedPost.userId}`,
           {
             notification,
           }
@@ -126,7 +126,7 @@ const PostsPage = ({ loggedInUser }) => {
   };
   const handleAddComment = async (postId) => {
     try {
-      const response = await axios.post(`https://recipe-dbs.vercel.app/api/comment/${postId}`, {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
         userId: loggedInUser._id,
         text: commentTexts[postId], // Use the comment text for the specific post
       });
@@ -179,7 +179,7 @@ const PostsPage = ({ loggedInUser }) => {
         console.log('Notification:', notification);
   
         const notificationResponse = await axios.post(
-          `https://recipe-dbs.vercel.app/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
+          `https://recipe-backend-1e02.onrender.com/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
           {
             notification,
           }
@@ -213,7 +213,7 @@ const PostsPage = ({ loggedInUser }) => {
 
   const handleDeleteComment = async (postId, commentId) => {
     try {
-      await axios.delete(`https://recipe-dbs.vercel.app/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         data: { userId: loggedInUser._id } // Send userId in the request body
       });
       setPosts(posts.map(post => {
@@ -229,7 +229,7 @@ const PostsPage = ({ loggedInUser }) => {
   };
   const getProfileImage = async (userId) => {
     try {
-      const response = await axios.get(`https://recipe-dbs.vercel.app/api/getProfileImage/${userId}`);
+      const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`);
       return response.data.profileImage;
     } catch (error) {
       console.error('Error fetching profile image:', error);
@@ -244,7 +244,7 @@ const PostsPage = ({ loggedInUser }) => {
         <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
         <div className="flex items-center mt-2">
             <img
-                  src={`https://recipe-dbs.vercel.app/api/getProfileImage/${post.userId._id}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius:'50%' }}
@@ -257,7 +257,7 @@ const PostsPage = ({ loggedInUser }) => {
               state: { comments: post.comments },
             }}>
               <img
-                src={`https://recipe-dbs.vercel.app/api/getRecipeImage/${post._id}`}
+                src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                 alt={post.title}
                 className="max-w-full max-h-full object-cover rounded-lg skeleton-item"
                 style={{ height: '200px' }}

@@ -25,7 +25,7 @@ const { token } = useParams();
     }
 
     try {
-      const response = await axios.post('https://recipe-dbs.vercel.app/api/reset-password', {
+      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/reset-password', {
         token,
         newPassword: password,
       });

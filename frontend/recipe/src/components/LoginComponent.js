@@ -33,7 +33,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
   const handleLogin = async () => {
     try {
       setIsLoggingIn(true); // Disable the button and show "Logging in..." message
-      const response = await axios.post('https://recipe-dbs.vercel.app/api/login', loginData);
+      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/login', loginData);
       console.log('Login successful:', response.data);
       onLoginSuccess(response.data);
       navigate('/profile');

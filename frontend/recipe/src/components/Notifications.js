@@ -13,7 +13,7 @@ const Notifications = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-dbs.vercel.app/api/user/${userId}`);
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
         setUserData(response.data);
         setLoading(false);
       } catch (error) {
@@ -33,7 +33,7 @@ const Notifications = ({ userId }) => {
 
   const handleDeleteNotification = async (notificationId) => {
     try {
-      await axios.delete(`https://recipe-dbs.vercel.app/api/notifications/${userId}/${notificationId}`);
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/notifications/${userId}/${notificationId}`);
       // Remove the deleted notification from the state
       setUserData((prevUserData) => ({
         ...prevUserData,
@@ -87,7 +87,7 @@ const Notifications = ({ userId }) => {
                       <span className="comment-icon">💬</span>
                     )}
                     <img
-                      src={`https://recipe-dbs.vercel.app/api/getProfileImage/${notification.UserId}`}
+                      src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
                       alt=""
                       className="max-w-full max-h-full object-cover mr-2"
                       style={{ height: '30px', width: '35px', borderRadius:'50%' }}

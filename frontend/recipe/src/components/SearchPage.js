@@ -20,7 +20,7 @@ const SearchPage = ({ loggedInUser }) => {
 
         setLoading(true);
         const response = await axios.get(
-          `https://recipe-dbs.vercel.app/api/search?q=${searchQuery}&category=${selectedCategory}`
+          `https://recipe-backend-1e02.onrender.com/api/search?q=${searchQuery}&category=${selectedCategory}`
         );
         setSearchResults(response.data);
         setLoading(false);
@@ -73,7 +73,7 @@ const SearchPage = ({ loggedInUser }) => {
             <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
               <p className="text-gray-500 flex">
           <img
-            src={`https://recipe-dbs.vercel.app/api/getProfileImage/${post.userId._id}`}
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
             alt=""
             className="max-w-full max-h-full object-cover mr-2"
             style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -84,7 +84,7 @@ const SearchPage = ({ loggedInUser }) => {
               <div className="w-100 h-100 mt-2">
                 <Link to={`/post-details/${post._id}`}>
                   <img
-                    src={`https://recipe-dbs.vercel.app/api/getRecipeImage/${post._id}`}
+                    src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                     alt={post.title}
                     className="max-w-full max-h-full object-cover"
                     style={{ maxWidth: '150px' }}
