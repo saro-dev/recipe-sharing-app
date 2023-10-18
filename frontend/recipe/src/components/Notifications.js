@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Notifications.css';
+import defaultimg from './default.jpg';
 import Alert from './Alert';
 
 const Notifications = ({ userId }) => {
@@ -87,11 +88,14 @@ const Notifications = ({ userId }) => {
                       <span className="comment-icon">💬</span>
                     )}
                     <img
-                      src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
-                      alt=""
-                      className="max-w-full max-h-full object-cover mr-2"
-                      style={{ height: '30px', width: '35px', borderRadius:'50%' }}
-                    />
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                  }}
+                />
                     {notification.message}
                   </Link>
                   <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>

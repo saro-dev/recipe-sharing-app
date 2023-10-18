@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { PulseLoader } from 'react-spinners';
+import defaultimg from './default.jpg';
 
 const SearchPage = ({ loggedInUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,12 +73,15 @@ const SearchPage = ({ loggedInUser }) => {
           searchResults.map((post) => (
             <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
               <p className="text-gray-500 flex">
-          <img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
-            alt=""
-            className="max-w-full max-h-full object-cover mr-2"
-            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-          /> 
+              <img
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                  }}
+                />
             <strong>{post.authorName}</strong>
             </p>
 

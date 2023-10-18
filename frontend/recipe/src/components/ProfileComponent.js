@@ -10,6 +10,7 @@ import ironIcon from '../iron.png';
 import bronzeIcon from '../bronze.png';
 import silverIcon from '../silver.png';
 import goldIcon from '../gold.png';
+import defaultimg from './default.jpg';
 import '../App.css';
 
 const ProfileComponent = ({ userId }) => {
@@ -173,11 +174,14 @@ const ProfileComponent = ({ userId }) => {
             <div className="bg-blue-100 p-2 rounded">
               
               <div className="flex items-center justify-center">
-                <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
-                  alt="Profile"
-                  className="max-w-full max-h-full object-cover "
-                  style={{ height: '100px', width: '100px', borderRadius:'50%' }}
+              <img
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                  }}
                 />
               </div>
               <label

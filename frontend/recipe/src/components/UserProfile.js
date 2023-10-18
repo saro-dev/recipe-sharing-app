@@ -5,6 +5,7 @@ import ironIcon from '../iron.png';
 import bronzeIcon from '../bronze.png';
 import silverIcon from '../silver.png';
 import goldIcon from '../gold.png';
+import defaultimg from './default.jpg';
 import axios from 'axios';
 
 const UserProfile = ({ loggedInUser }) => {
@@ -26,11 +27,11 @@ const UserProfile = ({ loggedInUser }) => {
         setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
         // Move the fetchRecipeCount logic here
         try {
-            const countResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
-            setRecipeCount(countResponse.data.count);
-          } catch (error) {
-            console.error('Error fetching recipe count:', error);
-          }
+          const countResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
+          setRecipeCount(countResponse.data.count);
+        } catch (error) {
+          console.error('Error fetching recipe count:', error);
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -82,14 +83,14 @@ const UserProfile = ({ loggedInUser }) => {
     }
   };
   // Function to open the badge description modal
-const openBadgeModal = () => {
-  setIsBadgeModalOpen(true);
-};
+  const openBadgeModal = () => {
+    setIsBadgeModalOpen(true);
+  };
 
-// Function to close the badge description modal
-const closeBadgeModal = () => {
-  setIsBadgeModalOpen(false);
-};
+  // Function to close the badge description modal
+  const closeBadgeModal = () => {
+    setIsBadgeModalOpen(false);
+  };
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
@@ -99,43 +100,43 @@ const closeBadgeModal = () => {
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
             <div className="mb-4">
               <div className='flex'>
-              <img
-  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
-  alt=""
-  className="max-w-full max-h-full object-cover mr-2"
-  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-  onError={(e) => {
-    e.target.src = 'https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?w=740&t=st=1697641083~exp=1697641683~hmac=644874adf7f3ca3e2e3c1b79b9c91ed7a801d0377beab99aa9ee673e4ddf2e76'; // Replace with the URL of your default image
-  }}
-/>
-              <p className="text-lg font-semibold mr-2">
-                 {userData.name}
+                <img
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                  }}
+                />
+                <p className="text-lg font-semibold mr-2">
+                  {userData.name}
                 </p>
                 <button
-                className="text-blue-600 mt-1 block hover:underline"
-                onClick={openBadgeModal} // Open the badge description modal
-              >
-                {recipeCount >= 0 && recipeCount <= 25 && (
-                  <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 26 && recipeCount <= 50 && (
-                  <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 51 && recipeCount <= 75 && (
-                  <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                {recipeCount >= 76 && recipeCount <= 100 && (
-                  <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
-                )}
-                
-              </button>
+                  className="text-blue-600 mt-1 block hover:underline"
+                  onClick={openBadgeModal} // Open the badge description modal
+                >
+                  {recipeCount >= 0 && recipeCount <= 25 && (
+                    <img src={ironIcon} alt="Iron Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 26 && recipeCount <= 50 && (
+                    <img src={bronzeIcon} alt="Bronze Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 51 && recipeCount <= 75 && (
+                    <img src={silverIcon} alt="Silver Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+                  {recipeCount >= 76 && recipeCount <= 100 && (
+                    <img src={goldIcon} alt="Gold Icon" className="inline-block w-6 h-auto mr-2" />
+                  )}
+
+                </button>
               </div>
               <BadgeDescriptionModal
-        isOpen={isBadgeModalOpen}
-        onClose={closeBadgeModal}
-        recipeCount={recipeCount} // Pass recipeCount as needed
-      />
-              
+                isOpen={isBadgeModalOpen}
+                onClose={closeBadgeModal}
+                recipeCount={recipeCount} // Pass recipeCount as needed
+              />
+
               <p className="mt-1">Followers: {followerCount}</p>
               <p className="mt-1">Recipe Posts: {recipeCount}</p>
               <Link to={`/user-posts/${userId}`} className="text-blue-700 border-blue-700 border-2 px-2 py-2 rounded font-bold hover:underline">

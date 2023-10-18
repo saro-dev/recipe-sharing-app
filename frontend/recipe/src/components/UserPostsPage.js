@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import defaultimg from './default.jpg';
 
 const UserPostsPage = () => {
   const { userId } = useParams();
@@ -55,11 +56,14 @@ const UserPostsPage = () => {
         </div>
       <h2 className="text-xl font-semibold mb-4 flex">
       <img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
-            alt=""
-            className="max-w-full max-h-full object-cover mr-2"
-            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-          />
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  alt=""
+                  className="max-w-full max-h-full object-cover mr-2"
+                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                  }}
+                />
         <span className='font-bold text-blue-800 text-2xl'>{userName} </span>'s Posts
       </h2>
       {isLoading ? (
