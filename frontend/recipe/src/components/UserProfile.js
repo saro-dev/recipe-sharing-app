@@ -100,11 +100,14 @@ const closeBadgeModal = () => {
             <div className="mb-4">
               <div className='flex'>
               <img
-            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
-            alt=""
-            className="max-w-full max-h-full object-cover mr-2"
-            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-          />
+  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+  alt=""
+  className="max-w-full max-h-full object-cover mr-2"
+  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+  onError={(e) => {
+    e.target.src = 'https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?w=740&t=st=1697641083~exp=1697641683~hmac=644874adf7f3ca3e2e3c1b79b9c91ed7a801d0377beab99aa9ee673e4ddf2e76'; // Replace with the URL of your default image
+  }}
+/>
               <p className="text-lg font-semibold mr-2">
                  {userData.name}
                 </p>
