@@ -8,7 +8,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const cache = require('express-cache-headers');
-const request = require('request-promise');
+const request = require('request');
 
 
 const app = express();
@@ -433,12 +433,13 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
     }
 
     if (!user.profileImage) {
-      
+      // Set the content type of the default image (adjust as needed)
       res.contentType('image/jpeg');
 
-      const defaultImage = await request.get('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg', { encoding: null });
+      // Fetch the default image from a URL using the 'request' package
+      request('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg')
+        .pipe(res);
 
-      res.send(defaultImage);
       return;
     }
 
