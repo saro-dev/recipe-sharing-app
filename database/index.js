@@ -432,10 +432,11 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
     }
 
     if (!user.profileImage) {
-      // Set the content type of the default image (adjust as needed)
       res.contentType('image/jpeg');
-      // Send the default image binary data
-      res.sendFile('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg'); // Replace with the actual path to your default image
+
+      const response = await axios.get('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg', { responseType: 'stream' });
+
+      response.data.pipe(res);
       return;
     }
 

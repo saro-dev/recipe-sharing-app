@@ -175,7 +175,7 @@ const ProfileComponent = ({ userId }) => {
               <div className="flex items-center justify-center">
                 <img
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userId}`}
-                  alt={'https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg'}
+                  alt="Profile"
                   className="max-w-full max-h-full object-cover "
                   style={{ height: '100px', width: '100px', borderRadius:'50%' }}
                 />
