@@ -8,6 +8,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const cache = require('express-cache-headers');
+const request = require('request-promise');
 
 
 const app = express();
@@ -432,11 +433,12 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
     }
 
     if (!user.profileImage) {
+      
       res.contentType('image/jpeg');
 
-      const response = await axios.get('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg', { responseType: 'stream' });
+      const defaultImage = await request.get('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg', { encoding: null });
 
-      response.data.pipe(res);
+      res.send(defaultImage);
       return;
     }
 
