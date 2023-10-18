@@ -82,7 +82,8 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
   }],
   profileImage: {
-    type:Buffer, // Store the content type of the image (e.g., 'image/jpeg', 'image/png', etc.)
+    type:Buffer, 
+    default:'https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg'
   },
   bio: String,
 });
@@ -265,7 +266,6 @@ app.post('/reset-password', async (req, res) => {
   }
 });
 // API endpoint for user signup
-// API endpoint for user signup
 app.post('/api/signup', async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -395,18 +395,7 @@ app.get('/api/recipe/count/:userId', async (req, res) => {
   }
 });
 
-app.get('/api/searchUsers', async (req, res) => {
-  try {
-    const searchQuery = req.query.q; // Get the search query from the request query parameters
-    // Perform a database query to search for users based on the search query
-    // Replace the following line with your actual database query
-    const users = await User.find({ name: { $regex: searchQuery, $options: 'i' } });
-    res.status(200).json(users);
-  } catch (error) {
-    console.error('Error fetching user search results:', error);
-    res.status(500).json({ error: 'Error fetching user search results' });
-  }
-});
+
 
 app.post('/api/uploadProfileImage/:userId', upload.single('image'), async (req, res) => {
   try {
@@ -442,9 +431,11 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
       return;
     }
 
-    // Ensure the user has a profile image
     if (!user.profileImage) {
-      res.status(404).json({ error: 'Profile image not found' });
+      // Set the content type of the default image (adjust as needed)
+      res.contentType('image/jpeg');
+      // Send the default image binary data
+      res.sendFile('https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg'); // Replace with the actual path to your default image
       return;
     }
 
@@ -490,7 +481,7 @@ app.get('/author/:userId', async (req, res) => {
 
 
 
-app.get('/api/posts', cache(3600), async (req, res) => {
+app.get('/api/posts', cache(10000), async (req, res) => {
   try {
     const posts = await Recipe.find().populate('userId', 'name');
     res.status(200).json(posts);
@@ -715,6 +706,7 @@ app.delete('/api/post/:postId', async (req, res) => {
     }
 
     res.status(200).json({ message: 'Post deleted successfully' });
+    cache.clear('/api/posts');
   } catch (error) {
     res.status(500).json({ error: 'Error deleting post' });
   }
