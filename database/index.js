@@ -7,6 +7,8 @@ const multer = require('multer');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const cache = require('express-cache-headers');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,7 +18,14 @@ const password = process.env.DB_PASSWORD;
 // Middleware
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+const corsOptions = {
+  origin: 'https://recipeeze.vercel.app', // Replace with the actual domain of your frontend
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
 
 // Connect to MongoDB
@@ -481,7 +490,7 @@ app.get('/author/:userId', async (req, res) => {
 
 
 
-app.get('/api/posts', async (req, res) => {
+app.get('/api/posts', cache(3600), async (req, res) => {
   try {
     const posts = await Recipe.find().populate('userId', 'name');
     res.status(200).json(posts);
@@ -489,6 +498,8 @@ app.get('/api/posts', async (req, res) => {
     res.status(500).json({ error: 'Error fetching posts' });
   }
 });
+
+
 
 app.post('/api/like/:postId', async (req, res) => {
   const { userId } = req.body;
