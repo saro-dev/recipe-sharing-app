@@ -106,7 +106,7 @@ const UserProfile = ({ loggedInUser }) => {
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}
                   onError={(e) => {
-                    e.target.src = { defaultimg }; // Replace with the URL of your default image
+                    e.target.src = defaultimg; // Replace with the URL of your default image
                   }}
                 />
                 <p className="text-lg font-semibold mr-2">
