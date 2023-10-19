@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 
 const SignupComponent = ({ onSignupSuccess }) => {
   const [userData, setUserData] = useState({
@@ -13,6 +14,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); // Initialize the button state
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -42,6 +44,8 @@ const SignupComponent = ({ onSignupSuccess }) => {
       const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/signup', userData);
       console.log('User created:', response.data);
       onSignupSuccess(response.data);
+      navigate('/profile');
+
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
         setErrorMessage(error.response.data.error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../App.css'
-import defaultimg from './default.jpg';
+import defaultimg from './defaultimg.jpg';
 
 const PostsPage = ({ loggedInUser }) => {
   const [posts, setPosts] = useState([]);
@@ -245,7 +245,7 @@ const PostsPage = ({ loggedInUser }) => {
         <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
         <div className="flex items-center mt-2">
         <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}

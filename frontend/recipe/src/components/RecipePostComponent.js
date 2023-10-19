@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Alert from './Alert';
+import PostingModal from './PostingModal';
 
 const RecipePostComponent = ({ userId }) => {
   const [recipeData, setRecipeData] = useState({
@@ -20,6 +21,7 @@ const RecipePostComponent = ({ userId }) => {
   const [category, setCategory] = useState(''); // State for selected category
   const [loading, setLoading] = useState(false);
   const [cookingTime, setCookingTime] = useState('');
+  const [isPosting, setIsPosting] = useState(false);
   const categories = ['Breakfast', 'Lunch', 'Dinner'];
 
   const handleInputChange = event => {
@@ -73,6 +75,7 @@ const RecipePostComponent = ({ userId }) => {
 
   const handleSubmit = async event => {
     event.preventDefault();
+    setIsPosting(true);
     const currentTime = new Date().toISOString(); // Get the current time as an ISO string
 
     const formData = new FormData();
@@ -101,6 +104,7 @@ const RecipePostComponent = ({ userId }) => {
     } catch (error) {
       console.error('Error posting recipe:', error);
     } finally {
+      setIsPosting(false);
       setLoading(false); // Disable loading state
     }
   };
@@ -109,6 +113,7 @@ const RecipePostComponent = ({ userId }) => {
     <div className="flex justify-center">
       <div className="p-4 w-full sm:w-96">
         {alert && <Alert type={alert.type} message={alert.message} />}
+        {isPosting && <PostingModal />}
         <h2 className="text-xl font-semibold mb-4">Post a Recipe</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

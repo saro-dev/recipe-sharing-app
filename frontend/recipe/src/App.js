@@ -38,7 +38,9 @@ const App = () => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
     setAlert({ type: 'success', message: 'Signup successful!' });
-    
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000);
   };
 
   const handleLoginSuccess = userData => {

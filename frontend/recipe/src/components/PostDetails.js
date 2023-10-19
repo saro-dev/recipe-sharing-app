@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import { WhatsappShareButton, FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
 import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
 import { FacebookIcon, TwitterIcon } from 'react-share';
-import defaultimg from './default.jpg';
+import defaultimg from './defaultimg.jpg';
 
 const PostDetails = ({ loggedInUser }) => {
   const [post, setPost] = useState(null);
@@ -284,7 +284,7 @@ const PostDetails = ({ loggedInUser }) => {
           className="ml-2 text-blue-600 hover:underline flex"
           onClick={handleProfileClick}
         ><img
-        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
         alt=""
         className="max-w-full max-h-full object-cover mr-2"
         style={{ height: '30px', width: '30px', borderRadius: '50%' }}

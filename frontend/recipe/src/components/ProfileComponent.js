@@ -10,7 +10,7 @@ import ironIcon from '../iron.png';
 import bronzeIcon from '../bronze.png';
 import silverIcon from '../silver.png';
 import goldIcon from '../gold.png';
-import defaultimg from './default.jpg';
+import defaultimg from './defaultimg.jpg';
 import '../App.css';
 
 const ProfileComponent = ({ userId }) => {
@@ -28,7 +28,7 @@ const ProfileComponent = ({ userId }) => {
   const [profileImage, setProfileImage] = useState(null); // State to store the profile image
   const [uploadingProfileImage, setUploadingProfileImage] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-
+  const [forceUpdate, setForceUpdate] = useState(0);
 
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const ProfileComponent = ({ userId }) => {
     fetchFollowersCount();
     fetchRecipeCount();
   }, [userId]);
-
+  
 
   // Function to open the info modal
   const openInfoModal = () => {
@@ -95,7 +95,7 @@ const ProfileComponent = ({ userId }) => {
       setTimeout(() => {
         setUploadSuccess(false);
         window.location.reload();
-      }, 3000);
+      }, 1000);
       console.log("uploaded!!")
 
     } catch (error) {
@@ -103,6 +103,18 @@ const ProfileComponent = ({ userId }) => {
       
     } finally {
       setUploadingProfileImage(false);
+    }
+  };
+
+  const removeProfileImage = async () => {
+    try {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeProfileImage/${userId}`);
+      setUserData({ ...userData, profileImage: null }); 
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Error removing profile image:', error);
     }
   };
 
@@ -178,7 +190,7 @@ const ProfileComponent = ({ userId }) => {
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
-                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  style={{ height: '60px', width: '60px', borderRadius: '50%' }}
                   onError={(e) => {
                     e.target.src = defaultimg; // Replace with the URL of your default image
                   }}
@@ -186,10 +198,10 @@ const ProfileComponent = ({ userId }) => {
               </div>
               <label
                 htmlFor="profile-image-upload"
-                className="text-blue-500 cursor-pointer block mt-2 text-center"
+                className="text-blue-500 font-bold cursor-pointer block mt-2 text-center"
                 onClick={handleProfileImageUpload}
               >
-                Change Profile Image
+                Change Profile
               </label>
               <input
                 type="file"
@@ -198,6 +210,14 @@ const ProfileComponent = ({ userId }) => {
                 id="profile-image-upload"
                 className="sr-only"
               />
+              {userData.profileImage && (
+                <button
+                  className="text-red-600 cursor-pointer font-bold block mt-2 text-center mx-auto"
+                  onClick={removeProfileImage}
+                >
+                  Remove Profile
+                </button>
+              )}
                 
               </div>
               {uploadingProfileImage && (

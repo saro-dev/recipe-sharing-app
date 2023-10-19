@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Notifications.css';
-import defaultimg from './default.jpg';
+import defaultimg from './defaultimg.jpg';
 import Alert from './Alert';
 
 const Notifications = ({ userId }) => {
@@ -88,7 +88,7 @@ const Notifications = ({ userId }) => {
                       <span className="comment-icon">💬</span>
                     )}
                     <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
+                  src={`https://recipe-backend-1e02.onrender.comnrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}

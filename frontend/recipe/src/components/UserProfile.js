@@ -5,7 +5,7 @@ import ironIcon from '../iron.png';
 import bronzeIcon from '../bronze.png';
 import silverIcon from '../silver.png';
 import goldIcon from '../gold.png';
-import defaultimg from './default.jpg';
+import defaultimg from './defaultimg.jpg';
 import axios from 'axios';
 
 const UserProfile = ({ loggedInUser }) => {

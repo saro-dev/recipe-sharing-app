@@ -448,6 +448,29 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
   }
 });
 
+app.delete('/api/removeProfileImage/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find the user by their ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Set the profileImage field to null
+    user.profileImage = null;
+
+    // Save the updated user
+    await user.save();
+
+    res.json({ message: 'Profile picture removed' });
+  } catch (error) {
+    console.error('Error removing profile picture:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 // API endpoint to update user data by ID
 app.patch('/api/user/:userId', async (req, res) => {
   try {
@@ -481,7 +504,7 @@ app.get('/author/:userId', async (req, res) => {
 
 
 
-app.get('/api/posts', cache(10000), async (req, res) => {
+app.get('/api/posts', async (req, res) => {
   try {
     const posts = await Recipe.find().populate('userId', 'name');
     res.status(200).json(posts);

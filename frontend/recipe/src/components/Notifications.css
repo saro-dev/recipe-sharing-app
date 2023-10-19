@@ -46,6 +46,10 @@
     font-size: 20px;
     color: #ff5733; /* Change to your desired heart color */
   }
+  .comment-icon {
+    margin-right: 10px;
+    font-size: 20px; 
+  }
   
   .loading-message {
     color: #777;
