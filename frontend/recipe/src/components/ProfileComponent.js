@@ -17,18 +17,14 @@ const ProfileComponent = ({ userId }) => {
   const [userData, setUserData] = useState(null);
   const [recipeCount, setRecipeCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
-  const [editingName, setEditingName] = useState(false);
   const [updatedName, setUpdatedName] = useState('');
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
-  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
-  const [editingBio, setEditingBio] = useState(false); // Add state for editing bio
-  const [updatedBio, setUpdatedBio] = useState('');
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false); const [updatedBio, setUpdatedBio] = useState('');
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(null); // State to store the profile image
   const [uploadingProfileImage, setUploadingProfileImage] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(0);
 
 
   useEffect(() => {
@@ -65,7 +61,7 @@ const ProfileComponent = ({ userId }) => {
     fetchFollowersCount();
     fetchRecipeCount();
   }, [userId]);
-  
+
 
   // Function to open the info modal
   const openInfoModal = () => {
@@ -100,7 +96,7 @@ const ProfileComponent = ({ userId }) => {
 
     } catch (error) {
       console.error('Error uploading profile image:', error.response.data); // Log the error
-      
+
     } finally {
       setUploadingProfileImage(false);
     }
@@ -109,7 +105,7 @@ const ProfileComponent = ({ userId }) => {
   const removeProfileImage = async () => {
     try {
       await axios.delete(`https://recipe-backend-1e02.onrender.com/api/removeProfileImage/${userId}`);
-      setUserData({ ...userData, profileImage: null }); 
+      setUserData({ ...userData, profileImage: null });
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -153,6 +149,14 @@ const ProfileComponent = ({ userId }) => {
   };
   const handleSaveProfileChanges = async (updatedName, updatedBio) => {
     try {
+      if (updatedName.length > 15) {
+        // Limit the name to 15 characters
+        updatedName = updatedName.substring(0, 15);
+      }
+      if (updatedBio.length > 40) {
+        // Limit the bio to 40 characters
+        updatedBio = updatedBio.substring(0, 40);
+      }
       // Update the name and bio in the database
       await axios.patch(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`, {
         name: updatedName,
@@ -184,9 +188,9 @@ const ProfileComponent = ({ userId }) => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-underline">Profile</h2>
             <div className="bg-blue-100 p-2 rounded">
-              
+
               <div className="flex items-center justify-center">
-              <img
+                <img
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
@@ -218,31 +222,31 @@ const ProfileComponent = ({ userId }) => {
                   Remove Profile
                 </button>
               )}
-                
-              </div>
-              {uploadingProfileImage && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
-          <div className="bg-white p-6 rounded-lg custom-shadow">
-            <p className="text-xl font-semibold mb-4">Uploading Profile Image...</p>
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+
             </div>
-          </div>
-        </div>
-      )}
-      {uploadSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
-          <div className="bg-white p-6 rounded-lg custom-shadow">
-            <p className="text-xl font-semibold mb-4">Upload Successful</p>
-            <p>Your profile image has been uploaded.</p>
-          </div>
-        </div>
-      )}
+            {uploadingProfileImage && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
+                <div className="bg-white p-6 rounded-lg custom-shadow">
+                  <p className="text-xl font-semibold mb-4">Uploading Profile Image...</p>
+                  <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {uploadSuccess && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="absolute inset-0 bg-gray-200 opacity-75"></div>
+                <div className="bg-white p-6 rounded-lg custom-shadow">
+                  <p className="text-xl font-semibold mb-4">Upload Successful</p>
+                  <p>Your profile image has been uploaded.</p>
+                </div>
+              </div>
+            )}
             <div className='bg-blue-100 p-2 rounded'>
-              <div className="mb-2 flex">
-                <p className="text-lg font-semibold mr-3 text-center ">{userData.name} </p>
+              <div className="mb-2 flex justify-center">
+                <p className="text-2xl font-semibold mr-3 text-center ">{userData.name} </p>
                 <button
                   className="text-blue-600 mt-1 block hover:underline"
                   onClick={openBadgeModal} // Open the badge description modal
@@ -268,23 +272,25 @@ const ProfileComponent = ({ userId }) => {
                 />
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 flex justify-center">
                 <p>{userData.bio}</p>
 
               </div>
             </div>
-            
-            <p className="mt-1">Email: {userData.email}</p>
-            <p className="mt-1">Recipe Posts: {recipeCount}</p>
-            <p className="mt-1">Followers: {followersCount}</p>
+
+            <p className="mt-1 text-center">Email: {userData.email}</p>
+            <div className='flex justify-between mx-10'>
+              <p className="mt-1 text-center"><strong className='text-2xl'>{recipeCount}</strong> <br></br> Posts</p>
+              <p className="mt-1 text-center"><strong className='text-2xl'>{followersCount}</strong> <br></br> Followers</p>
+            </div>
 
 
             <div className='flex justify-around'>
               <Link to="/myposts" className="flex items-center mt-4 text-gray-600 font-bold bg-blue-300 p-2 rounded">
                 My Posts
               </Link>
-              <button className="text-yellow-600 mt-4 ml-4 hover:underline bg-yellow-100 p-2 rounded">
-                <Link to={`/favourites/${userId}`} className="flex items-center text-yellow-600 hover:underline">
+              <button className="text-yellow-600 mt-4 ml-4  bg-yellow-100 p-2 rounded">
+                <Link to={`/favourites/${userId}`} className="flex items-center text-yellow-600 ">
                   <FaStar className="mr-1" />
                   View Favorites
                 </Link>
@@ -316,13 +322,13 @@ const ProfileComponent = ({ userId }) => {
           </div>
         ) : (
           <div>
-            <div className="mb-4 animate-pulse">
-              <div className="bg-gray-200 h-6 w-2/3 rounded-lg mb-2"></div>
-              <div className="bg-gray-200 h-4 w-1/2 rounded-lg"></div>
+            <div className="mb-4 mt-2 animate-pulse">
+              <div className="bg-gray-200 h-20 w-3/3 rounded-lg mb-2"></div>
+              <div className="bg-gray-200 h-20 w-1/2 rounded-lg"></div>
             </div>
             <div className="mb-4 flex animate-pulse">
-              <div className="bg-gray-200 h-6 w-1/3 rounded-lg mr-2"></div>
-              <div className="bg-gray-200 h-4 w-1/4 rounded-lg"></div>
+              <div className="bg-gray-200 h-10 w-1/3 rounded-lg mr-2"></div>
+              <div className="bg-gray-200 h-15 w-1/4 rounded-lg"></div>
             </div>
           </div>
         )}

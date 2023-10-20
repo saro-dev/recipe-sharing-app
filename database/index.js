@@ -770,7 +770,18 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Error searching posts' });
   }
 });
+app.get('/api/searchUsers', async (req, res) => {
+  const { q } = req.query;
 
+  try {
+    // Use a case-insensitive regular expression to search for users by name
+    const searchResults = await User.find({ name: { $regex: q, $options: 'i' }});
+    res.status(200).json(searchResults);
+  } catch (error) {
+    console.error('Error searching users:', error);
+    res.status(500).json({ error: 'Error searching users' });
+  }
+});
 //favourite
 // Add these API endpoints to your server code
 app.get('/api/isFavorite/:userId/:postId', async (req, res) => {

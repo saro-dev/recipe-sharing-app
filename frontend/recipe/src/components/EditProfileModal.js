@@ -25,7 +25,7 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
           <input
             type="text"
             value={updatedName}
-            onChange={(e) => setUpdatedName(e.target.value)}
+            onChange={(e) => setUpdatedName(e.target.value.substring(0, 15))}
             className="border rounded py-1 px-2 w-full focus:outline-none focus:border-blue-400"
           />
         </div>
@@ -34,9 +34,9 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
           <label className="block text-gray-600 font-semibold mb-1">Bio</label>
           <textarea
             value={updatedBio}
-            onChange={(e) => setUpdatedBio(e.target.value)}
+            onChange={(e) => setUpdatedBio(e.target.value.substring(0, 40))}
             rows="4"
-            maxLength="150" // Set a maximum character limit (150 characters)
+            maxLength="40" // Set a maximum character limit (150 characters)
             className="border rounded py-2 px-2 w-full focus:outline-none focus:border-blue-400"
           ></textarea>
         </div>

@@ -209,3 +209,33 @@ body{
   background-color: transparent; /* Make the scrollbar track transparent */
 }
 
+/* Style for checked radio button label */
+
+.radio-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.radio-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #333; /* Default text color */
+}
+
+
+
+.radio-input {
+  display: none; /* Hide the default radio button */
+}
+.checked-label {
+  font-weight: bold;
+  text-decoration: underline;
+  background-color: #002c5c;
+  color: #70b1f6;
+  padding: 8px 10px;
+  border-radius: 5px;
+}

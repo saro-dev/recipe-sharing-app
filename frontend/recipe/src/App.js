@@ -87,7 +87,7 @@ const App = () => {
               <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
               <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
               
-              <Route path="/search" element={<SearchPage />} />
+              <Route path="/search" element={<SearchPage loggedInUser={loggedInUser} />} />
               <Route path="/favourites/:userId" element={<FavouritesPage />} />
               <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>
               <Route path="/user-posts/:userId" element={<UserPostsPage userId={loggedInUser._id}/>} />
