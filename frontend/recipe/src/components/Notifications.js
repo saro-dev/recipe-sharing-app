@@ -88,7 +88,7 @@ const Notifications = ({ userId }) => {
                       <span className="comment-icon">💬</span>
                     )}
                     <img
-                  src={`https://recipe-backend-1e02.onrender.comnrender.com/api/getProfileImage/${userData._id}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}

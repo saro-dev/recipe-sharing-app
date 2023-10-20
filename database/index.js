@@ -8,7 +8,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const cache = require('express-cache-headers');
-
+const sharp = require('sharp');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -122,7 +122,10 @@ const recipeSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   comments: [commentSchema]
 });
 
@@ -336,15 +339,19 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
     }
 
     const imageBuffer = req.file.buffer;
-    const binaryImageString = imageBuffer.toString('hex');
+    const compressedImageBuffer = await sharp(imageBuffer)
+      .resize({ width: 800 }) // Adjust the width as needed
+      .webp({ quality: 70 }) // Adjust the quality as needed (for JPEG)
+      .toBuffer();
 
-    console.log(binaryImageString);
+    const binaryImageString = compressedImageBuffer.toString('hex');
+
 
     const newRecipe = await Recipe.create({
       ...req.body,
       userId: user._id, // Save user's ID
       authorName: user.name, // Save user's name
-      image: imageBuffer, // Save the image as binary data
+      image: compressedImageBuffer, // Save the compressed image as binary data
     });
 
     res.status(201).json(newRecipe);
@@ -353,6 +360,11 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Error creating recipe' });
   }
 });
+
+const recipeImageCacheStrategy = (res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+};
+
 app.get('/api/getRecipeImage/:recipeId', async (req, res) => {
   try {
     const recipeId = req.params.recipeId;
@@ -364,9 +376,10 @@ app.get('/api/getRecipeImage/:recipeId', async (req, res) => {
       res.status(404).json({ error: 'Recipe not found' });
       return;
     }
+    recipeImageCacheStrategy(res);
 
     // Send the image as binary data
-    res.contentType('image/jpeg'); // Adjust the content type as needed
+    res.contentType('image/webp'); // Set the content type to WebP
     res.send(recipe.image);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching image' });
@@ -433,7 +446,7 @@ app.get('/api/getProfileImage/:userId', async (req, res) => {
 
     if (!user.profileImage) {
       // Set the content type of the default image (adjust as needed)
-      res.contentType('image/jpeg');
+      res.contentType('image/webp');
       // Send the default image binary data
       res.sendFile('./default.jpg'); // Replace with the actual path to your default image
       return;
@@ -506,7 +519,16 @@ app.get('/author/:userId', async (req, res) => {
 
 app.get('/api/posts', async (req, res) => {
   try {
-    const posts = await Recipe.find().populate('userId', 'name');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    // Fetch the latest 5 posts first, based on createdAt in descending order
+    const posts = await Recipe.find()
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
+
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching posts' });

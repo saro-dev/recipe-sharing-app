@@ -7,7 +7,7 @@ const Alert = ({ type, message }) => {
     '';
 
   return (
-    <div className={`p-4 mb-4 rounded-lg ${alertClass}`}>
+    <div className={`p-4 mb-4 rounded-lg z-999 ${alertClass}`}>
       {message}
     </div>
   );

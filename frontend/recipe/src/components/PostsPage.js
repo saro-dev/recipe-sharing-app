@@ -11,25 +11,34 @@ const PostsPage = ({ loggedInUser }) => {
   const [likedPosts, setLikedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 3;
+  const [hasMorePosts, setHasMorePosts] = useState(true); // Track if there are more posts to load
+  const postsPerPage = 5;
   const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
-        const reversedPosts = response.data.reverse(); // Reverse the order of posts
-        setPosts(reversedPosts);
-        console.log('Post Data:', reversedPosts);
-        
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts?page=${currentPage}&limit=${postsPerPage}`);
+        const newPosts = response.data;
+
+        if (newPosts.length === 0) {
+          setHasMorePosts(false);
+        } else {
+          setPosts([ ...posts, ...newPosts]);
+          setCurrentPage(currentPage + 1);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
     };
 
-    fetchPosts();
-  }, [currentPage]);
+    if (hasMorePosts) {
+      fetchPosts();
+    }
+  }, [currentPage, hasMorePosts]);
+  
   useEffect(() => {
     const container = containerRef.current;
     const handleScroll = () => {
@@ -81,27 +90,24 @@ const PostsPage = ({ loggedInUser }) => {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
-      console.log('Updated Post:', updatedPost);
-
+  
       setLikedPosts((prevLikedPosts) =>
         updatedPost.isLiked
           ? [...prevLikedPosts, postId]
           : prevLikedPosts.filter((id) => id !== postId)
       );
-
+  
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post._id === postId ? updatedPost : post))
       );
-
+  
       const updatedLikedPosts = updatedPost.isLiked
         ? [...likedPosts, postId]
         : likedPosts.filter((id) => id !== postId);
       localStorage.setItem('likedPosts', JSON.stringify(updatedLikedPosts));
-
-      if (updatedPost.isLiked) {
+  
+      if (updatedPost.isLiked && updatedPost.userId !== loggedInUser._id) {
         const notificationMessage = `${loggedInUser.name} likes your post`;
-        console.log('Notification Message:', notificationMessage);
-
         const notification = {
           type: 'like',
           postId: updatedPost._id,
@@ -110,21 +116,24 @@ const PostsPage = ({ loggedInUser }) => {
           createdAt: new Date(),
           UserId: loggedInUser._id,
         };
-        console.log('Notification:', notification);
-
-        const notificationResponse = await axios.post(
-          `https://recipe-backend-1e02.onrender.com/api/addNotification/${updatedPost.userId}`,
-          {
-            notification,
-          }
-        );
-
-        console.log(`Notification sent to post owner ${updatedPost.userId}:`, notificationResponse.data);
+  
+        // Send notification to the post owner, excluding self
+        if (updatedPost.userId !== loggedInUser._id) {
+          const notificationResponse = await axios.post(
+            `https://recipe-backend-1e02.onrender.com/api/addNotification/${updatedPost.userId}`,
+            {
+              notification,
+            }
+          );
+  
+          console.log(`Notification sent to post owner ${updatedPost.userId}:`, notificationResponse.data);
+        }
       }
     } catch (error) {
       console.error('Error toggling like:', error);
     }
   };
+  
   const handleAddComment = async (postId) => {
     try {
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}`, {
@@ -245,7 +254,7 @@ const PostsPage = ({ loggedInUser }) => {
         <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
         <div className="flex items-center mt-2">
         <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}

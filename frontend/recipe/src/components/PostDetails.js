@@ -263,7 +263,7 @@ const PostDetails = ({ loggedInUser }) => {
         </div>
       )}
       {alert && (
-        <div className={`p-2 mb-4 text-white bg-${alert.type === 'success' ? 'green' : 'red'}-500`}>
+        <div className={`p-2 mb-4 z-999 text-white bg-${alert.type === 'success' ? 'green' : 'red'}-500`}>
           {alert.message}</div>)}
       <div className=" mb-4 w-100 flex">
         <Link to="/" className="text-black-600 flex items-center">
