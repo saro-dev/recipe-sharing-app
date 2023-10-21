@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import WOW from 'wowjs';
-import 'animate.css/animate.css';
-
+import banner from '../banner.webp';
 
 const LoginComponent = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
@@ -16,10 +14,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Initialize the button state
 
-  useEffect(() => {
-    const wow = new WOW.WOW();
-    wow.init();
-  }, []);
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -50,14 +45,16 @@ const LoginComponent = ({ onLoginSuccess }) => {
 
   return (
     <div className="p-4 bg-blue-100 h-screen flex items-center justify-center ">
+      
       <div className="bg-white p-6 rounded-lg shadow-md w-full sm:w-96">
-        <h2 className="text-xl font-semibold mb-4">Log In</h2>
+      <img src={banner} alt="banner" className='rounded' style={{width:"400px", margin:"auto "}}/>
+        <h2 className="text-xl font-semibold mb-4 mt-4 text-center">Log In</h2>
         {errorMessage && (
           <p className="text-red-500 mb-2 text-center border border-red-500 py-1 rounded">
             {errorMessage}
           </p>
         )}
-        <form onSubmit={(e) => e.preventDefault()}  className="space-y-4 wow fadeInUp" data-wow-delay="0.2s">
+        <form onSubmit={(e) => e.preventDefault()}  className="space-y-4 wow fadeInUp" >
           <input
             type="email"
             name="email"

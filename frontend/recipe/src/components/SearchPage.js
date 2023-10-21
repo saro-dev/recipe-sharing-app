@@ -142,7 +142,12 @@ const SearchPage = ({ loggedInUser }) => {
           <div className="loading-container">
             <PulseLoader color="#007BFF" size={10} />
           </div>
-        ) : searchType === 'users' ? (
+         ) : searchType === 'users' ? (
+          searchQuery.trim() === '' ? (
+            <p>Enter a search query to find users.</p>
+          ) : userSearchResults.length === 0 ? (
+            <p>No results found for users.</p>
+          ) : (
           userSearchResults.map((user) => (
             <div key={user._id} className="cursor-pointer border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow" onClick={() => handleProfileClick(user._id)}>
               <p className="text-black flex">
@@ -160,8 +165,13 @@ const SearchPage = ({ loggedInUser }) => {
               
               <p className='ml-10'>{recipeCounts[user._id] || 0} posts</p>
             </div>
-          ))
-        ) : (
+          )))
+        ) :(
+          searchQuery.trim() === '' ? (
+            <p className='text-l mt-2 ml-2'>Enter a search query to find recipes.</p>
+          ) : searchResults.length === 0 ? (
+            <p>No results found for recipes.</p>
+          ) : (
           // Recipe Search Section
           searchResults.map((post) => (
             <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
@@ -189,7 +199,7 @@ const SearchPage = ({ loggedInUser }) => {
                 </Link>
               </div>
             </div>
-          ))
+          )))
         )}
       </div>
     </div>

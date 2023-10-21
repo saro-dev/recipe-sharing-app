@@ -17,6 +17,7 @@ import FavouritesPage from './components/FavouritesPage';
 import UserPostsPage from './components/UserPostsPage';
 import ForgotPasswordComponent from './components/ForgotPasswordComponent';
 import PasswordResetComponent from './components/PasswordResetComponent';
+import NotFound404 from './components/NotFound404';
 import axios from 'axios';
 import splash from './splash.png';
 
@@ -28,11 +29,15 @@ const Splash = () => {
   );
 };
 
+
+
 const App = () => {
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
   const [loggedInUser, setLoggedInUser] = useState(storedUser);
   const [alert, setAlert] = useState(null); 
   const [showSplash, setShowSplash] = useState(true);
+  const [favoritePosts, setFavoritePosts] = useState([]);
+
 
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
@@ -82,7 +87,7 @@ const App = () => {
           
           {loggedInUser ? (
             <>
-            <Route path="/" element={<PostsPage loggedInUser={loggedInUser}  />} />
+            <Route path="/" element={<PostsPage loggedInUser={loggedInUser}  favoritePosts={favoritePosts} setFavoritePosts={setFavoritePosts}/>} />
               <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
               <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
               <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
@@ -96,6 +101,7 @@ const App = () => {
           ) : (
             <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
           )}
+           <Route path="*" element={<NotFound404 />} />
         </Routes>
       </div>
     )}

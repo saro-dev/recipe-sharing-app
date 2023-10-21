@@ -189,67 +189,68 @@ const PostDetails = ({ loggedInUser }) => {
       navigate(`/user/${post.userId._id}`);
     }
   };
-  const handleConvertToImage = () => {
+  const handleConvertToImage = (uptitle) => {
     // Convert the ingredient list to a plain text string
     const ingredientText = ingredientList.map((ingredient, index) => {
       const ingredientElement = document.createElement('div');
       ReactDOM.render(ingredient, ingredientElement);
       return ` ${ingredientElement.textContent}`;
     }).join('\n');
-
+  
     // Create a temporary element to measure the text size
     const tempElement = document.createElement('div');
     tempElement.style.font = 'bold 24px Arial'; // Font size and type
     tempElement.textContent = 'RECIPEEZE';
-
+  
     // Get the width and height required for the text
     const textWidth = tempElement.offsetWidth + 5;
     const textHeight = tempElement.offsetHeight + 20;
-
+  
     // Calculate the canvas dimensions based on text size and content
     const canvasWidth = Math.max(400, textWidth);
     const canvasHeight = textHeight + 40 + ingredientText.split('\n').length * 30; // Increased vertical padding
-
+  
     // Create a canvas element with dynamic dimensions
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-
+  
     // Set canvas dimensions based on content
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-
+  
     // Set background color to purple
     context.fillStyle = 'purple';
     context.fillRect(0, 0, canvas.width, canvas.height);
-
+  
     // Define styles for text
     context.fillStyle = 'white'; // Text color
     context.font = 'bold 24px Arial'; // Font size and type
-
+  
     // Add the heading text "RECIPEEZE" centered horizontally
     const headingX = (canvas.width - textWidth) / 4;
     const headingY = 30;
     context.fillText('RECIPEEZE', headingX, headingY);
-
+  
     // Define initial position for drawing ingredient text
     let x = 20; // X-coordinate
     let y = textHeight + 60; // Increased vertical padding and alignment
-
+  
     // Draw the ingredient text on the canvas
     ingredientText.split('\n').forEach((line) => {
       context.fillText(line, x, y);
       y += 30; // Move down for the next line
     });
-
+  
     // Convert the canvas to a data URL (image)
     const dataUrl = canvas.toDataURL('image/png');
-
-    // Create a download link for the image
+  
+    // Create a download link for the image with the recipe title as the filename
     const a = document.createElement('a');
     a.href = dataUrl;
-    a.download = 'shopping-list.png'; // Set the image filename
+    a.download = `${uptitle}.png`; // Set the image filename to the recipe title
     a.click();
   };
+  
 
 
 
@@ -259,7 +260,7 @@ const PostDetails = ({ loggedInUser }) => {
     <div className="p-4 page-container mb-10">
       {!loggedInUser && (
         <div className="z-999 bg-red-100 p-4 rounded text-red-600 mb-4">
-          Signup to view more dishes! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to access additional features.
+          You are not logged in! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to access additional features.
         </div>
       )}
       {alert && (
@@ -278,21 +279,21 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
       <hr></hr>
 
-      <h2 className="text-xl font-semibold mb-4 mt-2 flex">
+      <h2 className="text-l font-semibold mb-4 mt-2 flex">
         Post By{' '}
         <button
-          className="ml-2 text-blue-600 hover:underline flex"
+          className="ml-2 text-blue-900 flex"
           onClick={handleProfileClick}
         ><img
         src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
         alt=""
         className="max-w-full max-h-full object-cover mr-2"
-        style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+        style={{ height: '50px', width: '50px', borderRadius: '50%' }}
         onError={(e) => {
           e.target.src = defaultimg; // Replace with the URL of your default image
         }}
       />
-          {post.userId.name}
+          <h2 className='text-2xl mt-2'>{post.userId.name}</h2>
         </button>
 
       </h2>
@@ -325,7 +326,7 @@ const PostDetails = ({ loggedInUser }) => {
         <h3 className="font-semibold">Ingredients:</h3>
         {ingredientList}
       </div>
-      <button className='bg-blue-600 text-white p-2 rounded mt-3' onClick={handleConvertToImage}>Convert to Shopping List</button>
+      <button className='bg-blue-600 text-white p-2 rounded mt-3' onClick={() => handleConvertToImage(uptitle)}>Convert to Shopping List</button>
       <hr className='mt-2'></hr>
       <div className="mt-2">
         <h3 className="font-semibold">Steps:</h3>

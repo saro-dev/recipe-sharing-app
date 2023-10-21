@@ -29,6 +29,12 @@ const FavouritesPage = () => {
             <div key={post._id} className="bg-white p-4 rounded-lg shadow-md">
               <Link to={`/post-details/${post._id}`} className="text-blue-500 hover:underline">
                 <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
+                <img
+                src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+                alt={post.title}
+                className="max-w-full max-h-full object-cover rounded-lg skeleton-item"
+                style={{ height: '200px' }}
+              />
               </Link>
               <p className="text-gray-600">{post.authorName}</p>
             </div>

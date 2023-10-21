@@ -17,6 +17,8 @@ const UserProfile = ({ loggedInUser }) => {
   const [loadingUnfollow, setLoadingUnfollow] = useState(false);
   const [userFollowers, setUserFollowers] = useState([]);
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
+  const [bio, setBio] =useState("")
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,6 +27,7 @@ const UserProfile = ({ loggedInUser }) => {
         setUserData(response.data);
         setFollowerCount(response.data.followers.length);
         setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
+        setBio(response.data.bio);
         // Move the fetchRecipeCount logic here
         try {
           const countResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
@@ -104,16 +107,16 @@ const UserProfile = ({ loggedInUser }) => {
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
-                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+                  style={{ height: '60px', width: '60px', borderRadius: '50%' }}
                   onError={(e) => {
                     e.target.src = defaultimg; // Replace with the URL of your default image
                   }}
                 />
-                <p className="text-lg font-semibold mr-2">
+                <p className="text-lg font-semibold mr-2 mt-2">
                   {userData.name}
                 </p>
                 <button
-                  className="text-blue-600 mt-1 block hover:underline"
+                  className="text-blue-600  block hover:underline"
                   onClick={openBadgeModal} // Open the badge description modal
                 >
                   {recipeCount >= 0 && recipeCount <= 25 && (
@@ -131,15 +134,22 @@ const UserProfile = ({ loggedInUser }) => {
 
                 </button>
               </div>
+              <hr className='mt-3'></hr>
+              <div className=' px-1 py-2 my-2 rounded text-left'>
+                <h5 className='font-bold text-purple-900 mb-1'>About</h5>
+              <p>{bio}</p>
+              </div>
               <BadgeDescriptionModal
                 isOpen={isBadgeModalOpen}
                 onClose={closeBadgeModal}
                 recipeCount={recipeCount} // Pass recipeCount as needed
               />
 
-              <p className="mt-1">Followers: {followerCount}</p>
-              <p className="mt-1">Recipe Posts: {recipeCount}</p>
-              <Link to={`/user-posts/${userId}`} className="text-blue-700 border-blue-700 border-2 px-2 py-2 rounded font-bold hover:underline">
+              <div className='flex '>
+                <p className="mt-1 text-center ml-5 mr-10"><span className='text-2xl font-bold text-center mr-5'>{followerCount}</span> <br></br> Followers</p>
+                <p className="mt-1 text-center "><span className='text-2xl font-bold text-center'>{recipeCount}</span> <br></br> Posts</p>
+              </div>
+              <Link to={`/user-posts/${userId}`} className="text-purple-900 border-purple-900 border-2 px-2 py-2 rounded font-bold mr-5 mt-2">
                 View Posts
               </Link>
               {userFollowers.some(follower => follower._id === loggedInUser._id) ? (
@@ -152,7 +162,7 @@ const UserProfile = ({ loggedInUser }) => {
               ) : (
                 <button
                   onClick={handleFollow}
-                  className={`ml-2 mt-2 bg-blue-500 text-white px-4 py-2 rounded ${loadingFollow ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`ml-2 mt-2 bg-purple-900 text-white px-4 py-2 rounded ${loadingFollow ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   Follow
                 </button>
