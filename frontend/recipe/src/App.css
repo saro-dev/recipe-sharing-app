@@ -1,10 +1,18 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@font-face {
+  font-family: 'IOS'; 
+  src: url('./fonts/NotoColorEmoji.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'IOS',sans-serif;
 }
 
 body{
@@ -141,10 +149,7 @@ body{
   color: white;
 }
 
-.like-button:hover {
-  background-color: #ff1a1a; /* Change to your desired hover color */
-  color: #fff; /* Change to your desired text color on hover */
-}
+
 
 .like-button .heart-icon {
   font-size: 18px;

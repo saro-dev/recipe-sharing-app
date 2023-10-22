@@ -307,19 +307,21 @@ const PostDetails = ({ loggedInUser }) => {
           style={{ maxWidth: '300px' }}
         />
       </div>
+      <div className='flex items-center'>
       <button
-        className={`like-button2 ${isFavorite ? 'text-white' : 'text-red-600 hover:text-white'}`}
+        className={`like-button2 h-10 ${isFavorite ? 'text-white' : 'text-red-600 hover:text-white'}`}
         onClick={handleToggleLike}
       >
         <FaHeart size={25} />
         {likes} Likes
       </button>
-      <div className="mt-2 bg-white w-40 rounded">
+      <div className="mt-2 bg-white w-40 rounded ml-3">
         <div className='ml-5'>
-          <h3 className="font-semibold ">Cooking Time:</h3>
+          <h3 className="font-semibold ">Making Time:</h3>
           <i className='fa fa-clock mr-2 text-green-600'></i>
           {post.cookingTime} Minutes
         </div>
+      </div>
       </div>
       <hr className='m-1'></hr>
       <div className="mt-2">

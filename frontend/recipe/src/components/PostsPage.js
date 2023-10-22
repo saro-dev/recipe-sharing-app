@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CustomToast from './CustomToast';
 
 
-const PostsPage = ({ loggedInUser,favoritePosts, setFavoritePosts }) => {
+const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState({}); // Object to store comment texts
   const [showAllComments, setShowAllComments] = useState({});
@@ -299,7 +299,7 @@ const PostsPage = ({ loggedInUser,favoritePosts, setFavoritePosts }) => {
     <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
 
       <h2 className="text-2xl font-semibold mb-4">Posts</h2>
-      <CustomToast/>
+      <CustomToast />
       {posts.map((post) => (
         <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
           <div className="flex items-center mt-2">
@@ -329,13 +329,17 @@ const PostsPage = ({ loggedInUser,favoritePosts, setFavoritePosts }) => {
             </Link>
           </div>
 
-          <div className='flex'>
+          <div className='flex items-center'>
             <button
-              className={`like-button mr-5 ${likedPosts.includes(post._id) ? 'liked' : ''}`}
+              className={`like-button mr-3 ${likedPosts.includes(post._id) ? 'liked' : ''}`}
               onClick={() => handleToggleLike(post._id)}
             >
               <i className="fas fa-heart heart-icon"></i> {likedPosts.includes(post._id) ? 'Liked' : 'Like'}
             </button>
+            <div className='flex items-center mr-5'>
+              <i className='fa fa-clock mr-1 text-green-600'></i>
+              <p className='text-xl mb-2 mt-1'>{post.cookingTime}</p>
+            </div>
             <button
               className={`favorite-button  ${favoritePosts.includes(post._id) ? 'favorited' : ''}`}
               onClick={() => handleToggleFavorite(post._id)}
