@@ -23,7 +23,7 @@ const password = process.env.DB_PASSWORD;
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 const corsOptions = {
-  origin: 'https://recipeeze.vercel.app', 
+  origin: 'http://localhost:3000', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
@@ -32,7 +32,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
 
-const backendUrl = 'https://recipe-backend-1e02.onrender.com';
+const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
 
 // Schedule a cron job to ping the backend URL every 14 minutes
 cron.schedule('*/14 * * * *', () => {
