@@ -17,7 +17,7 @@ const PostsPage = ({ loggedInUser,favoritePosts, setFavoritePosts }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMorePosts, setHasMorePosts] = useState(true); // Track if there are more posts to load
-  const postsPerPage = 5;
+  const postsPerPage = 3;
   const containerRef = useRef(null);
 
   useEffect(() => {
