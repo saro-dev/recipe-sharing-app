@@ -9,6 +9,10 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const cache = require('express-cache-headers');
 const sharp = require('sharp');
+const cron = require('node-cron');
+const https = require('https');
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,7 +23,7 @@ const password = process.env.DB_PASSWORD;
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 const corsOptions = {
-  origin: 'https://recipeeze.vercel.app', // Replace with the actual domain of your frontend
+  origin: 'https://recipeeze.vercel.app', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
@@ -27,6 +31,21 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
+
+const backendUrl = 'https://recipe-backend-1e02.onrender.com';
+
+// Schedule a cron job to ping the backend URL every 14 minutes
+cron.schedule('*/14 * * * *', () => {
+  https.get(backendUrl, (res) => {
+    if (res.statusCode === 200) {
+      console.log('Server is running.');
+    } else {
+      console.log('Server may be sleeping.');
+    }
+  }).on('error', (error) => {
+    console.error('Error pinging the server:', error);
+  });
+});
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://codersaro:Sarorosy12@cluster0.av48khu.mongodb.net/', {
