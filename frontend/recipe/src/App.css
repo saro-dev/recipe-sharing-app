@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 @font-face {
   font-family: 'IOS'; 
-  src: url('./fonts/NotoColorEmoji.ttf') format('ttf');
+  src: url('./fonts/ios.ttf') format('ttf');
   font-weight: normal;
   font-style: normal;
 }
