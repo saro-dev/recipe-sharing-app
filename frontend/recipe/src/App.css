@@ -1,18 +1,12 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-@font-face {
-  font-family: 'IOS'; 
-  src: url('./fonts/ios.ttf') format('trutype');
-  font-weight: normal;
-  font-style: normal;
-}
+
 
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'IOS',sans-serif;
 }
 
 body{
