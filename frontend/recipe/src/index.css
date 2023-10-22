@@ -12,7 +12,7 @@
 
 body {
   margin: 0;
-  font-family: 'IOS','Ubuntu',sans-serif;
+  font-family: 'Ubuntu','IOS',sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
