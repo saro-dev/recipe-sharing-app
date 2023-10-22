@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 @font-face {
   font-family: 'IOS'; 
-  src: url('./fonts/ios.ttf') format('ttf');
+  src: url('./fonts/ios.ttf') format('trutype');
   font-weight: normal;
   font-style: normal;
 }
@@ -17,6 +17,7 @@
 
 body{
   background-color: #ECF8F9;
+  font-family: 'IOS',sans-serif;
 }
 .custom-shadow{
     box-shadow: 1px 1px 5px black;
