@@ -13,10 +13,6 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'IOS',sans-serif;
-  touch-action: pan-x pan-y;
-  touch-zooming:none;
-  user-scalable:no;
-  overflow: hidden;
 }
 
 body{
