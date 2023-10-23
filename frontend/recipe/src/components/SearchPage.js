@@ -146,9 +146,11 @@ const SearchPage = ({ loggedInUser }) => {
           onChange={handleCategoryChange}
         >
           <option value="">All</option>
-          <option value="Category1">Category 1</option>
-          <option value="Category2">Category 2</option>
-          {/* Add more options for each category you have */}
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+          <option value="Dessert">Dessert</option>
+          <option value="Snacks">Snacks</option>
         </select>
       </div>
 
