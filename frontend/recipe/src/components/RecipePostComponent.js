@@ -22,7 +22,7 @@ const RecipePostComponent = ({ userId }) => {
   const [loading, setLoading] = useState(false);
   const [cookingTime, setCookingTime] = useState('');
   const [isPosting, setIsPosting] = useState(false);
-  const categories = ['Breakfast', 'Lunch', 'Dinner'];
+  const categories = ['Breakfast', 'Lunch', 'Dinner','Dessert','Snacks'];
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -124,7 +124,7 @@ const RecipePostComponent = ({ userId }) => {
             onChange={handleInputChange}
             className="w-full border rounded p-2"
           />
-          <div className="relative">
+          <div className="relative z-1">
             <input
               type="file"
               name="image"
@@ -197,7 +197,7 @@ const RecipePostComponent = ({ userId }) => {
           >
             <i className="fas fa-plus-circle mr-2"></i> Add Step
           </button>
-          <div className="relative">
+          <div className="relative z-1">
             <select
               name="category"
               value={category}
