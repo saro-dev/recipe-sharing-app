@@ -76,6 +76,9 @@ const SearchPage = ({ loggedInUser }) => {
   const handleRadioChange = (event) => {
     setSearchType(event.target.value);
   };
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
 
   const handleProfileClick = (userId) => {
     if (loggedInUser && loggedInUser._id === userId) {
@@ -135,6 +138,19 @@ const SearchPage = ({ loggedInUser }) => {
           className="radio-input"
         />
       </div>
+      <div className="mb-4">
+        <label htmlFor="categoryFilter">Filter by Category:</label>
+        <select
+          id="categoryFilter"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="">All</option>
+          <option value="Category1">Category 1</option>
+          <option value="Category2">Category 2</option>
+          {/* Add more options for each category you have */}
+        </select>
+      </div>
 
       {/* User Search Section */}
       <div className="search-results">
@@ -173,6 +189,7 @@ const SearchPage = ({ loggedInUser }) => {
             <p>No results found for recipes.</p>
           ) : (
           // Recipe Search Section
+          
           searchResults.map((post) => (
             <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
               <p className="text-gray-500 flex">
