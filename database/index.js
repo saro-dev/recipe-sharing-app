@@ -779,16 +779,27 @@ app.delete('/api/post/:postId', async (req, res) => {
 //search
 // Add this to your Express app.js or server.js
 app.get('/api/search', async (req, res) => {
-  const { q } = req.query;
+  const { q, category } = req.query;
 
   try {
-    const searchResults = await Recipe.find({ title: { $regex: q, $options: 'i' } }).populate('userId', 'name');
+    // Create a filter object to filter by title and category
+    const filter = {
+      title: { $regex: q, $options: 'i' },
+    };
+
+    // Add category filter if category is specified
+    if (category) {
+      filter.category = category;
+    }
+
+    const searchResults = await Recipe.find(filter).populate('userId', 'name');
     res.status(200).json(searchResults);
   } catch (error) {
     console.error('Error searching posts:', error);
     res.status(500).json({ error: 'Error searching posts' });
   }
 });
+
 app.get('/api/searchUsers', async (req, res) => {
   const { q } = req.query;
 
