@@ -1,0 +1,25 @@
+/* Set the grid container and specify the number of columns for different screen sizes */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for large screens */
+  
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+    }
+  
+    @media (max-width: 640px) {
+      grid-template-columns: repeat(1, 1fr); /* 1 column for mobile */
+    }
+  }
+  
+  /* Style each post item within the grid */
+  .post-item {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Additional styling for your post items can be added here */
+  

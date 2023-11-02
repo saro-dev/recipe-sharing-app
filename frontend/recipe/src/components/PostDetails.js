@@ -4,9 +4,12 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaStar, FaHeart } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
 import { WhatsappShareButton, FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
-import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
+import { FaWhatsapp,FaSnapchat, FaTelegram } from 'react-icons/fa'; // Import WhatsApp icon
 import { FacebookIcon, TwitterIcon } from 'react-share';
 import defaultimg from './defaultimg.jpg';
+import nonveg from '../non-veg.png';
+import veg from '../veg.webp';
+
 
 const PostDetails = ({ loggedInUser }) => {
   const [post, setPost] = useState(null);
@@ -251,7 +254,12 @@ const PostDetails = ({ loggedInUser }) => {
     a.click();
   };
   
-
+  function checkForNonVeg(ingredients) {
+    const nonVegKeywords = ['egg', 'chicken', 'meat', 'mutton', 'beef', 'pork', 'fish', 'seafood', 'lamb', 'venison', 'duck', 'turkey', 'veal', 'salmon', 'shrimp', 'crab', 'lobster', 'clam', 'oyster', 'scallop', 'squid', 'octopus', 'prawn', 'ham', 'bacon', 'sausage', 'steak', 'ribs', 'liver', 'tripe', 'gizzard', 'offal'];
+    const lowerIngredients = ingredients.toLowerCase();
+  
+    return nonVegKeywords.some((keyword) => lowerIngredients.includes(keyword));
+  }
 
 
 
@@ -298,7 +306,22 @@ const PostDetails = ({ loggedInUser }) => {
 
       </h2>
       <hr></hr>
-      <h2 className="text-xl font-semibold mb-4 mt-2 ">{uptitle}</h2>
+      <div className='flex mb-4 mt-2'>
+      <h2 className="text-xl font-semibold  mr-6">{uptitle}</h2>
+      {checkForNonVeg(post.ingredients) ? (
+            <img
+              src={nonveg} // Replace with the path to your non-veg icon
+              alt="Non-Veg"
+              className="h-6 w-6 mr-3"
+            />
+          ) : (
+            <img
+              src={veg} // Replace with the path to your veg icon
+              alt="Veg"
+              className="h-6 w-6 mr-3"
+            />
+          )} 
+      </div>
       <div>
         <img
           src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
@@ -344,7 +367,7 @@ const PostDetails = ({ loggedInUser }) => {
         <span className="text-blue-600">#Tags:</span> {post.tags}
       </p>
       <hr className='m-2'></hr>
-      <div className='bg-white p-2 rounded'>
+      <div className='bg-white p-2 rounded flex'>
         <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
         <WhatsappShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
           <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
@@ -352,9 +375,21 @@ const PostDetails = ({ loggedInUser }) => {
         <FacebookShareButton url={postURL} quote={`${customMessage}\n${post.title}`}>
           <FacebookIcon size={30} className="ml-4 cursor-pointer text-blue-600 hover:text-blue-700" />
         </FacebookShareButton>
-        <TwitterShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
-          <TwitterIcon size={30} className="ml-4 cursor-pointer text-blue-400 hover:text-blue-500" />
-        </TwitterShareButton>
+        <a
+          href={`https://www.snapchat.com/share?url=${encodeURIComponent(postURL)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaSnapchat size={30} className="ml-4 cursor-pointer text-yellow-600 hover:text-yellow-700" />
+        </a>
+        <a
+          href={`https://t.me/share/url?url=${encodeURIComponent(postURL)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaTelegram size={30} className="ml-4 cursor-pointer text-blue-600 hover:text-blue-700" />
+        </a>
+
       </div>
       <div className="mt-4 mb-4">
         <h3 className="font-semibold">Comments:</h3>

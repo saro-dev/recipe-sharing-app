@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../App.css'
+import './PostsPage.css';
 import defaultimg from './defaultimg.jpg';
+import nonveg from '../non-veg.png';
 import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CustomToast from './CustomToast';
-
+import veg from '../veg.webp';
 
 const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   const [posts, setPosts] = useState([]);
@@ -95,21 +97,24 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
 
   if (loading) {
     return (
-      <div className="p-4">
-
+      <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
         <h2 className="text-2xl font-semibold mb-4">Posts</h2>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="border p-4 mb-4 rounded-lg bg-white shadow-md skeleton-loading">
-            <div className="w-full h-40 mb-4 bg-gray-300 rounded-lg text-center flex justify-center items-center text-xl text-gray-500">loading..</div> {/* Placeholder image */}
-            <h3 className="text-lg font-semibold mb-2 bg-gray-300 h-8 rounded"></h3> {/* Placeholder heading */}
-            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
-            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
-            <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
-          </div>
-        ))}
+        <CustomToast />
+        <div className="posts-grid">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="post-item skeleton-loading">
+              <div className="w-full h-40 mb-4 bg-gray-300 rounded-lg text-center flex justify-center items-center text-xl text-gray-500">loading..</div> {/* Placeholder image */}
+              <h3 className="text-lg font-semibold mb-2 bg-gray-300 h-8 rounded"></h3> {/* Placeholder heading */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
+
 
   const handleToggleLike = async (postId) => {
     try {
@@ -293,122 +298,147 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
       console.error('Error toggling favorite:', error);
     }
   };
-
+  function checkForNonVeg(ingredients) {
+    const nonVegKeywords = ['egg', 'chicken', 'meat', 'mutton', 'beef', 'pork', 'fish', 'seafood', 'lamb', 'venison', 'duck', 'turkey', 'veal', 'salmon', 'shrimp', 'crab', 'lobster', 'clam', 'oyster', 'scallop', 'squid', 'octopus', 'prawn', 'ham', 'bacon', 'sausage', 'steak', 'ribs', 'liver', 'tripe', 'gizzard', 'offal'];
+    const lowerIngredients = ingredients.toLowerCase();
+  
+    return nonVegKeywords.some((keyword) => lowerIngredients.includes(keyword));
+  }
+  
 
   return (
     <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
-
-      <h2 className="text-2xl font-semibold mb-4">Posts</h2>
-      <CustomToast />
-      {posts.map((post) => (
-        <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md">
-          <div className="flex items-center mt-2">
-            <img
-              src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
-              alt=""
-              className="max-w-full max-h-full object-cover mr-2"
-              style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-              onError={(e) => {
-                e.target.src = defaultimg; // Replace with the URL of your default image
-              }}
-            />
-            <strong>{post.authorName}</strong>
-          </div>
-          <div className="w-full h-auto mt-2">
-            <Link to={{
-              pathname: `/post-details/${post._id}`,
-              state: { comments: post.comments },
-            }}>
+  <h2 className="text-2xl font-semibold mb-4">Posts</h2>
+  <CustomToast />
+  <div className='posts-grid'>
+    {posts.map((post) => (
+      <div key={post._id} className="border p-4 mb-4 rounded-lg bg-white shadow-md post-item">
+        <div className="flex items-center mt-2">
+          <img
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+            onError={(e) => {
+              e.target.src = defaultimg; // Replace with the URL of your default image
+            }}
+          />
+          <strong>{post.authorName}</strong>
+        </div>
+        <div className="w-full h-auto mt-2">
+          <Link to={{
+            pathname: `/post-details/${post._id}`,
+            state: { comments: post.comments },
+          }}>
+            <div style={{ width: '100%', height: '200px' }}>
               <img
                 src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                 alt={post.title}
                 className="max-w-full max-h-full object-cover rounded-lg skeleton-item"
-                style={{ height: '200px' }}
+                style={{ width: '100%', height: '100%', borderRadius: '10px' }}
               />
-              <h3 className="text-lg font-semibold mt-2">{post.title}</h3>
-            </Link>
-          </div>
+            </div>
+            <h3 className="text-lg font-semibold mt-2">{post.title}</h3>
+          </Link>
+        </div>
 
-          <div className='flex items-center'>
-            <button
-              className={`like-button mr-3 ${likedPosts.includes(post._id) ? 'liked' : ''}`}
-              onClick={() => handleToggleLike(post._id)}
-            >
-              <i className="fas fa-heart heart-icon"></i> {likedPosts.includes(post._id) ? 'Liked' : 'Like'}
-            </button>
-            <div className='flex items-center mr-5'>
-              <i className='fa fa-clock mr-1 text-green-600'></i>
-              <p className='text-xl mb-2 mt-1'>{post.cookingTime}</p>
-            </div>
-            <button
-              className={`favorite-button  ${favoritePosts.includes(post._id) ? 'favorited' : ''}`}
-              onClick={() => handleToggleFavorite(post._id)}
-            >
-              <FaStar color={favoritePosts.includes(post._id) ? 'orange' : 'grey'} size={25} />
-            </button>
+        <div className='flex items-center'>
+          
+
+          <button
+            className={`like-button mr-3 ${likedPosts.includes(post._id) ? 'liked' : ''}`}
+            onClick={() => handleToggleLike(post._id)}
+          >
+            <i className="fas fa-heart heart-icon"></i> {likedPosts.includes(post._id) ? 'Liked' : 'Like'}
+          </button>
+          <div className='flex items-center mr-2'>
+            <i className='fa fa-clock mr-1 text-green-600'></i>
+            <p className='text-xl mb-2 mt-1'>{post.cookingTime}</p>
           </div>
-          <div className="mt-2">
-            <p className="text-gray-600">{post.likes.length} likes</p>
-            <hr />
+          {checkForNonVeg(post.ingredients) ? (
+            <img
+              src={nonveg} // Replace with the path to your non-veg icon
+              alt="Non-Veg"
+              className="h-6 w-6 mr-3"
+            />
+          ) : (
+            <img
+              src={veg} // Replace with the path to your veg icon
+              alt="Veg"
+              className="h-6 w-6 mr-3"
+            />
+          )} 
+          <button
+            className={`favorite-button  ${favoritePosts.includes(post._id) ? 'favorited' : ''}`}
+            onClick={() => handleToggleFavorite(post._id)}
+          >
+            <FaStar color={favoritePosts.includes(post._id) ? 'orange' : 'grey'} size={25} />
+          </button>
+        </div>
+        <div className="mt-2">
+          <p className="text-gray-600">{post.likes.length} likes</p>
+          <hr />
+          <div className="flex mt-2">
             <div className="flex mt-2">
-              <div className="flex mt-2">
-                <input
-                  type="text"
-                  value={commentTexts[post._id] || ''}
-                  onChange={(event) => handleCommentChange(post._id, event)}
-                  placeholder="Enter your comment"
-                  className="border rounded p-2 flex-grow mr-2 w-9/12"
-                />
-                <button
-                  className="text-blue-600 hover:text-blue-700"
-                  onClick={() => handleAddComment(post._id)}
-                  disabled={!commentTexts[post._id]}
-                >
-                  <i className="fas fa-paper-plane"></i> Post
-                </button>
-              </div>
+              <input
+                type="text"
+                value={commentTexts[post._id] || ''}
+                onChange={(event) => handleCommentChange(post._id, event)}
+                placeholder="Enter your comment"
+                className="border rounded p-2 flex-grow mr-2 w-9/12"
+              />
+              <button
+                className="text-blue-600 hover:text-blue-700"
+                onClick={() => handleAddComment(post._id)}
+                disabled={!commentTexts[post._id]}
+              >
+                <i className="fas fa-paper-plane"></i> Post
+              </button>
             </div>
-            <div className="mt-4">
-              <strong className="border-b border-blue-600 mb-3 text-blue-800">Comments:</strong>
-              <ul>
-                {post.comments.slice(0, showAllComments[post._id] ? post.comments.length : 3).map((comment) => (
-                  <li key={comment._id} className="mb-2">
-                    {comment.user ? (
-                      <span className="text-gray-800">
-                        <strong>{comment.name}:</strong> {comment.text}
-                        {comment.user === loggedInUser._id && (
-                          <button
-                            className="text-red-500 ml-2"
-                            onClick={() => handleDeleteComment(post._id, comment._id)}
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        )}
-                      </span>
-                    ) : (
-                      <span className="text-gray-800">Unknown User: {comment.text}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {!showAllComments[post._id] && post.comments.length > 3 && (
-                <button
-                  className="text-blue-500 mt-2"
-                  onClick={() =>
-                    setShowAllComments((prevState) => ({
-                      ...prevState,
-                      [post._id]: true,
-                    }))
-                  }
-                >
-                  Show all comments ({post.comments.length})
-                </button>
-              )}
-            </div>
+          </div>
+          <div className="mt-4">
+            <strong className="border-b border-blue-600 mb-3 text-blue-800">Comments:</strong>
+            <ul>
+              {post.comments.slice(0, showAllComments[post._id] ? post.comments.length : 3).map((comment) => (
+                <li key={comment._id} className="mb-2">
+                  {comment.user ? (
+                    <span className="text-gray-800">
+                      <strong>{comment.name}:</strong> {comment.text}
+                      {comment.user === loggedInUser._id && (
+                        <button
+                          className="text-red-500 ml-2"
+                          onClick={() => handleDeleteComment(post._id, comment._id)}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-gray-800">Unknown User: {comment.text}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            {!showAllComments[post._id] && post.comments.length > 3 && (
+              <button
+                className="text-blue-500 mt-2"
+                onClick={() =>
+                  setShowAllComments((prevState) => ({
+                    ...prevState,
+                    [post._id]: true,
+                  }))
+                }
+              >
+                Show all comments ({post.comments.length})
+              </button>
+            )}
           </div>
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
+</div>
+
   );
 };
 
