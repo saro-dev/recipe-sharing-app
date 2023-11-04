@@ -7,11 +7,12 @@ const multer = require('multer');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const fetch = require('node-fetch');
-const cache = require('memory-cache');
 const sharp = require('sharp');
 const cron = require('node-cron');
 const https = require('https');
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 300 });
+
 
 
 
@@ -48,26 +49,6 @@ cron.schedule('*/14 * * * *', () => {
   });
 });
 
-const cacheDuration = 2 * 60 * 1000;
-const fetchAndCachePosts = async () => {
-  try {
-    const response = await fetch(backendUrl);
-    if (response.status === 200) {
-      const data = await response.json();
-      // Cache the fetched data for the specified duration
-      cache.put('cachedPosts', data, cacheDuration);
-      console.log('Fetched and cached posts:', new Date());
-    } else {
-      console.log('Server may be sleeping.');
-    }
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-  }
-};
-fetchAndCachePosts();
-cron.schedule('*/2 * * * *', () => {
-  fetchAndCachePosts();
-});
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://codersaro:Sarorosy12@cluster0.av48khu.mongodb.net/', {
   useNewUrlParser: true,
@@ -559,22 +540,25 @@ app.get('/author/:userId', async (req, res) => {
 
 app.get('/api/posts', async (req, res) => {
   try {
-    const cachedPosts = cache.get('cachedPosts');
+    // Check if posts are cached
+    const cachedPosts = cache.get('posts');
 
     if (cachedPosts) {
-      // If cached data is available, return it
-      console.log('Serving cached posts:', new Date());
+      // Serve cached posts if they exist
       res.status(200).json(cachedPosts);
     } else {
-      // If no cached data, fetch new posts and serve them
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const skip = (page - 1) * limit;
 
+      // Fetch the latest 5 posts first, based on createdAt in descending order
       const posts = await Recipe.find()
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
+
+      // Cache the fetched posts for 5 minutes
+      cache.set('posts', posts);
 
       res.status(200).json(posts);
     }
@@ -582,7 +566,6 @@ app.get('/api/posts', async (req, res) => {
     res.status(500).json({ error: 'Error fetching posts' });
   }
 });
-
 
 
 
