@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
 import './Notifications.css';
+import { FaHeart, FaComment } from 'react-icons/fa';
 import defaultimg from './defaultimg.jpg';
 import Alert from './Alert';
 
@@ -26,11 +28,7 @@ const Notifications = ({ userId }) => {
     fetchUserData();
   }, [userId]);
 
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return date.toLocaleDateString('en-US', options);
-  };
+  
 
   const handleDeleteNotification = async (notificationId) => {
     try {
@@ -57,6 +55,16 @@ const Notifications = ({ userId }) => {
   const sortedNotifications = userData.notifications.slice().sort((a, b) => b.createdAt - a.createdAt);
 
   const reversedNotifications = sortedNotifications.slice().reverse();
+  
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    if (isNaN(date)) {
+      // If the timestamp is not valid, return an empty string or handle it as needed
+      return '';
+    }
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
 
   return (
     <div className="notifications-container">
@@ -83,9 +91,9 @@ const Notifications = ({ userId }) => {
                 <li key={notification._id} className="notification-item">
                   <Link to={`/post-details/${notification.postId}`} className="notification-link">
                     {notification.type === 'like' ? (
-                      <span className="heart-icon">❤️</span>
+                      <FaHeart className="heart-icon" />
                     ) : (
-                      <span className="comment-icon">💬</span>
+                      <FaComment className='comment-icon' />
                     )}
                     <img
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
@@ -97,8 +105,9 @@ const Notifications = ({ userId }) => {
                   }}
                 />
                     {notification.message}
+                    <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
                   </Link>
-                  <span className="timestamp">{formatTimestamp(notification.createdAt)}</span>
+                  
                   <button
                     className="delete-button ml-5"
                     onClick={() => handleDeleteNotification(notification._id)}

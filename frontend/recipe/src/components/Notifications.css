@@ -35,20 +35,22 @@
     font-weight: 600;
   }
 .timestamp{
-    margin-left: 10px;
+    margin-left: 5px;
     font-weight: 400;
     color: #333;
+    font-size: 13px;
 }
 
   
   .heart-icon {
     margin-right: 10px;
     font-size: 20px;
-    color: #ff5733; /* Change to your desired heart color */
+    color: red; /* Change to your desired heart color */
   }
   .comment-icon {
     margin-right: 10px;
     font-size: 20px; 
+    color: aliceblue;
   }
   
   .loading-message {
