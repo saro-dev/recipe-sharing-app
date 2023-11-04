@@ -10,9 +10,6 @@ const crypto = require('crypto');
 const sharp = require('sharp');
 const cron = require('node-cron');
 const https = require('https');
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: 300 });
-
 
 
 
@@ -540,28 +537,17 @@ app.get('/author/:userId', async (req, res) => {
 
 app.get('/api/posts', async (req, res) => {
   try {
-    // Check if posts are cached
-    const cachedPosts = cache.get('posts');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    if (cachedPosts) {
-      // Serve cached posts if they exist
-      res.status(200).json(cachedPosts);
-    } else {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 5;
-      const skip = (page - 1) * limit;
+    // Fetch the latest 5 posts first, based on createdAt in descending order
+    const posts = await Recipe.find()
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
 
-      // Fetch the latest 5 posts first, based on createdAt in descending order
-      const posts = await Recipe.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit);
-
-      // Cache the fetched posts for 5 minutes
-      cache.set('posts', posts);
-
-      res.status(200).json(posts);
-    }
+    res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching posts' });
   }
