@@ -17,7 +17,7 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
 
   const handleDelete = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/comment/${postId}/${commentId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
         params: { userId: loggedInUser._id },
       });
 
@@ -33,7 +33,7 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
 
   const handleDeleteReply = async (replyId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/comment/${postId}/${comment._id}/${replyId}`, {
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${comment._id}/${replyId}`, {
         params: { userId: loggedInUser._id },
       });
 
