@@ -238,3 +238,122 @@ body{
   padding: 8px 10px;
   border-radius: 5px;
 }
+/* Style the root comment container */
+.comment {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.comment strong {
+  font-weight: bold;
+}
+
+.comment button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: #0074d9;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.comment button:hover {
+  text-decoration: underline;
+}
+
+/* Style the replies container */
+.replies {
+  margin-top: 10px;
+  list-style-type: none;
+}
+
+/* Style individual reply */
+.reply {
+  background-color: #e6e6e6;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.reply strong {
+  font-weight: bold;
+}
+
+.reply button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: #0074d9;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.reply button:hover {
+  text-decoration: underline;
+}
+
+.filter-bar {
+  display: inline-block;
+  padding: 0px 3px;
+  border-radius: 20px;
+  position: relative;
+  border: 2px solid #95A5A6;
+}
+
+.filter-bar label {
+  text-align: center;
+  font-family: sans-serif;
+  display: inline-block;
+  color: #95A5A6;
+  position: relative;
+  z-index: 2;
+  margin: 0 8px;
+  text-align: center;
+  padding: 0px 3px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.filter-bar input {
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.filter-bar span {
+  height: 11px;
+  width: 11px;
+  line-height: 21px;
+  border-radius: 50%;
+  background: #fff;
+  display: block;
+  position: absolute;
+  left: 22px;
+  top: -4px;
+  transition: all 0.3s ease-in-out;
+}
+
+.filter-bar input[value="all"]:checked ~ span {
+  background: gray;
+  left: 57px;
+  color: #fff;
+}
+
+.filter-bar input[value="veg"]:checked ~ span {
+  background: #27ae60;
+  left: 100px;
+}
+
+.filter-bar input[value="nonveg"]:checked ~ span {
+  background: red;
+  left: 17px;
+}
+
+.filter-bar input[value="all"]:checked + label,
+.filter-bar input[value="veg"]:checked + label,
+.filter-bar input[value="nonveg"]:checked + label {
+  color: black;
+}

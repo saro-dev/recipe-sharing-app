@@ -4,11 +4,12 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaStar, FaHeart } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
 import { WhatsappShareButton, FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
-import { FaWhatsapp,FaSnapchat, FaTelegram } from 'react-icons/fa'; // Import WhatsApp icon
+import { FaWhatsapp, FaSnapchat, FaTelegram } from 'react-icons/fa'; // Import WhatsApp icon
 import { FacebookIcon, TwitterIcon } from 'react-share';
 import defaultimg from './defaultimg.jpg';
 import nonveg from '../non-veg.png';
 import veg from '../veg.webp';
+import Comment from './Comment';
 
 
 const PostDetails = ({ loggedInUser }) => {
@@ -146,6 +147,45 @@ const PostDetails = ({ loggedInUser }) => {
     }
   };
 
+  const handleAddReply = async (parentCommentId, text) => {
+    try {
+      const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/addReply/${parentCommentId}`, {
+        userId: loggedInUser._id,
+        name: loggedInUser.name,
+        text,
+      });
+
+      const newReply = response.data;
+
+      // Update the state to reflect the newly added reply
+      setPost((prevPost) => {
+        const updatedComments = addReplyToComments(prevPost.comments, parentCommentId, newReply);
+        return { ...prevPost, comments: updatedComments };
+      });
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    }
+  };
+
+
+  const addReplyToComments = (comments, parentCommentId, newReply) => {
+    return comments.map((comment) => {
+      if (comment._id === parentCommentId) {
+        // Add the new reply to the replies array of the parent comment
+        if (!comment.replies) {
+          comment.replies = [newReply];
+        } else {
+          comment.replies.push(newReply);
+        }
+      } else if (comment.replies) {
+        // Recursively search for the parent comment in replies
+        addReplyToComments(comment.replies, parentCommentId, newReply);
+      }
+      return comment;
+    });
+  };
+
+
 
 
   if (loading) {
@@ -199,65 +239,65 @@ const PostDetails = ({ loggedInUser }) => {
       ReactDOM.render(ingredient, ingredientElement);
       return ` ${ingredientElement.textContent}`;
     }).join('\n');
-  
+
     // Create a temporary element to measure the text size
     const tempElement = document.createElement('div');
     tempElement.style.font = 'bold 24px Arial'; // Font size and type
     tempElement.textContent = 'RECIPEEZE';
-  
+
     // Get the width and height required for the text
     const textWidth = tempElement.offsetWidth + 5;
     const textHeight = tempElement.offsetHeight + 20;
-  
+
     // Calculate the canvas dimensions based on text size and content
     const canvasWidth = Math.max(400, textWidth);
     const canvasHeight = textHeight + 40 + ingredientText.split('\n').length * 30; // Increased vertical padding
-  
+
     // Create a canvas element with dynamic dimensions
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-  
+
     // Set canvas dimensions based on content
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-  
+
     // Set background color to purple
     context.fillStyle = 'purple';
     context.fillRect(0, 0, canvas.width, canvas.height);
-  
+
     // Define styles for text
     context.fillStyle = 'white'; // Text color
     context.font = 'bold 24px Arial'; // Font size and type
-  
+
     // Add the heading text "RECIPEEZE" centered horizontally
     const headingX = (canvas.width - textWidth) / 4;
     const headingY = 30;
     context.fillText('RECIPEEZE', headingX, headingY);
-  
+
     // Define initial position for drawing ingredient text
     let x = 20; // X-coordinate
     let y = textHeight + 60; // Increased vertical padding and alignment
-  
+
     // Draw the ingredient text on the canvas
     ingredientText.split('\n').forEach((line) => {
       context.fillText(line, x, y);
       y += 30; // Move down for the next line
     });
-  
+
     // Convert the canvas to a data URL (image)
     const dataUrl = canvas.toDataURL('image/png');
-  
+
     // Create a download link for the image with the recipe title as the filename
     const a = document.createElement('a');
     a.href = dataUrl;
     a.download = `${uptitle}.png`; // Set the image filename to the recipe title
     a.click();
   };
-  
+
   function checkForNonVeg(ingredients) {
     const nonVegKeywords = ['egg', 'chicken', 'meat', 'mutton', 'beef', 'pork', 'fish', 'seafood', 'lamb', 'venison', 'duck', 'turkey', 'veal', 'salmon', 'shrimp', 'crab', 'lobster', 'clam', 'oyster', 'scallop', 'squid', 'octopus', 'prawn', 'ham', 'bacon', 'sausage', 'steak', 'ribs', 'liver', 'tripe', 'gizzard', 'offal'];
     const lowerIngredients = ingredients.toLowerCase();
-  
+
     return nonVegKeywords.some((keyword) => lowerIngredients.includes(keyword));
   }
 
@@ -293,34 +333,34 @@ const PostDetails = ({ loggedInUser }) => {
           className="ml-2 text-blue-900 flex"
           onClick={handleProfileClick}
         ><img
-        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
-        alt=""
-        className="max-w-full max-h-full object-cover mr-2"
-        style={{ height: '50px', width: '50px', borderRadius: '50%' }}
-        onError={(e) => {
-          e.target.src = defaultimg; // Replace with the URL of your default image
-        }}
-      />
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: '50px', width: '50px', borderRadius: '50%' }}
+            onError={(e) => {
+              e.target.src = defaultimg; // Replace with the URL of your default image
+            }}
+          />
           <h2 className='text-2xl mt-2'>{post.userId.name}</h2>
         </button>
 
       </h2>
       <hr></hr>
       <div className='flex mb-4 mt-2'>
-      <h2 className="text-xl font-semibold  mr-6">{uptitle}</h2>
-      {checkForNonVeg(post.ingredients) ? (
-            <img
-              src={nonveg} // Replace with the path to your non-veg icon
-              alt="Non-Veg"
-              className="h-6 w-6 mr-3"
-            />
-          ) : (
-            <img
-              src={veg} // Replace with the path to your veg icon
-              alt="Veg"
-              className="h-6 w-6 mr-3"
-            />
-          )} 
+        <h2 className="text-xl font-semibold  mr-6">{uptitle}</h2>
+        {checkForNonVeg(post.ingredients) ? (
+          <img
+            src={nonveg} // Replace with the path to your non-veg icon
+            alt="Non-Veg"
+            className="h-6 w-6 mr-3"
+          />
+        ) : (
+          <img
+            src={veg} // Replace with the path to your veg icon
+            alt="Veg"
+            className="h-6 w-6 mr-3"
+          />
+        )}
       </div>
       <div>
         <img
@@ -331,20 +371,20 @@ const PostDetails = ({ loggedInUser }) => {
         />
       </div>
       <div className='flex items-center'>
-      <button
-        className={`like-button2 h-10 ${isFavorite ? 'text-white' : 'text-red-600 hover:text-white'}`}
-        onClick={handleToggleLike}
-      >
-        <FaHeart size={25} />
-        {likes} Likes
-      </button>
-      <div className="mt-2 bg-white w-40 rounded ml-3">
-        <div className='ml-5'>
-          <h3 className="font-semibold ">Making Time:</h3>
-          <i className='fa fa-clock mr-2 text-green-600'></i>
-          {post.cookingTime} Minutes
+        <button
+          className={`like-button2 h-10 ${isFavorite ? 'text-white' : 'text-red-600 hover:text-white'}`}
+          onClick={handleToggleLike}
+        >
+          <FaHeart size={25} />
+          {likes} Likes
+        </button>
+        <div className="mt-2 bg-white w-40 rounded ml-3">
+          <div className='ml-5'>
+            <h3 className="font-semibold ">Making Time:</h3>
+            <i className='fa fa-clock mr-2 text-green-600'></i>
+            {post.cookingTime} Minutes
+          </div>
         </div>
-      </div>
       </div>
       <hr className='m-1'></hr>
       <div className="mt-2">
@@ -404,35 +444,26 @@ const PostDetails = ({ loggedInUser }) => {
           <button
             className="text-blue-600 hover:text-blue-700"
             onClick={() => handleAddComment(post._id)}
-            disabled={!commentText.trim()}>
+            disabled={!commentText.trim()}
+          >
             <i className="fas fa-paper-plane"></i> Post
           </button>
         </div>
-        <ul>
-          {post.comments.slice(0, showAllComments ? post.comments.length : 3).map((comment) => (
-            <li key={comment._id} className="mb-2">
-              {comment.user ? (
-                <span className="text-gray-800">
-                  <strong>{comment.name}:</strong> {comment.text}
-                  {comment.user === loggedInUser._id && (
-                    <button
-                      className="text-red-500 ml-2"
-                      onClick={() => handleDeleteComment(comment._id)}
-                    >
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  )}
-                </span>
-              ) : (
-                <span className="text-gray-800">Unknown User: {comment.text}</span>
-              )}
-            </li>
-          ))}
-        </ul>
+        {post.comments.map((comment) => (
+          <Comment
+            key={comment._id}
+            comment={comment}
+            onAddReply={handleAddReply}
+            loggedInUser={loggedInUser} // Pass loggedInUser
+            postId={post._id} // Pass postId
+            setPost={setPost} // Pass setPost
+          />
+        ))}
+
 
       </div>
       <button
-        className="text-blue-500 mt-2"
+        className="text-blue-500 mt-2 mb-4"
         onClick={handleToggleComments}
       >
         {showAllComments ? 'Hide comments' : 'Show all comments'}

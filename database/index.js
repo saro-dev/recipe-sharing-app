@@ -28,7 +28,7 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
 
 const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
@@ -106,15 +106,30 @@ const userSchema = new mongoose.Schema({
   bio: String,
 });
 // Mongoose schema for comments
+const replySchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  name: String,
+  text: String,
+});
+
+const Reply = mongoose.model('Reply', replySchema);
+
+// Comment schema
 const commentSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  name:String,
+  name: String,
   text: String,
-  
+  replies: [replySchema], // Array of replies
 });
+
+
+
 
 const Comment = mongoose.model('Comment', commentSchema);
 
@@ -149,6 +164,125 @@ const recipeSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 const Recipe = mongoose.model('Recipe', recipeSchema);
+
+app.post('/api/comment/:postId', async (req, res) => {
+  const { userId, text, parentCommentId } = req.body; // Include parentCommentId in the request body
+
+  try {
+    const post = await Recipe.findById(req.params.postId);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (parentCommentId) {
+      // If parentCommentId is provided, it means this is a reply
+      const parentComment = await Comment.findById(parentCommentId);
+      if (!parentComment) {
+        return res.status(404).json({ error: 'Parent comment not found' });
+      }
+
+      const newReply = new Comment({
+        user: userId,
+        name: user.name,
+        text,
+      });
+
+      parentComment.replies.push(newReply);
+      await parentComment.save();
+      res.status(201).json(newReply);
+    } else {
+      // If parentCommentId is not provided, it's a top-level comment
+      const newComment = new Comment({
+        user: userId,
+        name: user.name,
+        text,
+      });
+
+      post.comments.push(newComment);
+      await post.save();
+      res.status(201).json(newComment);
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding comment' });
+  }
+});
+
+app.post('/api/comment/:postId/addReply/:commentId', async (req, res) => {
+  const { userId, text, name } = req.body;
+  const postId = req.params.postId;
+  const commentId = req.params.commentId;
+
+  try {
+    const post = await Recipe.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Find the parent comment in the post
+    const parentComment = post.comments.id(commentId);
+    if (!parentComment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    // Create a new reply
+    const newReply = new Reply({
+      user: userId,
+      name,
+      text,
+    });
+
+    // Add the reply to the parent comment's replies array
+    parentComment.replies.push(newReply);
+    await post.save();
+
+    res.status(201).json(newReply);
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding reply' });
+  }
+});
+
+// API endpoint to delete a reply
+app.delete('/api/comment/reply/:postId/:commentId/:replyId', async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const replyId = req.params.replyId;
+
+    const post = await Recipe.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const comment = post.comments.find((comment) => comment._id.toString() === commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    // Find the reply by replyId
+    const reply = comment.replies.find((reply) => reply._id.toString() === replyId);
+    if (!reply) {
+      return res.status(404).json({ error: 'Reply not found' });
+    }
+
+    // Check if the logged-in user is the owner of the reply
+    if (reply.user.toString() !== req.body.userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Remove the reply from the comment's replies
+    comment.replies.pull(replyId);
+    await post.save();
+
+    res.status(200).json({ message: 'Reply deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting reply' });
+  }
+});
 
 app.get('/api/notifications/:userId', async (req, res) => {
   try {
@@ -636,32 +770,51 @@ app.get('/api/liked-posts/:userId', async (req, res) => {
 });
 
 // API endpoint to add a comment
+// API endpoint to add a comment
 app.post('/api/comment/:postId', async (req, res) => {
-  const { userId, text, } = req.body;
+  const { userId, text, replyTo } = req.body;
+  const postId = req.params.postId;
 
   try {
-    const post = await Recipe.findById(req.params.postId);
-    
+    const post = await Recipe.findById(postId);
+
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     const newComment = new Comment({
       user: userId,
-      name:user.name,
+      name: user.name,
       text,
     });
 
-    post.comments.push(newComment);
-    await post.save();
+    if (replyTo) {
+      // If replyTo is provided, it's a reply
+      const parentComment = await Comment.findById(replyTo);
+      if (!parentComment) {
+        return res.status(404).json({ error: 'Parent comment not found' });
+      }
+
+      // Add the reply to the parent comment's replies array
+      parentComment.replies.push(newComment);
+      await parentComment.save();
+    } else {
+      // If replyTo is not provided, it's a top-level comment
+      post.comments.push(newComment);
+      await post.save();
+    }
+
     res.status(201).json(newComment);
   } catch (error) {
     res.status(500).json({ error: 'Error adding comment' });
   }
 });
+
 
 // API endpoint to delete a comment
 app.delete('/api/comment/:postId/:commentId', async (req, res) => {
@@ -691,6 +844,63 @@ app.delete('/api/comment/:postId/:commentId', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Error deleting comment' });
   }
+});
+app.delete('/api/reply/:commentId/:replyId', (req, res) => {
+  const commentId = req.params.commentId;
+  const replyId = req.params.replyId;
+  const userId = req.body.userId; 
+  Reply.findOneAndDelete({ _id: replyId, comment: commentId, user: userId }, (err, deletedReply) => {
+    if (err) {
+      return res.status(500).json({ error: 'An error occurred while deleting the reply.' });
+    }
+
+    if (!deletedReply) {
+      return res.status(404).json({ error: 'Reply not found or you do not have permission to delete it.' });
+    }
+
+    // Reply deleted successfully
+    return res.status(200).json({ message: 'Reply deleted successfully' });
+  });
+});
+app.delete('/api/comment/:postId/:commentId/:replyId', (req, res) => {
+  const postId = req.params.postId;
+  const commentId = req.params.commentId;
+  const replyId = req.params.replyId;
+  const userId = req.query.userId; // Assuming userId is provided as a query parameter
+
+  // Find the post
+  const post = posts.find((p) => p._id === postId);
+
+  if (!post) {
+    return res.status(404).json({ error: 'Post not found' });
+  }
+
+  // Find the comment within the post
+  const comment = post.comments.find((c) => c._id === commentId);
+
+  if (!comment) {
+    return res.status(404).json({ error: 'Comment not found' });
+  }
+
+  // Find the reply within the comment
+  const replyIndex = comment.replies.findIndex((r) => r._id === replyId);
+
+  if (replyIndex === -1) {
+    return res.status(404).json({ error: 'Reply not found' });
+  }
+
+  const reply = comment.replies[replyIndex];
+
+  // Check if the user is authorized to delete the reply (you can implement your own authorization logic here)
+
+  if (userId !== reply.userId) {
+    return res.status(403).json({ error: 'Unauthorized to delete this reply' });
+  }
+
+  // Delete the reply
+  comment.replies.splice(replyIndex, 1);
+
+  return res.status(200).json({ message: 'Reply deleted successfully' });
 });
 app.get('/api/comments/:postId', async (req, res) => {
   try {
