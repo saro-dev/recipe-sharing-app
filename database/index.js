@@ -246,43 +246,7 @@ app.post('/api/comment/:postId/addReply/:commentId', async (req, res) => {
   }
 });
 
-// API endpoint to delete a reply
-app.delete('/api/comment/reply/:postId/:commentId/:replyId', async (req, res) => {
-  try {
-    const postId = req.params.postId;
-    const commentId = req.params.commentId;
-    const replyId = req.params.replyId;
 
-    const post = await Recipe.findById(postId);
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-
-    const comment = post.comments.find((comment) => comment._id.toString() === commentId);
-    if (!comment) {
-      return res.status(404).json({ error: 'Comment not found' });
-    }
-
-    // Find the reply by replyId
-    const reply = comment.replies.find((reply) => reply._id.toString() === replyId);
-    if (!reply) {
-      return res.status(404).json({ error: 'Reply not found' });
-    }
-
-    // Check if the logged-in user is the owner of the reply
-    if (reply.user.toString() !== req.body.userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // Remove the reply from the comment's replies
-    comment.replies.pull(replyId);
-    await post.save();
-
-    res.status(200).json({ message: 'Reply deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Error deleting reply' });
-  }
-});
 
 app.get('/api/notifications/:userId', async (req, res) => {
   try {
@@ -822,6 +786,8 @@ app.delete('/api/comment/:postId/:commentId', async (req, res) => {
     const postId = req.params.postId;
     const commentId = req.params.commentId;
 
+    console.log('User ID:', req.body.userId);
+
     const post = await Recipe.findById(postId);
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
@@ -842,66 +808,51 @@ app.delete('/api/comment/:postId/:commentId', async (req, res) => {
     
     res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error deleting comment' });
   }
 });
-app.delete('/api/reply/:commentId/:replyId', (req, res) => {
-  const commentId = req.params.commentId;
-  const replyId = req.params.replyId;
-  const userId = req.body.userId; 
-  Reply.findOneAndDelete({ _id: replyId, comment: commentId, user: userId }, (err, deletedReply) => {
-    if (err) {
-      return res.status(500).json({ error: 'An error occurred while deleting the reply.' });
+
+app.delete('/api/comment/:postId/:commentId/:replyId', async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const replyId = req.params.replyId;
+    const userId = req.body.userId; // Assuming userId is provided as a query parameter
+
+    const post = await Recipe.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
     }
 
-    if (!deletedReply) {
-      return res.status(404).json({ error: 'Reply not found or you do not have permission to delete it.' });
+    const comment = post.comments.find(comment => comment._id.toString() === commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
     }
 
-    // Reply deleted successfully
-    return res.status(200).json({ message: 'Reply deleted successfully' });
-  });
+    const replyIndex = comment.replies.findIndex(reply => reply._id.toString() === replyId);
+    if (replyIndex === -1) {
+      return res.status(404).json({ error: 'Reply not found' });
+    }
+
+    const reply = comment.replies[replyIndex];
+
+    // Check if the user is authorized to delete the reply (you can implement your own authorization logic here)
+    if (userId !== reply.userId) {
+      return res.status(403).json({ error: 'Unauthorized to delete this reply' });
+    }
+
+    comment.replies.splice(replyIndex, 1);
+    await post.save();
+
+    res.status(200).json({ message: 'Reply deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error deleting reply' });
+  }
 });
-app.delete('/api/comment/:postId/:commentId/:replyId', (req, res) => {
-  const postId = req.params.postId;
-  const commentId = req.params.commentId;
-  const replyId = req.params.replyId;
-  const userId = req.query.userId; // Assuming userId is provided as a query parameter
 
-  // Find the post
-  const post = posts.find((p) => p._id === postId);
 
-  if (!post) {
-    return res.status(404).json({ error: 'Post not found' });
-  }
-
-  // Find the comment within the post
-  const comment = post.comments.find((c) => c._id === commentId);
-
-  if (!comment) {
-    return res.status(404).json({ error: 'Comment not found' });
-  }
-
-  // Find the reply within the comment
-  const replyIndex = comment.replies.findIndex((r) => r._id === replyId);
-
-  if (replyIndex === -1) {
-    return res.status(404).json({ error: 'Reply not found' });
-  }
-
-  const reply = comment.replies[replyIndex];
-
-  // Check if the user is authorized to delete the reply (you can implement your own authorization logic here)
-
-  if (userId !== reply.userId) {
-    return res.status(403).json({ error: 'Unauthorized to delete this reply' });
-  }
-
-  // Delete the reply
-  comment.replies.splice(replyIndex, 1);
-
-  return res.status(200).json({ message: 'Reply deleted successfully' });
-});
 app.get('/api/comments/:postId', async (req, res) => {
   try {
     const postId = req.params.postId;
