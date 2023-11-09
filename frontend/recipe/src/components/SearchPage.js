@@ -206,8 +206,8 @@ const SearchPage = ({ loggedInUser }) => {
       />
 
       
-      // Recommended Posts Section
-<div className="mb-4 overflow-x-auto">
+      
+<div className="mb-4 overflow-x-auto p-2 scrollbar-hidden">
   <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
   {recommendedPostsLoading ? (
     // Show loading spinner while fetching recommended posts
