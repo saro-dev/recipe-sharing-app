@@ -205,46 +205,58 @@ const SearchPage = ({ loggedInUser }) => {
         recipeCounts={recipeCounts}
       />
 
-      {/* Recommended Posts Section */}
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
-        {recommendedPostsLoading ? (
-          // Show loading spinner while fetching recommended posts
-          <div className="loading-container">
-            <PulseLoader color="#007BFF" size={10} />
-          </div>
-        ) : (
-        <div className="flex overflow-x-auto">
-          {recommendedPosts.map((post) => (
-            <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow mx-2" style={{width:"250px", overflow:"hidden"}}>
-              <p className="text-gray-700 flex">
-                <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
-                  alt=""
-                  className="max-w-full max-h-full object-cover mr-2"
-                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-                  onError={(e) => {
-                    e.target.src = defaultimg;
-                  }}
-                />
-                <strong>{post.authorName}</strong>
-              </p>
-              <div className="w-full h-100 mt-2">
-                <Link to={`/post-details/${post._id}`}>
-                  <img
-                    src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
-                    alt={post.title}
-                    className="max-w-full max-h-full object-cover rounded"
-                    style={{ width: '250px',height:"150px" }}
-                  />
-                  <span className='flex'><h3 className="text-lg font-semibold mt-2 mr-5">{post.title}</h3>
-                  <h3 className='flex mt-4 justify-center items-center bg-gray-300 p-1 rounded-full'><FaHeart className='text-red-700'/><p className='font-bold ml-2'>{post.likes.length}</p></h3></span>
-                </Link>
+      
+      // Recommended Posts Section
+<div className="mb-4 overflow-x-auto">
+  <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
+  {recommendedPostsLoading ? (
+    // Show loading spinner while fetching recommended posts
+    <div className="loading-container">
+      <PulseLoader color="#007BFF" size={10} />
+    </div>
+  ) : (
+    <div className="flex space-x-2">
+      {recommendedPosts.map((post) => (
+        <div
+          key={post._id}
+          className="flex-none border p-4 rounded-lg bg-gray-100 custom-shadow"
+          style={{ width: '250px' }}
+        >
+          <p className="text-gray-700 flex">
+            <img
+              src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
+              alt=""
+              className="max-w-full max-h-full object-cover mr-2"
+              style={{ height: '30px', width: '30px', borderRadius: '50%' }}
+              onError={(e) => {
+                e.target.src = defaultimg;
+              }}
+            />
+            <strong>{post.authorName}</strong>
+          </p>
+          <div className="w-full h-100 mt-2">
+            <Link to={`/post-details/${post._id}`}>
+              <img
+                src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
+                alt={post.title}
+                className="max-w-full max-h-full object-cover rounded"
+                style={{ width: '100%', height: '150px' }}
+              />
+              <div className="flex justify-between items-center mt-2">
+                <h3 className="text-lg font-semibold">{post.title}</h3>
+                <div className="flex items-center bg-gray-300 p-1 rounded-full">
+                  <FaHeart className="text-red-700" />
+                  <p className="font-bold ml-2">{post.likes.length}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>)}
-      </div>
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
     </div>
   );
 };
