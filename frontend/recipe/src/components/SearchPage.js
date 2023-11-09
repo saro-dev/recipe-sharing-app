@@ -1,10 +1,13 @@
+// Import necessary dependencies and components
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
+import { FaHeart, FaSearch } from 'react-icons/fa';
 import { PulseLoader } from 'react-spinners';
 import defaultimg from './defaultimg.jpg';
+import SearchResults from './SearchResults'; // Assuming you put the refactored code in a separate file
 
+// The main component
 const SearchPage = ({ loggedInUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -12,11 +15,16 @@ const SearchPage = ({ loggedInUser }) => {
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchType, setSearchType] = useState('recipes');
+  const [recommendedPostsLoading, setRecommendedPostsLoading] = useState(true);
   const navigate = useNavigate();
 
   // State to store the number of recipe posts for each user
   const [recipeCounts, setRecipeCounts] = useState({});
 
+  // State for recommended posts
+  const [recommendedPosts, setRecommendedPosts] = useState([]);
+
+  // Function to fetch search results
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
@@ -35,6 +43,7 @@ const SearchPage = ({ loggedInUser }) => {
       }
     };
 
+    // Function to fetch user search results and recipe counts
     const fetchUserSearchResults = async () => {
       try {
         if (searchQuery.trim() === '') {
@@ -57,6 +66,7 @@ const SearchPage = ({ loggedInUser }) => {
       }
     };
 
+    // Function to fetch recipe count for a specific user
     const fetchRecipeCount = async (userId) => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
@@ -69,17 +79,47 @@ const SearchPage = ({ loggedInUser }) => {
       }
     };
 
+    // Function to fetch recommended posts
+    const fetchRecommendedPosts = async () => {
+      try {
+        setRecommendedPostsLoading(true);
+        // Assuming you have a list of posts available
+        const allPosts = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
+        
+        // Get a random subset of posts (adjust the count based on your preference)
+        const recommendedPostsSubset = getRandomSubset(allPosts.data, 5);
+    
+        setRecommendedPosts(recommendedPostsSubset);
+      } catch (error) {
+        console.error('Error fetching recommended posts:', error);
+      }finally {
+        setRecommendedPostsLoading(false);
+      }
+    };
+    
+    // Function to get a random subset of an array
+    const getRandomSubset = (array, count) => {
+      const shuffledArray = array.sort(() => 0.5 - Math.random());
+      return shuffledArray.slice(0, count);
+    };
+
+    // Call the fetch functions
     fetchSearchResults();
     fetchUserSearchResults();
+    fetchRecommendedPosts(); // Call the function to fetch recommended posts
   }, [searchQuery, selectedCategory, searchType]);
 
+  // Event handler for radio button change
   const handleRadioChange = (event) => {
     setSearchType(event.target.value);
   };
+
+  // Event handler for category filter change
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
 
+  // Event handler for profile click
   const handleProfileClick = (userId) => {
     if (loggedInUser && loggedInUser._id === userId) {
       // If the user is the logged-in user, navigate to their own profile
@@ -154,49 +194,32 @@ const SearchPage = ({ loggedInUser }) => {
         </select>
       </div>
 
-      {/* User Search Section */}
-      <div className="search-results">
-        {loading ? (
+      {/* Render search results using the SearchResults component */}
+      <SearchResults
+        loading={loading}
+        searchType={searchType}
+        searchQuery={searchQuery}
+        userSearchResults={userSearchResults}
+        searchResults={searchResults}
+        handleProfileClick={handleProfileClick}
+        recipeCounts={recipeCounts}
+      />
+
+      {/* Recommended Posts Section */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
+        {recommendedPostsLoading ? (
+          // Show loading spinner while fetching recommended posts
           <div className="loading-container">
             <PulseLoader color="#007BFF" size={10} />
           </div>
-         ) : searchType === 'users' ? (
-          searchQuery.trim() === '' ? (
-            <p>Enter a search query to find users.</p>
-          ) : userSearchResults.length === 0 ? (
-            <p>No results found for users.</p>
-          ) : (
-          userSearchResults.map((user) => (
-            <div key={user._id} className="cursor-pointer border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow" onClick={() => handleProfileClick(user._id)}>
-              <p className="text-black flex">
-                <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${user._id}`}
-                  alt=""
-                  className="max-w-full max-h-full object-cover mr-2"
-                  style={{ height: '30px', width: '30px', borderRadius: '50%' }}
-                  onError={(e) => {
-                    e.target.src = defaultimg;
-                  }}
-                />
-                <strong>{user.name}</strong>
-              </p>
-              
-              <p className='ml-10'>{recipeCounts[user._id] || 0} posts</p>
-            </div>
-          )))
-        ) :(
-          searchQuery.trim() === '' ? (
-            <p className='text-l mt-2 ml-2'>Enter a search query to find recipes.</p>
-          ) : searchResults.length === 0 ? (
-            <p>No results found for recipes.</p>
-          ) : (
-          // Recipe Search Section
-          
-          searchResults.map((post) => (
-            <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
+        ) : (
+        <div className="flex overflow-x-auto">
+          {recommendedPosts.map((post) => (
+            <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow mx-2" style={{width:"250px", overflow:"hidden"}}>
               <p className="text-gray-500 flex">
                 <img
-                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
+                  src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
                   style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -206,20 +229,21 @@ const SearchPage = ({ loggedInUser }) => {
                 />
                 <strong>{post.authorName}</strong>
               </p>
-              <div className="w-100 h-100 mt-2">
+              <div className="w-full h-100 mt-2">
                 <Link to={`/post-details/${post._id}`}>
                   <img
                     src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                     alt={post.title}
-                    className="max-w-full max-h-full object-cover"
-                    style={{ maxWidth: '150px' }}
+                    className="max-w-full max-h-full object-cover rounded"
+                    style={{ width: '250px',height:"150px" }}
                   />
-                  <h3 className="text-lg font-semibold mt-2">{post.title}</h3>
+                  <span className='flex'><h3 className="text-lg font-semibold mt-2 mr-5">{post.title}</h3>
+                  <h3 className='flex mt-4 justify-center items-center bg-gray-300 p-1 rounded-full'><FaHeart className='text-red-700'/><p className='font-bold ml-2'>{post.likes.length}</p></h3></span>
                 </Link>
               </div>
             </div>
-          )))
-        )}
+          ))}
+        </div>)}
       </div>
     </div>
   );

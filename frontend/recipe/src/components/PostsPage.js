@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CustomToast from './CustomToast';
 import veg from '../veg.webp';
+import { debounce } from 'lodash';
+
 
 const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   const [posts, setPosts] = useState([]);
@@ -22,6 +24,9 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   const [hasMorePosts, setHasMorePosts] = useState(true); // Track if there are more posts to load
   const postsPerPage = 3;
   const containerRef = useRef(null);
+
+ 
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -48,24 +53,24 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   }, [currentPage, hasMorePosts]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const handleScroll = () => {
+    const handleScrollDebounced = debounce(() => {
+      const container = containerRef.current;
       if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 20) {
-        // Reached the bottom, load more posts
         setCurrentPage((prevPage) => prevPage + 1);
       }
-    };
-
+    }, 500);
+  
+    const container = containerRef.current;
+  
     if (container) {
-      container.addEventListener('scroll', handleScroll);
+      container.addEventListener('scroll', handleScrollDebounced);
+  
+      return () => {
+        container.removeEventListener('scroll', handleScrollDebounced);
+      };
     }
-
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, []);
+  }, [setCurrentPage]);
+  
 
   useEffect(() => {
     const storedLikedPosts = localStorage.getItem('likedPosts');
@@ -80,7 +85,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/isFavorite/${loggedInUser._id}/${postId}`);
         const { isFavorite } = response.data;
-
+  
         if (isFavorite) {
           setFavoritePosts((prevFavorites) => [...prevFavorites, postId]);
         }
@@ -88,12 +93,13 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
         console.error('Error checking favorite:', error);
       }
     };
-
+  
     // Check if each post is a favorite
     posts.forEach((post) => {
       checkIsFavorite(post._id);
     });
   }, [loggedInUser, posts, setFavoritePosts]);
+  
 
   const handleModeChange = (mode) => {
     setSelectedMode(mode);

@@ -34,10 +34,11 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
 
   const handleDeleteReply = async (replyId) => {
     try {
+      console.log('User ID:', loggedInUser._id);
       await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${comment._id}/${replyId}`, {
         data: { userId: loggedInUser._id },
       });
-
+      
       // Update the comment by filtering out the deleted reply
       setPost((prevPost) => ({
         ...prevPost,

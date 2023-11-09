@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -27,39 +28,24 @@ const ProfileComponent = ({ userId }) => {
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
 
+  const fetchData = async () => {
+    try {
+      const [userDataResponse, followersCountResponse, recipeCountResponse] = await Promise.all([
+        axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
+        axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
+        axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
+      ]);
+
+      setUserData(userDataResponse.data);
+      setRecipeCount(recipeCountResponse.data.count);
+      setFollowersCount(followersCountResponse.data.count);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
-        setUserData(response.data);
-        setUpdatedName(response.data.name);
-        setUpdatedBio(response.data.bio); // Set the initial value for the updated name
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-    const fetchFollowersCount = async () => {
-      try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`);
-        setFollowersCount(response.data.count);
-      } catch (error) {
-        console.error('Error fetching followers count:', error);
-      }
-    };
-
-    const fetchRecipeCount = async () => {
-      try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`);
-        setRecipeCount(response.data.count);
-      } catch (error) {
-        console.error('Error fetching recipe count:', error);
-      }
-    };
-
-
-    fetchUserData();
-    fetchFollowersCount();
-    fetchRecipeCount();
+    fetchData();
   }, [userId]);
 
 
@@ -323,11 +309,11 @@ const ProfileComponent = ({ userId }) => {
         ) : (
           <div>
             <div className="mb-4 mt-2 animate-pulse">
-              <div className="bg-gray-200 h-20 w-3/3 rounded-lg mb-2"></div>
+              <div className="bg-blue-200 h-20 w-3/3 rounded-lg mb-2" style={{height:"200px"}}></div>
               <div className="bg-gray-200 h-20 w-1/2 rounded-lg"></div>
             </div>
             <div className="mb-4 flex animate-pulse">
-              <div className="bg-gray-200 h-10 w-1/3 rounded-lg mr-2"></div>
+              <div className="bg-gray-200 h-10 w-1/2 rounded-lg mr-2"></div>
               <div className="bg-gray-200 h-15 w-1/4 rounded-lg"></div>
             </div>
           </div>

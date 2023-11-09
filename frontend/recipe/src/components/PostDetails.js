@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaStar, FaHeart } from 'react-icons/fa';
-import ReactDOM from 'react-dom';
-import { WhatsappShareButton, FacebookShareButton, TwitterShareButton, } from 'react-share'; // Import WhatsAppShareButton
-import { FaWhatsapp, FaSnapchat, FaTelegram } from 'react-icons/fa'; // Import WhatsApp icon
+import {
+  FaArrowLeft,
+  FaStar,
+  FaHeart,
+  FaWhatsapp,
+  FaSnapchat,
+  FaTelegram,
+} from 'react-icons/fa';
+import { WhatsappShareButton, FacebookShareButton, TwitterShareButton } from 'react-share';
 import { FacebookIcon, TwitterIcon } from 'react-share';
+import ReactDOM from 'react-dom';
+import Comment from './Comment';
 import defaultimg from './defaultimg.jpg';
 import nonveg from '../non-veg.png';
 import veg from '../veg.webp';
-import Comment from './Comment';
+
 
 
 const PostDetails = ({ loggedInUser }) => {
@@ -67,7 +74,7 @@ const PostDetails = ({ loggedInUser }) => {
 
 
 
-  const handleToggleLike = async () => {
+  const handleToggleLike = useCallback(async () => {
     try {
       // Send a request to toggle the like status of the post
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
@@ -82,7 +89,7 @@ const PostDetails = ({ loggedInUser }) => {
     } catch (error) {
       console.error('Error toggling like:', error);
     }
-  };
+  }, [postId, loggedInUser]);
   const handleAddToFavorites = async () => {
     try {
       if (!loggedInUser) {
@@ -131,21 +138,6 @@ const PostDetails = ({ loggedInUser }) => {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    try {
-      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${commentId}`, {
-        data: { userId: loggedInUser._id },
-      });
-
-      // Update the post by filtering out the deleted comment
-      setPost((prevPost) => ({
-        ...prevPost,
-        comments: prevPost.comments.filter((comment) => comment._id !== commentId),
-      }));
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-    }
-  };
 
   const handleAddReply = async (parentCommentId, text) => {
     try {

@@ -818,7 +818,6 @@ app.delete('/api/comment/:postId/:commentId/:replyId', async (req, res) => {
     const postId = req.params.postId;
     const commentId = req.params.commentId;
     const replyId = req.params.replyId;
-    const userId = req.body.userId; // Assuming userId is provided as a query parameter
 
     const post = await Recipe.findById(postId);
     if (!post) {
@@ -835,13 +834,7 @@ app.delete('/api/comment/:postId/:commentId/:replyId', async (req, res) => {
       return res.status(404).json({ error: 'Reply not found' });
     }
 
-    const reply = comment.replies[replyIndex];
-
-    // Check if the user is authorized to delete the reply (you can implement your own authorization logic here)
-    if (userId !== reply.userId) {
-      return res.status(403).json({ error: 'Unauthorized to delete this reply' });
-    }
-
+    // Delete the reply
     comment.replies.splice(replyIndex, 1);
     await post.save();
 
@@ -851,6 +844,7 @@ app.delete('/api/comment/:postId/:commentId/:replyId', async (req, res) => {
     res.status(500).json({ error: 'Error deleting reply' });
   }
 });
+
 
 
 app.get('/api/comments/:postId', async (req, res) => {

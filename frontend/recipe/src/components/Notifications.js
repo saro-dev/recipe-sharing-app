@@ -76,10 +76,20 @@ const Notifications = ({ userId }) => {
       )}
       {loading ? (
         <div className="loading-skeleton">
-          {/* Skeleton loading effect */}
-          <div className="skeleton-item"></div>
-          <div className="skeleton-item"></div>
-          <div className="skeleton-item"></div>
+          <div className="mb-4 mt-2 animate-pulse">
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+              <div className="bg-blue-200 mb-1 h-5 w-3/3 rounded-lg"></div>
+              <div className="bg-gray-200 mb-3 h-2 w-2/3 rounded-lg"></div>
+            </div>
         </div>
       ) : (
         <div>
