@@ -217,7 +217,7 @@ const SearchPage = ({ loggedInUser }) => {
         <div className="flex overflow-x-auto">
           {recommendedPosts.map((post) => (
             <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow mx-2" style={{width:"250px", overflow:"hidden"}}>
-              <p className="text-gray-500 flex">
+              <p className="text-gray-700 flex">
                 <img
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId}`}
                   alt=""
