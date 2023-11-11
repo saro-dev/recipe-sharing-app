@@ -7,7 +7,7 @@ const UserResult = ({ user, handleProfileClick, recipeCounts }) => (
   <div key={user._id} className="cursor-pointer border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow" onClick={() => handleProfileClick(user._id)}>
     <p className="text-black flex">
       <img
-        src={`http://localhost:5000/api/getProfileImage/${user._id}`}
+        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${user._id}`}
         alt=""
         className="max-w-full max-h-full object-cover mr-2"
         style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -25,7 +25,7 @@ const RecipeResult = ({ post }) => (
   <div key={post._id} className="border p-4 mb-4 rounded-lg bg-gray-100 custom-shadow">
     <p className="text-gray-500 flex">
       <img
-        src={`http://localhost:5000/api/getProfileImage/${post.userId._id}`}
+        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${post.userId._id}`}
         alt=""
         className="max-w-full max-h-full object-cover mr-2"
         style={{ height: '30px', width: '30px', borderRadius: '50%' }}
@@ -38,7 +38,7 @@ const RecipeResult = ({ post }) => (
     <div className="w-100 h-100 mt-2">
       <Link to={`/post-details/${post._id}`}>
         <img
-          src={`http://localhost:5000/api/getRecipeImage/${post._id}`}
+          src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
           alt={post.title}
           className="max-w-full max-h-full object-cover"
           style={{ maxWidth: '150px' }}

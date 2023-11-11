@@ -300,7 +300,7 @@ const PostDetails = ({ loggedInUser }) => {
     <div className="p-4 page-container mb-10">
       {!loggedInUser && (
         <div className="z-999 bg-red-100 p-4 rounded text-red-600 mb-4">
-          You are not logged in! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to access additional features.
+          You are not logged in! <br></br> Please <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/login">Log In</Link> or <Link className="bg-red-600 text-white px-2 py-1 rounded font-bold mx-1" to="/signup">Sign Up</Link> to view more recipes.
         </div>
       )}
       {alert && (
@@ -431,7 +431,7 @@ const PostDetails = ({ loggedInUser }) => {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Enter your comment"
-            className="border rounded p-2 flex-grow"
+            className="border rounded p-2 flex-grow mb-3 mr-3"
           />
           <button
             className="text-blue-600 hover:text-blue-700"

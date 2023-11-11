@@ -839,11 +839,13 @@ app.delete('/api/comment/:postId/:commentId/:replyId', async (req, res) => {
     await post.save();
 
     res.status(200).json({ message: 'Reply deleted successfully' });
+    console.log("Reply deleted succesfully")
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error deleting reply' });
   }
 });
+
 
 
 

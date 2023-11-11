@@ -34,7 +34,6 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
 
   const handleDeleteReply = async (replyId) => {
     try {
-      console.log('User ID:', loggedInUser._id);
       await axios.delete(`https://recipe-backend-1e02.onrender.com/api/comment/${postId}/${comment._id}/${replyId}`, {
         data: { userId: loggedInUser._id },
       });
@@ -52,6 +51,7 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
           return c;
         }),
       }));
+      console.log("Reply deleted successfully")
     } catch (error) {
       console.error('Error deleting reply:', error);
     }
@@ -79,6 +79,20 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
       >
         Reply
       </button>
+      {showReplyInput && (
+        <div className="reply-input">
+          <input
+            type="text"
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Reply to this comment"
+            className="border rounded p-2 flex-grow m-3"
+          />
+          <button onClick={handleAddReply} className="reply-button">
+            Reply
+          </button>
+        </div>
+      )}
       {comment.replies && comment.replies.length > 0 && (
         <button
           onClick={() => setShowReplies(!showReplies)}
@@ -107,19 +121,7 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
         </div>
       )}
       
-      {showReplyInput && (
-        <div className="reply-input">
-          <input
-            type="text"
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            placeholder="Reply to this comment"
-          />
-          <button onClick={handleAddReply} className="reply-button">
-            Reply
-          </button>
-        </div>
-      )}
+      
     </div>
   );
 };
