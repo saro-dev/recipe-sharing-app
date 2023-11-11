@@ -81,7 +81,7 @@ const App = () => {
           <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/forgot-password" element={<ForgotPasswordComponent loggedInUser={loggedInUser}/>} />
           <Route path="/password-reset/:token" element={<PasswordResetComponent />} />
-          <Route path="/post-details/:postId" element={<PostDetails />} />
+          
   
           {/* Add the route for post details */}
           
@@ -97,11 +97,12 @@ const App = () => {
               <Route path="/user/:userId" element={<UserProfile loggedInUser={loggedInUser} />}/>
               <Route path="/user-posts/:userId" element={<UserPostsPage userId={loggedInUser._id}/>} />
               <Route path="/notifications" element={<Notifications loggedInUser={loggedInUser} userId={loggedInUser._id}/>} />
-              <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser} />} />
+              
             </>
           ) : (
             <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
           )}
+          <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser} />} />
            <Route path="*" element={<NotFound404 />} />
         </Routes>
       </div>
