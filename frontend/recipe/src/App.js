@@ -17,9 +17,11 @@ import FavouritesPage from './components/FavouritesPage';
 import UserPostsPage from './components/UserPostsPage';
 import ForgotPasswordComponent from './components/ForgotPasswordComponent';
 import PasswordResetComponent from './components/PasswordResetComponent';
+import LandingPage from './components/LandingPage';
 import NotFound404 from './components/NotFound404';
 import axios from 'axios';
 import splash from './splash.png';
+import TermsOfService from './components/TermsOfService';
 
 const Splash = () => {
   return (
@@ -81,7 +83,7 @@ const App = () => {
           <Route path="/login" element={<LoginComponent onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/forgot-password" element={<ForgotPasswordComponent loggedInUser={loggedInUser}/>} />
           <Route path="/password-reset/:token" element={<PasswordResetComponent />} />
-          
+          <Route path="/termsofservices" element={<TermsOfService />} />
   
           {/* Add the route for post details */}
           
@@ -100,7 +102,7 @@ const App = () => {
               
             </>
           ) : (
-            <Route path="/" element={<SignupComponent onSignupSuccess={handleSignupSuccess} />} />
+            <Route path="/" element={<LandingPage />} />
           )}
           <Route path="/post-details/:postId" element={<PostDetails loggedInUser={loggedInUser} />} />
            <Route path="*" element={<NotFound404 />} />
