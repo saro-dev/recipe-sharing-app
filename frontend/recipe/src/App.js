@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { FaHome, FaSearch, FaPlus, FaUser, FaBell } from 'react-icons/fa';
 import SignupComponent from './components/SignupComponent';
@@ -22,6 +22,9 @@ import NotFound404 from './components/NotFound404';
 import axios from 'axios';
 import splash from './splash.png';
 import TermsOfService from './components/TermsOfService';
+import ContactForm from './components/ContactForm';
+import PricingPage from './components/PricingPage';
+
 
 const Splash = () => {
   return (
@@ -31,15 +34,29 @@ const Splash = () => {
   );
 };
 
-
-
 const App = () => {
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
   const [loggedInUser, setLoggedInUser] = useState(storedUser);
   const [alert, setAlert] = useState(null); 
   const [showSplash, setShowSplash] = useState(true);
   const [favoritePosts, setFavoritePosts] = useState([]);
+  const [landingPageCssLoaded, setLandingPageCssLoaded] = useState(false);
 
+  useEffect(() => {
+    const loadLandingPageCss = async () => {
+      if (!loggedInUser) {
+        try {
+          // Dynamically import LandingPage.css if LandingPage component is rendered
+          await import('./components/LandingPage.css');
+          setLandingPageCssLoaded(true);
+        } catch (error) {
+          console.error('Error loading LandingPage.css:', error);
+        }
+      }
+    };
+
+    loadLandingPageCss();
+  }, [loggedInUser]);
 
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
@@ -57,8 +74,8 @@ const App = () => {
     setTimeout(() => {
       setAlert(null);
     }, 3000);
-
   };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
@@ -70,11 +87,11 @@ const App = () => {
   }, []);
 
   return (
-  <Router>
-    {showSplash ? (
-      <Splash />
-    ) : (
-      <div className="all">
+    <Router>
+      {showSplash ? (
+        <Splash />
+      ) : (
+        <div className={`all ${loggedInUser ? '' : 'landing-page'}`}>
         <div className='flex justify-center '>
           {alert && <Alert type={alert.type} message={alert.message} />}
         </div>
@@ -84,7 +101,8 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPasswordComponent loggedInUser={loggedInUser}/>} />
           <Route path="/password-reset/:token" element={<PasswordResetComponent />} />
           <Route path="/termsofservices" element={<TermsOfService />} />
-  
+          <Route path="/contact" element={<ContactForm />} />
+          <Route path="/pricing" element={<PricingPage />} />
           {/* Add the route for post details */}
           
           {loggedInUser ? (

@@ -20,7 +20,7 @@
 }
 
 .brand span {
-  font-size: 1.5em;
+  font-size: 2em;
   font-weight: bold;
   color: black;
 }
@@ -83,7 +83,7 @@ p {
     background-position: 0% 50%;
   }
 }
-html {
+.html {
   --font-size-1: 1rem;
   --font-size-2: 1.2rem;
   --font-size-3: 1.3rem;
@@ -102,7 +102,7 @@ html {
   box-sizing: border-box;
 }
 
-html {
+.html {
   scroll-behavior: smooth;
 }
 
@@ -179,6 +179,7 @@ a:link, a:visited {
 
 .menu-items-column {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: start;
 }
@@ -189,13 +190,14 @@ a:link, a:visited {
 }
 .menu-item-card-1 {
   padding: 4rem 3rem;
-  margin: 0 2rem;
+  margin: 5rem 2rem;
   border-radius: 4rem;
+  width: 17rem;
 }
 .menu-item-card-2 {
   margin-top: 5rem;
   padding: 1.4rem 1rem;
-  width: 12rem;
+  width: 6rem;
   border-radius: 1.6rem;
 }
 .menu-item-card-horizontal {
@@ -253,7 +255,7 @@ a:link, a:visited {
   line-height: 0;
 }
 .cart-button img {
-  width: 3rem;
+  width: 1.5rem;
   filter: invert(1);
 }
 
@@ -266,7 +268,7 @@ display: flex;
 }
 
 .heading-primary {
-  font-size: var(--font-size-10);
+  font-size: 30px;
   font-weight: 900;
 }
 
@@ -363,7 +365,7 @@ display: flex;
 }
 
 header {
-  padding: 5rem;
+  padding:2rem 5rem;
 }
 
 .header-section {
@@ -685,8 +687,15 @@ footer {
   color: #fff;
 }
 
+@media (min-width: 1600px) {
+  .html {
+    font-size: 75%;
+  }
+}
 @media (max-width: 1200px) {
- 
+  .html {
+    font-size: 55%;
+  }
 
   .description p,
 .menu-item-details-vertical p {
@@ -703,7 +712,12 @@ footer {
   }
 }
 @media (max-width: 1050px) {
-  
+  .html {
+    font-size: 50%;
+    --font-size-1: 1.2rem;
+    --font-size-2: 1.5rem;
+    --font-size-4: 1.6rem;
+  }
 
   .brand h4 {
     font-size: var(--font-size-9);
@@ -792,7 +806,7 @@ footer {
 
   .menu-item-card-1 {
     transform: scale(1.1);
-    margin: 2rem 0 0;
+    margin: 5rem  0;
   }
   .menu-item-card-1:first-of-type {
     margin-right: 5rem;
@@ -854,7 +868,9 @@ footer {
   }
 }
 @media (max-width: 600px) {
-  
+  .html {
+    font-size: 45%;
+  }
 
   .section-1, .section-2 {
     padding: 0;
@@ -869,15 +885,23 @@ footer {
   }
 }
 @media (max-width: 450px) {
-  
+  .html {
+    font-size: 40%;
+    --font-size-1: 1.8rem;
+    --font-size-2: 2rem;
+    --font-size-4: 2.2rem;
+    --font-size-9: 4rem;
+    --font-size-10: 6rem;
+  }
 
   .food-icons {
-    width: 5rem;
+    width: 3rem;
   }
 
   .food-categories-1 button {
     border-radius: 1.2rem;
     padding: 1.4rem 1.6rem;
+    margin: 10px 5px ;
   }
 
   .header-image img {
@@ -910,6 +934,15 @@ footer {
     padding: 2rem;
   }
 }
-
+@media (max-width: 400px) {
+  .html {
+    font-size: 35%;
+  }
+}
+@media (max-width: 330px) {
+  .html {
+    font-size: 30%;
+  }
+}
 
 /*# sourceMappingURL=styles.css.map */

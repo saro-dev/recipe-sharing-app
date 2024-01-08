@@ -1,0 +1,107 @@
+/* PricingPage.css */
+
+.pricing-page {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .pricing-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  .pricing-plans {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .pricing-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  
+    &:hover {
+      transform: scale(1.05);
+    }
+  
+    .plan-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+  
+    .plan-price {
+      font-size: 18px;
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+  
+    .plan-features {
+      list-style: none;
+      padding: 0;
+  
+      li {
+        margin: 5px 0;
+      }
+    }
+  
+    .plan-button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+  /* In your CSS file */
+
+  .pricing-card {
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #c0c0c0; /* Silver color */
+    position: relative;
+  }
+  
+  .pricing-card.gold {
+    background: linear-gradient(to right, #ffd700, #ffd700 );
+    animation: shining 1s infinite linear;
+  }
+  
+  .plan-price {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .features-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .features-list li {
+    margin: 5px 0;
+  }
+  
+  .subscribe-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Animation for the shining effect */
+  @keyframes shining {
+    from {
+      background-position: 0% center;
+    }
+    to {
+      background-position: 100% center;
+    }
+  }

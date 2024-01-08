@@ -286,6 +286,28 @@ const PasswordReset = mongoose.model('PasswordReset', {
   token: String,
   expires: Date,
 });
+app.post('/api/contact', (req, res) => {
+  const { name, email, message } = req.body;
+
+  // Send email
+  sendContactEmail(name, email, message)
+    .then(() => {
+      res.status(200).json({ success: true, message: 'Message sent successfully.' });
+    })
+    .catch((error) => {
+      res.status(500).json({ success: false, error: error.message });
+    });
+});
+const sendContactEmail = (name, email, message) => {
+  const mailOptions = {
+    from: 'Recipeeze User',
+    to: 'codersarogmail.com', // Replace with your actual email to receive contact form submissions
+    subject: 'New Contact Form Submission',
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
 // POST route for sending reset password email
 app.post('/api/forgot-password', async (req, res) => {
   const { email } = req.body;

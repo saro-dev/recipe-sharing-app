@@ -1,7 +1,6 @@
 // LandingPage.js
 
 import React, { useState } from 'react';
-import './LandingPage.css';
 import logo from '../splash.png';
 import { Link } from 'react-router-dom';
 import mainiamge from './images/vegetable-eggs.png';
@@ -21,7 +20,8 @@ const LandingPage = () => {
   return (
     <>
 
-    <div className='bodyy'>
+   <div id='box'>
+   <div className='bodyy'>
     <header>
         <div className="brand">
         <img src={logo} />
@@ -31,7 +31,8 @@ const LandingPage = () => {
         <div className="header-section">
             <div className="hero-heading">
                 <h1 className="heading-primary">Delicious <br/> Food Recipes are Waiting <br/> For You</h1>
-                <Link to="/signup" className="button button-active view-menu" style={{color:"white"}}>View Recipes 
+                <Link to="/signup" className="button button-active view-menu" style={{color:"white"}}>
+                    <span>View Recipes</span> 
                     <span><img src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxnPjxwYXRoIGQ9Ik01MDYuMTM0LDI0MS44NDNjLTAuMDA2LTAuMDA2LTAuMDExLTAuMDEzLTAuMDE4LTAuMDE5bC0xMDQuNTA0LTEwNGMtNy44MjktNy43OTEtMjAuNDkyLTcuNzYyLTI4LjI4NSwwLjA2OGMtNy43OTIsNy44MjktNy43NjIsMjAuNDkyLDAuMDY3LDI4LjI4NEw0NDMuNTU4LDIzNkgyMGMtMTEuMDQ2LDAtMjAsOC45NTQtMjAsMjBjMCwxMS4wNDYsOC45NTQsMjAsMjAsMjBoNDIzLjU1N2wtNzAuMTYyLDY5LjgyNGMtNy44MjksNy43OTItNy44NTksMjAuNDU1LTAuMDY3LDI4LjI4NGM3Ljc5Myw3LjgzMSwyMC40NTcsNy44NTgsMjguMjg1LDAuMDY4bDEwNC41MDQtMTA0YzAuMDA2LTAuMDA2LDAuMDExLTAuMDEzLDAuMDE4LTAuMDE5QzUxMy45NjgsMjYyLjMzOSw1MTMuOTQzLDI0OS42MzUsNTA2LjEzNCwyNDEuODQzeiIvPjwvZz48L2c+PGc+PC9nPjxnPjwvZz48Zz48L2c+PGc+PC9nPjxnPjwvZz48Zz48L2c+PGc+PC9nPjxnPjwvZz48Zz48L2c+PGc+PC9nPjxnPjwvZz48Zz48L2c+PGc+PC9nPjxnPjwvZz48Zz48L2c+PC9zdmc+" alt="Arrow right" /></span>
                 </Link>
 
@@ -113,12 +114,10 @@ const LandingPage = () => {
         <section className="section-2">
             <div className="description">
                 <h2 className="heading-secondary">
-                    Special offers and discounts available on select items!
+                    Special Dishes For All Category
                 </h2>
                 <p>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Magni eveniet vero, minus dolores
-                    facere voluptatem repudiandae quas laudantium ipsum ad sed doloremque facilis non libero
-                    optio. Obcaecati odit commodi expedita?
+                Discover special offers and exclusive discounts on selected recipes! Dive into a world of culinary delights where you can explore and enjoy a variety of mouth-watering dishes—all for free.
                 </p>
             </div>
 
@@ -141,10 +140,8 @@ const LandingPage = () => {
         </div>
 
         <div className="description">
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequatur a ipsam blanditiis, similique,
-                aliquam excepturi hic vero accusantium non cumque adipisci. Perspiciatis corrupti iste saepe, molestias
-                magni obcaecati. Similique, officiis.</p>
-        </div>
+  <p>Welcome to Recipeeze, your go-to destination for mouth-watering recipes, cooking tips, and culinary inspiration. Whether you're a seasoned chef or just starting out in the kitchen, our platform offers a diverse range of recipes that cater to every taste and occasion. Dive into our collection and discover new flavors, techniques, and cooking adventures awaiting you.</p>
+</div>
 
         <div className="footer-links">
             <div className="links-group copyright">
@@ -155,28 +152,28 @@ const LandingPage = () => {
 
             <div className="links-group links-group-2">
                 <h3>Our Services</h3>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Pricing</a>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Tracking</a>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Report a bug</a>
+                <Link to="/pricing">Pricing</Link>
+                <Link to="/contact">Report a Bug</Link>
                 <Link to="/termsofservices">Terms of Services</Link>
             </div>
 
             <div className="links-group">
                 <h3>Our Company</h3>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Reporting</a>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Get in touch</a>
-                <a href="https://zakariyaq313.github.io/error-404/" target="_blank" rel="noopener">Management</a>
+                <Link to="/contact">Reporting</Link>
+                <Link to="/contact">Get In Touch</Link>
+                <Link to="/contact">Management</Link>
             </div>
 
             <div className="links-group links-group-4">
                 <h3>Address</h3>
-                <p>Kanhipuram,</p>
+                <p>Kanchipuram,</p>
                 <p>TamilNadu</p>
                 <p>codersarogmail.com</p>
             </div>
         </div>
     </footer>
     </div>
+   </div>
 
     </>
   );
