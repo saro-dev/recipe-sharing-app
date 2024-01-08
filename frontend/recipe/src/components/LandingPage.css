@@ -685,15 +685,8 @@ footer {
   color: #fff;
 }
 
-@media (min-width: 1600px) {
-  html {
-    font-size: 75%;
-  }
-}
 @media (max-width: 1200px) {
-  html {
-    font-size: 55%;
-  }
+ 
 
   .description p,
 .menu-item-details-vertical p {
@@ -710,12 +703,7 @@ footer {
   }
 }
 @media (max-width: 1050px) {
-  html {
-    font-size: 50%;
-    --font-size-1: 1.2rem;
-    --font-size-2: 1.5rem;
-    --font-size-4: 1.6rem;
-  }
+  
 
   .brand h4 {
     font-size: var(--font-size-9);
@@ -866,9 +854,7 @@ footer {
   }
 }
 @media (max-width: 600px) {
-  html {
-    font-size: 45%;
-  }
+  
 
   .section-1, .section-2 {
     padding: 0;
@@ -883,14 +869,7 @@ footer {
   }
 }
 @media (max-width: 450px) {
-  html {
-    font-size: 40%;
-    --font-size-1: 1.8rem;
-    --font-size-2: 2rem;
-    --font-size-4: 2.2rem;
-    --font-size-9: 4rem;
-    --font-size-10: 6rem;
-  }
+  
 
   .food-icons {
     width: 5rem;
@@ -931,15 +910,6 @@ footer {
     padding: 2rem;
   }
 }
-@media (max-width: 400px) {
-  html {
-    font-size: 35%;
-  }
-}
-@media (max-width: 330px) {
-  html {
-    font-size: 30%;
-  }
-}
+
 
 /*# sourceMappingURL=styles.css.map */
