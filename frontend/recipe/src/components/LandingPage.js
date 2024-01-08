@@ -15,7 +15,7 @@ const LandingPage = () => {
     setIsLiked(!isLiked);
   };
   const handleLikeClick2 = () => {
-    setIsLiked2(!isLiked2);
+    setIsLiked2(!islikesd2);
   };
   return (
     <>
@@ -63,7 +63,7 @@ const LandingPage = () => {
                         </div>
 
                         <button
-      className={`like-button like-button-1 ${isLiked ? 'favourite' : ''}`}
+      className={`likes-button likes-button-1 ${isLiked ? 'favourite' : ''}`}
       onClick={handleLikeClick}
       style={{ backgroundColor: isLiked ? 'red' : 'rgba(0, 0, 0, 0.1)' }}
     >
@@ -85,7 +85,7 @@ const LandingPage = () => {
                             <p>Real chicken</p>
                         </div>
                         <button
-      className={`like-button like-button-1 ${isLiked2 ? 'favourite' : ''}`}
+      className={`likes-button likes-button-1 ${isLiked2 ? 'favourite' : ''}`}
       onClick={handleLikeClick2}
       style={{ backgroundColor: isLiked2 ? 'red' : 'rgba(0, 0, 0, 0.1)' }}
     >

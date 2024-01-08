@@ -208,32 +208,32 @@ a:link, a:visited {
   align-items: center;
 }
 
-.like-button {
+.likes-button {
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 100%;
   line-height: 0;
   transition: all 0.2s;
 }
-.like-button-1 {
+.likes-button-1 {
   padding: 1rem;
 }
-.like-button-1 img {
+.likes-button-1 img {
   width: 2rem;
 }
-.like-button-2 {
+.likes-button-2 {
   padding: 0.6rem;
   position: absolute;
   bottom: 1rem;
   right: 1rem;
 }
-.like-button-2 img {
+.likes-button-2 img {
   width: 1.5rem;
 }
 
-.like-button-hover:hover {
+.likes-button-hover:hover {
   background-color: #000;
 }
-.like-button-hover:hover > img {
+.likes-button-hover:hover > img {
   filter: invert(1);
 }
 
