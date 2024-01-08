@@ -57,7 +57,7 @@
   color: #fff;
 }
 
-h1 {
+.bodyy h1 {
   font-size: 3em;
   font-weight: bold;
   margin-bottom: 10px;
@@ -129,7 +129,7 @@ p {
     filter: blur(5rem);
   }
 }
-button {
+.bodyy button {
   border: none;
   cursor: pointer;
   background-color: transparent;
