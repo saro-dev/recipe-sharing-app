@@ -28,7 +28,7 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use('/uploads/', express.static('uploads'));
 
 const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
@@ -301,7 +301,7 @@ app.post('/api/contact', (req, res) => {
 const sendContactEmail = (name, email, message) => {
   const mailOptions = {
     from: 'Recipeeze User',
-    to: 'codersarogmail.com', // Replace with your actual email to receive contact form submissions
+    to: 'codersaro@gmail.com', // Replace with your actual email to receive contact form submissions
     subject: 'New Contact Form Submission',
     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
   };

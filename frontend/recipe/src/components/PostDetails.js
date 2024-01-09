@@ -226,6 +226,7 @@ const PostDetails = ({ loggedInUser }) => {
   };
   const handleConvertToImage = (uptitle) => {
     // Convert the ingredient list to a plain text string
+    
     const ingredientText = ingredientList.map((ingredient, index) => {
       const ingredientElement = document.createElement('div');
       ReactDOM.render(ingredient, ingredientElement);
@@ -293,7 +294,18 @@ const PostDetails = ({ loggedInUser }) => {
     return nonVegKeywords.some((keyword) => lowerIngredients.includes(keyword));
   }
 
-
+  const handleWhatsappShare = () => {
+    // Construct the sharable URL for the image (replace 'imageUrl' with your actual image URL)
+    const imageUrl = `https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`;
+  
+    // Construct the text message for WhatsApp
+    const message = `${post.title}\n${customMessage}\n${imageUrl}`;
+  
+    // Use the react-share library to share on WhatsApp
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  
+    window.open(whatsappShareUrl, '_blank');
+  };
 
 
   return (
@@ -401,9 +413,9 @@ const PostDetails = ({ loggedInUser }) => {
       <hr className='m-2'></hr>
       <div className='bg-white p-2 rounded flex'>
         <h1 className='mb-2'>Share <i className='fa fa-share'></i></h1>
-        <WhatsappShareButton url={postURL} title={`${customMessage}\n${post.title}`}>
-          <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
-        </WhatsappShareButton>
+        <button onClick={handleWhatsappShare}>
+    <FaWhatsapp size={30} className="ml-2 cursor-pointer text-green-500 hover:text-green-600" />
+  </button>
         <FacebookShareButton url={postURL} quote={`${customMessage}\n${post.title}`}>
           <FacebookIcon size={30} className="ml-4 cursor-pointer text-blue-600 hover:text-blue-700" />
         </FacebookShareButton>

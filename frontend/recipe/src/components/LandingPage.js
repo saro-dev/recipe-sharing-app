@@ -15,7 +15,7 @@ const LandingPage = () => {
     setIsLiked(!isLiked);
   };
   const handleLikeClick2 = () => {
-    setIsLiked2(!islikesd2);
+    setIsLiked2(!isLiked2);
   };
   return (
     <>

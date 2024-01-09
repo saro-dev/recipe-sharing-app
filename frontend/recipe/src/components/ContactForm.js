@@ -25,10 +25,16 @@ const ContactForm = () => {
     // Submit the form data to the server
     axios.post('https://recipe-backend-1e02.onrender.com/api/contact', formData)
       .then((response) => {
-        setResponseMessage('Your message has been sent successfully. Recipeeze will contact you shortly.');
+        setResponseMessage({
+          text: 'Your message has been sent successfully. Recipeeze will contact you shortly.',
+          color: 'green', // Set color to green for success
+        });
       })
       .catch((error) => {
-        setResponseMessage('An error occurred while sending your message. Please try again later.');
+        setResponseMessage({
+          text: 'An error occurred while sending your message. Please try again later.',
+          color: 'red', // Set color to red for error
+        });
       })
       .finally(() => {
         setSubmitting(false);
@@ -53,7 +59,7 @@ const ContactForm = () => {
           {submitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
-      {responseMessage && <p style={{color:"red"}} className={submitting ? 'submitting' : 'response'}>{responseMessage}</p>}
+      {responseMessage && <p style={{ color: responseMessage.color }} className={submitting ? 'submitting' : 'response'}>{responseMessage.text}</p>}
     </div>
   );
 };
