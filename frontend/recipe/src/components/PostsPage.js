@@ -445,7 +445,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
                     </button>
                   </div>
                 </div>
-                <div className="mt-4" style={{width:'350px',height:'80px', overflowX:'scroll',wordWrap: 'break-word'}}>
+                <div className="mt-4" style={{width:'300px',height:'80px', overflowX:'scroll',wordWrap: 'break-word'}}>
                   <strong className="border-b border-blue-600 mb-3 text-blue-800">Comments:</strong>
                   <ul>
                     {post.comments.slice(0, showAllComments[post._id] ? post.comments.length : 3).map((comment) => (
