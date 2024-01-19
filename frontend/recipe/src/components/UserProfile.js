@@ -117,11 +117,10 @@ const UserProfile = ({ loggedInUser }) => {
   };
 
   return (
-    <>
-      <div className="back-nav" onClick={handleGoBack}>
+      <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
+      <div className="back-nav my-1" onClick={handleGoBack}>
         &#x2190; Back
       </div>
-      <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg custom-shadow w-full sm:w-96">
           {userData ? (
             <div>
@@ -239,7 +238,6 @@ const UserProfile = ({ loggedInUser }) => {
           )}
         </div>
       </div>
-    </>
   );
 };
 

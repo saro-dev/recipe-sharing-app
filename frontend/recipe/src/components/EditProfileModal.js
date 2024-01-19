@@ -34,9 +34,9 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
           <label className="block text-gray-600 font-semibold mb-1">Bio</label>
           <textarea
             value={updatedBio}
-            onChange={(e) => setUpdatedBio(e.target.value.substring(0, 80))}
+            onChange={(e) => setUpdatedBio(e.target.value.substring(0, 100))}
             rows="4"
-            maxLength="80" // Set a maximum character limit (150 characters)
+            maxLength="100" // Set a maximum character limit (300 characters)
             className="border rounded py-2 px-2 w-full focus:outline-none focus:border-blue-400"
           ></textarea>
         </div>
