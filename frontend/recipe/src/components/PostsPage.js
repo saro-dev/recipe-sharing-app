@@ -383,7 +383,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
                     <img
                       src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                       alt={post.title}
-                      className="max-w-full max-h-full object-cover rounded-lg skeleton-item"
+                      className="max-w-full max-h-full object-cover rounded-lg skeleton-item recipe-image"
                       style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                     />
                   </div>
