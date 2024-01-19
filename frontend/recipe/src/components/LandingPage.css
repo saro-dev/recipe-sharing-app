@@ -839,6 +839,9 @@ footer {
   .header-image img {
     width: 35rem;
   }
+  .heading-primary {
+    font-size: 20px;
+  }
 
   .section-1,
 .section-2 {
