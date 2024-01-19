@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './contactform.css';
+import { useNavigate } from 'react-router-dom';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const ContactForm = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,6 +31,9 @@ const ContactForm = () => {
           text: 'Your message has been sent successfully. Recipeeze will contact you shortly.',
           color: 'green', // Set color to green for success
         });
+        setTimeout(() => {
+        navigate('/');
+      }, 3000);
       })
       .catch((error) => {
         setResponseMessage({

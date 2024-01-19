@@ -381,7 +381,7 @@ header {
   align-items: center;
   border-bottom-right-radius: 0;
   margin-top: 4rem;
-  padding: 1.5rem 3rem;
+  padding: 1.5rem;
 }
 .view-menu span {
   line-height: 0;
@@ -407,8 +407,9 @@ header {
 .header-image {
   justify-self: end;
 }
+
 .header-image img {
-  width: 55rem;
+  width: 25rem;
   justify-self: end;
   box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.5);
   border-radius: 100%;
