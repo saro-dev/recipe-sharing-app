@@ -57,11 +57,7 @@
   color: #fff;
 }
 
-.bodyy h1 {
-  font-size: 3em;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+
 
 p {
   font-size: 1.2em;
@@ -247,7 +243,6 @@ a:link, a:visited {
 .cart-button {
   position: absolute;
   right: 2rem;
-  bottom: -3rem;
   background-color: #000000;
   padding: 1rem 1.5rem 2rem 1rem;
   border-radius: 0.5rem 0.5rem 4rem 1.5rem;
@@ -420,7 +415,7 @@ header {
   grid-template-columns: 1fr 1fr;
   place-items: center;
   padding: 0 10rem;
-  margin: 10rem 0;
+  margin: 2rem 0;
 }
 
 .menu-item-type-1 {
@@ -640,7 +635,7 @@ footer {
   grid-template-columns: 2fr 1.4fr;
   align-items: center;
   justify-items: stretch;
-  padding: 3rem 0;
+  padding: 2rem 0;
   border-bottom: 1px solid #000;
 }
 .contact-us a {
@@ -758,15 +753,18 @@ footer {
   }
 
   .section-1 .menu-items-column {
-    margin-top: 10rem;
+    margin-top: 2rem;
   }
 
   .section-1 {
-    margin-bottom: 16rem;
+    margin-bottom: 2rem;
   }
 
   .pasta-image {
     margin-top: 5rem;
+  }
+  .pasta-image img{
+    width: 20rem;
   }
 
   .section-3 {
@@ -836,13 +834,18 @@ footer {
   }
 }
 @media (max-width: 750px) {
+  header{
+    padding: 1rem 2rem;
+  }
   .header-image img {
-    width: 35rem;
+    width: 30rem;
   }
   .heading-primary {
-    font-size: 20px;
+    font-size: 28px;
   }
-
+  .view-menu{
+    margin-top: 2rem;
+  }
   .section-1,
 .section-2 {
     padding: 0 5rem;
@@ -908,7 +911,7 @@ footer {
   }
 
   .header-image img {
-    width: 50rem;
+    width: 25rem;
   }
 
   .section-3 {
@@ -934,7 +937,7 @@ footer {
   .contact-us a {
     width: 90%;
     font-size: var(--font-size-2);
-    padding: 2rem;
+    padding: 1rem 2rem;
   }
 }
 @media (max-width: 400px) {
