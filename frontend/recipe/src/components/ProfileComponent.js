@@ -160,7 +160,7 @@ const ProfileComponent = ({ userId }) => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center ">
+    <div className="p-2 bg-gray-100 min-h-screen flex items-center justify-center ">
       <div className="bg-white p-6 rounded-lg custom-shadow w-full sm:w-96">
         <div className="flex justify-end">
           <FaInfoCircle
