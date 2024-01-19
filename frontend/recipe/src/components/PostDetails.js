@@ -307,9 +307,9 @@ const PostDetails = ({ loggedInUser }) => {
         <div className={`p-2 mb-4 z-999 text-white bg-${alert.type === 'success' ? 'green' : 'red'}-500`}>
           {alert.message}</div>)}
       <div className=" mb-4 w-100 flex">
-        <Link to="/" className="text-black-600 flex items-center">
+        <button onClick={() => navigate(-1)} className="text-black-600 flex items-center">
           <FaArrowLeft size={20} className="mr-2" />Back
-        </Link>
+        </button>
         <button
           onClick={handleAddToFavorites}
           className={`ml-auto ${isFavorite ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}
