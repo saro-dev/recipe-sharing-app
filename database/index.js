@@ -28,7 +28,7 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
 
 const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
