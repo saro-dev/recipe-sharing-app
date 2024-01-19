@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link,useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import BadgeDescriptionModal from "./BadgeDescriptionModal";
 import ironIcon from "../iron.png";
 import bronzeIcon from "../bronze.png";
@@ -7,7 +7,7 @@ import silverIcon from "../silver.png";
 import goldIcon from "../gold.png";
 import defaultimg from "./defaultimg.jpg";
 import axios from "axios";
-import './termsofservices.css'
+import "./termsofservices.css";
 
 const UserProfile = ({ loggedInUser }) => {
   const { userId } = useParams();
@@ -22,12 +22,11 @@ const UserProfile = ({ loggedInUser }) => {
 
   const navigate = useNavigate();
 
-    const handleGoBack = () => {
-      navigate(-1); // Go back to the previous route
-    };
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
 
   useEffect(() => {
-  
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
@@ -74,10 +73,9 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingFollow(true);
 
     try {
-      await axios.post(
-        `https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`,
-        { followerId: loggedInUser._id }
-      );
+      await axios.post(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`, {
+        followerId: loggedInUser._id,
+      });
       setUserFollowers((prevFollowers) => [...prevFollowers, loggedInUser]); // Add logged-in user to followers list
       setFollowerCount((prevCount) => prevCount + 1);
     } catch (error) {
@@ -92,10 +90,9 @@ const UserProfile = ({ loggedInUser }) => {
     setLoadingUnfollow(true);
 
     try {
-      await axios.delete(
-        `https://recipe-backend-1e02.onrender.com/api/user/${userId}/unfollow`,
-        { data: { followerId: loggedInUser._id } }
-      );
+      await axios.delete(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/unfollow`, {
+        data: { followerId: loggedInUser._id },
+      });
       setUserFollowers((prevFollowers) =>
         prevFollowers.filter((follower) => follower._id !== loggedInUser._id)
       ); // Remove logged-in user from followers list
@@ -117,10 +114,11 @@ const UserProfile = ({ loggedInUser }) => {
   };
 
   return (
-      <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="back-nav my-1" onClick={handleGoBack}>
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center" style={{ flexDirection: 'column' }}>
+      <div className="back-nav my-1" onClick={handleGoBack} style={{ position: 'absolute', top: '20px', left: '10px' }}>
         &#x2190; Back
       </div>
+      <div className="p-4 ">
         <div className="bg-white p-6 rounded-lg custom-shadow w-full sm:w-96">
           {userData ? (
             <div>
@@ -238,6 +236,7 @@ const UserProfile = ({ loggedInUser }) => {
           )}
         </div>
       </div>
+    </div>
   );
 };
 
