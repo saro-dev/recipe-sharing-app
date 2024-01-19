@@ -1,11 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Use Link for the "Go to Home" link
-import './NotFound404.css'
-
+import { Link, useNavigate } from 'react-router-dom'; // Use Link for the "Go to Home" link
+import './NotFound404.css';
 
 const NotFound404 = () => {
+
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
+
   return (
     <section className="page_404">
+      <div className="back-nav" onClick={handleGoBack}>
+        &#x2190; Back
+      </div>
       <div className="container">
         <div className="row">
           <div className="col-sm-12">

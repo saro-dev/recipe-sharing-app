@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { FaHome, FaSearch, FaPlus, FaUser, FaBell } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SignupComponent from './components/SignupComponent';
 import LoginComponent from './components/LoginComponent';
 import RecipePostComponent from './components/RecipePostComponent';
@@ -61,19 +63,13 @@ const App = () => {
   const handleSignupSuccess = userData => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
-    setAlert({ type: 'success', message: 'Signup successful!' });
-    setTimeout(() => {
-      setAlert(null);
-    }, 3000);
+    toast.success('Signup successful!');
   };
 
   const handleLoginSuccess = userData => {
     setLoggedInUser(userData);
     localStorage.setItem('loggedInUser', JSON.stringify(userData));
-    setAlert({ type: 'success', message: 'Login successful!' });
-    setTimeout(() => {
-      setAlert(null);
-    }, 3000);
+    toast.success('Login successful!');
   };
 
   useEffect(() => {
@@ -161,6 +157,8 @@ const App = () => {
         </nav>
       </div>
     )}
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
   </Router>
 );
 

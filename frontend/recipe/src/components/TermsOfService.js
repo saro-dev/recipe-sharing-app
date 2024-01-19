@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './termsofservices.css';
+import { useNavigate } from 'react-router-dom';
 
 
 const TermsOfService = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
+
   return (
     <div className="terms-of-service">
+      <div className="back-nav" onClick={handleGoBack}>
+        &#x2190; Back
+      </div>
+      <hr></hr>
       <h1 className="title">Recipeeze Terms of Service</h1>
 
       <p>
@@ -58,7 +73,7 @@ const TermsOfService = () => {
 
       <h2 className="section-title">10. Contact Information</h2>
       <p>
-        If you have any questions about these Terms, please contact us at support@recipeeze.com.
+        If you have any questions about these Terms, please contact us at <b>recipeeze.contact@gmail.com</b> .
       </p>
     </div>
   );

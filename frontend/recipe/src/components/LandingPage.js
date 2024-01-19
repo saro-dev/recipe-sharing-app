@@ -135,11 +135,6 @@ const LandingPage = () => {
 </div>
 
         <div className="footer-links">
-            <div className="links-group copyright">
-                <h3>Copyright</h3>
-                <p>Images from <a href="https://www.freepik.com/photos/food" target="_blank" rel="noopener">Freepik</a></p>
-                <p>Icons from <a href="https://www.flaticon.com/" target="_blank" rel="noopener">Flaticon</a></p>
-                </div>
 
             <div className="links-group links-group-2">
                 <h3>Our Services</h3>

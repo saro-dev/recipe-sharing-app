@@ -64,8 +64,9 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
           ? 'bg-blue-100'
           : 'bg-gray-100'
       }`}
+      style={{ overflowX: 'auto', maxHeight: '200px', width:'400px' }}
     >
-      <div className="comment-text mb-3">
+      <div className="comment-text mb-3 " style={{ wordWrap: 'break-word' }}>
         <strong>{comment.name}:</strong> {comment.text}
       </div>
       {loggedInUser && comment.user === loggedInUser._id && (
@@ -87,6 +88,7 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Reply to this comment"
             className="border rounded p-2 flex-grow m-3"
+            style={{ wordWrap: 'break-word' }}
           />
           <button onClick={handleAddReply} className="reply-button">
             Reply
@@ -102,10 +104,10 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
         </button>
       )}
       {showReplies && comment.replies.length > 0 && (
-        <div className="replies" style={{ marginLeft: '20px' }}>
+        <div className="replies" style={{ marginLeft: '20px', overflow: 'scroll', display: 'flex', flexDirection: 'column' }}>
           {comment.replies.map((reply) => (
             <div key={reply._id} className="reply rounded">
-              <div className="reply-text rounded">
+              <div className="reply-text rounded" style={{ wordWrap: 'break-word' }}>
                 <strong>{reply.name}:</strong> {reply.text}
               </div>
               {loggedInUser && loggedInUser._id === reply.user && (
@@ -120,8 +122,6 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
           ))}
         </div>
       )}
-      
-      
     </div>
   );
 };

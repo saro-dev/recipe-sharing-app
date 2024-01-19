@@ -2,6 +2,8 @@
 
 import React from 'react';
 import './PricingPage.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const PricingPage = () => {
   const pricingPlans = [
@@ -25,9 +27,17 @@ const PricingPage = () => {
       ],
     },
   ];
+  
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
 
   return (
     <div className="pricing-page">
+      <div className="back-nav" onClick={handleGoBack}>
+        &#x2190; Back
+      </div>
       <h2 className="pricing-title">Choose Your Plan</h2>
 
       <div className="pricing-plans">

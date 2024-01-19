@@ -6,11 +6,23 @@
     padding: 20px;
     font-family: 'Arial', sans-serif;
   }
-  
+  .back-nav {
+    cursor: pointer;
+    width: 100px;
+    color: white; /* You can adjust the color as needed */
+    border-radius: 20px;
+    background-color: #330066;
+    font-size: 18px; /* You can adjust the font size as needed */
+    margin-bottom: 15px; /* Optional margin to provide space between the back button and the title */
+    padding: 5px 8px;
+  }
+
   .title {
     color: #333;
     font-size: 24px;
+    font-weight: bold;
     margin-bottom: 20px;
+    margin-top: 5px;
   }
   
   .section-title {

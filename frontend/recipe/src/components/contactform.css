@@ -3,6 +3,16 @@
   margin: 20px auto; /* Center the form */
   padding: 30px;
 }
+.back-nav {
+  cursor: pointer;
+  width: 100px;
+  color: white; /* You can adjust the color as needed */
+  border-radius: 20px;
+  background-color: #330066;
+  font-size: 18px; /* You can adjust the font size as needed */
+  margin-bottom: 15px; /* Optional margin to provide space between the back button and the title */
+  padding: 5px 8px;
+}
 
 .contact-title {
   font-size: 24px;

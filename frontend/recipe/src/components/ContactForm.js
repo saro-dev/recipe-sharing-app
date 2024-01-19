@@ -19,6 +19,9 @@ const ContactForm = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +36,7 @@ const ContactForm = () => {
         });
         setTimeout(() => {
         navigate('/');
-      }, 3000);
+      }, 3000);                                                                                                                                                                   
       })
       .catch((error) => {
         setResponseMessage({
@@ -48,6 +51,9 @@ const ContactForm = () => {
 
   return (
     <div className="contact-form">
+    <div className="back-nav" onClick={handleGoBack}>
+        &#x2190; Back
+      </div>
       <h2 className="contact-title">Get in Touch</h2>
       
       <form onSubmit={handleSubmit} className="form">
