@@ -101,7 +101,7 @@ const userSchema = new mongoose.Schema({
   }],
   profileImage: {
     type:Buffer, 
-    default:'https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=626&ext=jpg'
+    default:'../frontend/recipe/src/components/defaultimg.jpg'
   },
   bio: String,
 });
@@ -286,28 +286,34 @@ const PasswordReset = mongoose.model('PasswordReset', {
   token: String,
   expires: Date,
 });
-app.post('/api/contact', (req, res) => {
+app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
-  // Send email
-  sendContactEmail(name, email, message)
-    .then(() => {
-      res.status(200).json({ success: true, message: 'Message sent successfully.' });
-    })
-    .catch((error) => {
-      res.status(500).json({ success: false, error: error.message });
-    });
-});
-const sendContactEmail = (name, email, message) => {
-  const mailOptions = {
-    from: 'Recipeeze User',
-    to: 'codersaro@gmail.com', // Replace with your actual email to receive contact form submissions
-    subject: 'New Contact Form Submission',
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-  };
+  try {
+    // Send email
+    const mailOptions = {
+      from: 'Recipeeze User',
+      to: 'codersaro@gmail.com', // Replace with your actual email to receive contact form submissions
+      subject: 'New Contact Form Submission',
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    };
 
-  return transporter.sendMail(mailOptions);
-};
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email: ', error);
+        res.status(500).json({ success: false, error: error.message });
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).json({ success: true, message: 'Message sent successfully.' });
+      }
+    });
+  } catch (error) {
+    console.error('Error sending contact form email:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // POST route for sending reset password email
 app.post('/api/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -322,8 +328,6 @@ app.post('/api/forgot-password', async (req, res) => {
 
     // Access the user's password field
     const password = user.password;
-
-
     // Compose the email
      const mailOptions = {
   from: 'Saro from recipeeze',
@@ -359,8 +363,6 @@ app.post('/api/forgot-password', async (req, res) => {
     </html>
   `,
 };
-
-
 
     // Send the email
     transporter.sendMail(mailOptions, (error, info) => {
