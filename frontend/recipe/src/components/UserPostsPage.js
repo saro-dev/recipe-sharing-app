@@ -42,20 +42,14 @@ const UserPostsPage = () => {
     fetchUserName();
   }, [userId]);
 
-  const handleGoBack = () => {
-    navigate(-1); // Go back to the previous route
-  };
-
   return (
     <>
-      <div className="back-nav" onClick={handleGoBack}>
-        &#x2190; Back
-      </div>
+  
       <div className="p-4">
         <div className="mb-4 flex items-center">
           <button
             onClick={() => navigate(-1)}
-            className="mr-2 p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+            className="back-nav"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +64,7 @@ const UserPostsPage = () => {
                 strokeWidth="2"
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
-            </svg>
+            </svg>Back
           </button>
         </div>
         <h2 className="text-xl font-semibold mb-4 flex">
