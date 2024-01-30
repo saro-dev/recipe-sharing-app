@@ -31,42 +31,7 @@ const corsOptions = {
 
 app.use(cors());
 app.use('/uploads/', express.static('uploads'));
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
-  res.setHeader("Access-Control-Allow-Headers", "*");
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
-  next();
-});
-
-// Set up web push with your VAPID keys
-const publicVapidKey = "BHv-txNocDb5FIHQwcTtdifsSm-6pZoOV73IKh4Yv6V5Qa2rjeHaTbP8JuhEMTOWFq3qNU0BJBOvPbWPxH6WVV0";
-const privateVapidKey = "fKDDMLxTfKFq_MYDmXospw-tcXVWMlQWOSu68-RLpok";
-webpush.setVapidDetails("mailto:codersaro@example.com", publicVapidKey, privateVapidKey);
-
-// Route to handle subscription
-app.post("/subscribe", (req, res) => {
-  const subscription = req.body;
-  console.log(subscription);
-  res.status(201).json({}); // Respond with success status
-
-  // Send a welcome notification to the new subscriber
-  const welcomeMessage = JSON.stringify({ title: "Welcome to Notifications" });
-  webpush.sendNotification(subscription, welcomeMessage).catch((err) => console.error(err));
-});
 const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
 
 // Schedule a cron job to ping the backend URL every 14 minutes
