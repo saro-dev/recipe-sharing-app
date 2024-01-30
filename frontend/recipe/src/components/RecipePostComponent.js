@@ -109,27 +109,28 @@ const RecipePostComponent = ({ userId }) => {
     setCookingTime(value);
   };
   // Function to send browser notifications
-  const sendBrowserNotification = (message) => {
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("New Recipe Posted", {
-        body: message,
-      });
-    } else if ("Notification" in window && Notification.permission !== "denied") {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          new Notification("New Recipe Posted", {
-            body: message,
-          });
-        }
-      });
-    }
-  };
-
-  const sendNotificationsToFollowers = (notificationMessage) => {
-    followers.forEach((followerId) => {
-      sendBrowserNotification(notificationMessage);
+ // Function to send browser notification
+ const sendBrowserNotification = (followerName, recipeTitle) => {
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(`New Recipe Posted by ${followerName}`, {
+      body: `Check out the new recipe: ${recipeTitle}`,
     });
-  };
+  } else if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification(`New Recipe Posted by ${followerName}`, {
+          body: `Check out the new recipe: ${recipeTitle}`,
+        });
+      }
+    });
+  }
+};
+
+const sendNotificationsToFollowers = (notificationMessage) => {
+  followers.forEach((followerId) => {
+    sendBrowserNotification(followerId.name, notificationMessage);
+  });
+};
 
 
   const handleSubmit = async (event) => {
@@ -164,7 +165,7 @@ const RecipePostComponent = ({ userId }) => {
       setAlert({ type: "success", message: "Recipe posted successfully!" });
       setTimeout(() => setAlert(null), 2000);
 
-      const notificationMessage = `${userData.name} posted ${recipeData.title}`;
+      const notificationMessage = `${response.data.authorName} posted ${response.data.title}`;
       sendNotificationsToFollowers(notificationMessage);
 
     } catch (error) {
