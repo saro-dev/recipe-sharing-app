@@ -1,142 +1,141 @@
-import React, { useState,useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Alert from './Alert';
-import PostingModal from './PostingModal';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Alert from "./Alert";
+import PostingModal from "./PostingModal";
 
 const RecipePostComponent = ({ userId }) => {
   const [recipeData, setRecipeData] = useState({
-    title: '',
-    ingredients: [''],
-    steps: [''],
-    tags: '',
+    title: "",
+    ingredients: [""],
+    steps: [""],
+    tags: "",
     image: null,
-    category: '',
-    cookingTime: '',
-    notesAndTips: '',
+    category: "",
+    cookingTime: "",
+    notesAndTips: "",
     timestamp: new Date().toISOString(),
   });
   const navigate = useNavigate();
   const [alert, setAlert] = useState(null);
-  const [category, setCategory] = useState(''); // State for selected category
+  const [category, setCategory] = useState(""); // State for selected category
   const [loading, setLoading] = useState(false);
-  const [cookingTime, setCookingTime] = useState('');
+  const [cookingTime, setCookingTime] = useState("");
   const [isPosting, setIsPosting] = useState(false);
-  const categories = ['Breakfast', 'Lunch', 'Dinner','Dessert','Snacks'];
+  const categories = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks"];
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/userName/${userId}`);
+        const response = await axios.get(
+          `https://recipe-backend-1e02.onrender.com/api/userName/${userId}`
+        );
         setUserData(response.data.name);
-        console.log(userData)
+        console.log(userData);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
 
     fetchUserData();
   }, [userId]);
 
-  const sendNotificationToFollowers = async (followers, recipeTitle, userName) => {
-    try {
-      const notifications = followers.map(async followerId => {
-        const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/sendNotification/${followerId}`, {
-          message: `${userName} posted a new recipe: ${recipeTitle}`,
-        });
-        return response.data;
-      });
-      await Promise.all(notifications);
-      console.log('Notifications sent successfully.');
-    } catch (error) {
-      console.error('Error sending notifications:', error);
-    }
-  };
-  
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setRecipeData(prevData => ({ ...prevData, [name]: value }));
-    if (name === 'category') {
+    setRecipeData((prevData) => ({ ...prevData, [name]: value }));
+    if (name === "category") {
       setCategory(value);
     }
   };
 
-  const handleImageUpload = event => {
+  const handleImageUpload = (event) => {
     const selectedImage = event.target.files[0];
-    setRecipeData(prevData => ({ ...prevData, image: selectedImage }));
+    setRecipeData((prevData) => ({ ...prevData, image: selectedImage }));
   };
 
   const handleAddIngredient = () => {
-    setRecipeData(prevData => ({ ...prevData, ingredients: [...prevData.ingredients, ''] }));
+    setRecipeData((prevData) => ({
+      ...prevData,
+      ingredients: [...prevData.ingredients, ""],
+    }));
   };
 
-  const handleRemoveIngredient = index => {
+  const handleRemoveIngredient = (index) => {
     const newIngredients = [...recipeData.ingredients];
     newIngredients.splice(index, 1);
-    setRecipeData(prevData => ({ ...prevData, ingredients: newIngredients }));
+    setRecipeData((prevData) => ({ ...prevData, ingredients: newIngredients }));
   };
-  const handleRemoveStep = index => {
+  const handleRemoveStep = (index) => {
     const newSteps = [...recipeData.steps];
     newSteps.splice(index, 1);
-    setRecipeData(prevData => ({ ...prevData, steps: newSteps }));
+    setRecipeData((prevData) => ({ ...prevData, steps: newSteps }));
   };
 
   const handleIngredientChange = (index, value) => {
     const newIngredients = [...recipeData.ingredients];
     newIngredients[index] = value;
-    setRecipeData(prevData => ({ ...prevData, ingredients: newIngredients }));
+    setRecipeData((prevData) => ({ ...prevData, ingredients: newIngredients }));
   };
 
   const handleStepChange = (index, value) => {
     const newSteps = [...recipeData.steps];
     newSteps[index] = value;
-    setRecipeData(prevData => ({ ...prevData, steps: newSteps }));
+    setRecipeData((prevData) => ({ ...prevData, steps: newSteps }));
   };
   const handleAddStep = () => {
-    setRecipeData(prevData => ({ ...prevData, steps: [...prevData.steps, ''] }));
+    setRecipeData((prevData) => ({
+      ...prevData,
+      steps: [...prevData.steps, ""],
+    }));
   };
 
-  const handleCookingTimeChange = event => {
+  const handleCookingTimeChange = (event) => {
     const { value } = event.target;
     setCookingTime(value);
   };
 
-
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsPosting(true);
     const currentTime = new Date().toISOString(); // Get the current time as an ISO string
 
     const formData = new FormData();
-    formData.append('title', recipeData.title);
-    formData.append('ingredients', recipeData.ingredients.join('\n'));
-    formData.append('steps', recipeData.steps.join('\n'));
-    formData.append('tags', recipeData.tags);
-    formData.append('userId', userId);
-    formData.append('image', recipeData.image);
-    formData.append('category', recipeData.category);
-    formData.append('cookingTime', cookingTime);
-    formData.append('notesAndTips', recipeData.notesAndTips);
-    formData.append('timestamp', currentTime); // Append the timestamp to the form data
+    formData.append("title", recipeData.title);
+    formData.append("ingredients", recipeData.ingredients.join("\n"));
+    formData.append("steps", recipeData.steps.join("\n"));
+    formData.append("tags", recipeData.tags);
+    formData.append("userId", userId);
+    formData.append("image", recipeData.image);
+    formData.append("category", recipeData.category);
+    formData.append("cookingTime", cookingTime);
+    formData.append("notesAndTips", recipeData.notesAndTips);
+    formData.append("timestamp", currentTime); // Append the timestamp to the form data
 
     setLoading(true);
     try {
-      const response = await axios.post('https://recipe-backend-1e02.onrender.com/api/postRecipe', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log('Recipe posted:', response.data);
-      setAlert({ type: 'success', message: 'Recipe posted successfully!' });
+      const response = await axios.post(
+        "https://recipe-backend-1e02.onrender.com/api/postRecipe",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Recipe posted:", response.data);
+      setAlert({ type: "success", message: "Recipe posted successfully!" });
       setTimeout(() => setAlert(null), 2000);
-
-      const followerResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/followers`);
-    const followers = followerResponse.data.followers;
-
-    await sendNotificationToFollowers(followers, recipeData.title, userData.name);
+      const notificationMessage = `${userData.name} posted ${recipeData.title}`;
+      await axios.post(
+        "https://recipe-backend-1e02.onrender.com/api/sendNotificationToFollowers",
+        {
+          userId,
+          message: notificationMessage,
+        }
+      );
     } catch (error) {
-      console.error('Error posting recipe:', error);
+      console.error("Error posting recipe:", error);
     } finally {
       setIsPosting(false);
       setLoading(false); // Disable loading state
@@ -182,7 +181,7 @@ const RecipePostComponent = ({ userId }) => {
                 type="text"
                 placeholder={`Ingredient ${index + 1}`}
                 value={ingredient}
-                onChange={e => handleIngredientChange(index, e.target.value)}
+                onChange={(e) => handleIngredientChange(index, e.target.value)}
                 className="flex-1 border rounded p-2"
               />
               {index > 0 && (
@@ -210,7 +209,7 @@ const RecipePostComponent = ({ userId }) => {
                 type="text"
                 placeholder={`Step ${index + 1}`}
                 value={step}
-                onChange={e => handleStepChange(index, e.target.value)}
+                onChange={(e) => handleStepChange(index, e.target.value)}
                 className="flex-1 border rounded p-2"
               />
               {index > 0 && (
@@ -239,7 +238,7 @@ const RecipePostComponent = ({ userId }) => {
               className="w-full border rounded p-2 appearance-none"
             >
               <option value="">Select Category</option>
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -278,10 +277,9 @@ const RecipePostComponent = ({ userId }) => {
             className="w-full bg-green-500 text-white py-2 px-4 font-bold rounded hover:bg-blue-600"
             disabled={loading}
           >
-            {loading ? 'Posting...' : 'Post Recipe'}
+            {loading ? "Posting..." : "Post Recipe"}
           </button>
         </form>
-
       </div>
     </div>
   );

@@ -161,7 +161,14 @@ const recipeSchema = new mongoose.Schema({
   },
   comments: [commentSchema]
 });
+const mainnotificationSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the user who receives the notification
+  message: { type: String, required: true }, // Notification message
+  timestamp: { type: Date, default: Date.now } // Timestamp of the notification
+});
 
+// 2. Create Notification Model
+const Notification = mongoose.model('Notification', mainnotificationSchema)
 const User = mongoose.model('User', userSchema);
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
@@ -513,19 +520,30 @@ app.get('/api/user/:userId/followers', async (req, res) => {
   }
 });
 
-// POST endpoint to send notification to a follower
-app.post('/api/sendNotification/:followerId', async (req, res) => {
-  const followerId = req.params.followerId;
-  const { message } = req.body;
-
+app.post('/api/sendNotificationToFollowers', async (req, res) => {
   try {
-    // Logic to send a notification to the follower with followerId
-    // You can use a notification service or implement your own logic here
-    console.log(`Notification sent to follower ${followerId}: ${message}`);
-    res.json({ success: true });
+    const { userId, message } = req.body;
+
+    // Assuming you have a User model
+    const user = await User.findById(userId);
+
+    // Assuming you have a followers field in your User model
+    const followers = user.followers;
+
+    // Send notification to all followers
+    followers.forEach(async followerId => {
+      // Assuming you have a Notification model or collection
+      await Notification.create({
+        userId: followerId,
+        message: message,
+        timestamp: new Date(),
+      });
+    });
+
+    res.status(200).json({ success: true, message: 'Notifications sent successfully' });
   } catch (error) {
-    console.error('Error sending notification:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error sending notifications:', error);
+    res.status(500).json({ success: false, message: 'Failed to send notifications' });
   }
 });
 

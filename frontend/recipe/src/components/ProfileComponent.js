@@ -42,16 +42,26 @@ const ProfileComponent = ({ userId }) => {
             axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
             axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
           ]);
-
-        setUserData(userDataResponse.data);
-        sessionStorage.setItem("userData", JSON.stringify(userDataResponse.data));
-        setRecipeCount(recipeCountResponse.data.count);
-        setFollowersCount(followersCountResponse.data.count);
+  
+        const userData = userDataResponse.data;
+        const followersCount = followersCountResponse.data.count;
+        const recipeCount = recipeCountResponse.data.count;
+  
+        // Store user data, followers count, and recipe count in session storage
+        sessionStorage.setItem("userData", JSON.stringify(userData));
+        sessionStorage.setItem("followersCount", followersCount);
+        sessionStorage.setItem("recipeCount", recipeCount);
+  
+        // Set state values
+        setUserData(userData);
+        setRecipeCount(recipeCount);
+        setFollowersCount(followersCount);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
 
  useEffect(() => {
     fetchData();
