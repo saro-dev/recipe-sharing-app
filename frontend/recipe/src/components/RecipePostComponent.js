@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Alert from "./Alert";
 import PostingModal from "./PostingModal";
+import PushNotification from "react-push-notification";
+
 
 const RecipePostComponent = ({ userId }) => {
   const [recipeData, setRecipeData] = useState({
@@ -24,8 +26,18 @@ const RecipePostComponent = ({ userId }) => {
   const [isPosting, setIsPosting] = useState(false);
   const categories = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks"];
   const [userData, setUserData] = useState(null);
-
+  const [followers, setFollowers] = useState([]);
   useEffect(() => {
+    const fetchFollowers = async () => {
+      try {
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/followers/${userId}`);
+        setFollowers(response.data.followers);
+        console.log(response.data.followers)
+      } catch (error) {
+        console.error("Error fetching followers:", error);
+      }
+    };
+
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
@@ -38,8 +50,10 @@ const RecipePostComponent = ({ userId }) => {
       }
     };
 
+    fetchFollowers();
     fetchUserData();
   }, [userId]);
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -94,6 +108,25 @@ const RecipePostComponent = ({ userId }) => {
     const { value } = event.target;
     setCookingTime(value);
   };
+  const sendNotificationsToFollowers = async (notificationMessage) => {
+    try {
+      await Promise.all(
+        followers.map(async (followerId) => {
+          await axios.post(
+            `https://recipe-backend-1e02.onrender.com/api/sendNotification`,
+            { userId: followerId, message: notificationMessage }
+          );
+          // Trigger browser notification for each follower
+          PushNotification.create("New Recipe Posted", {
+            body: notificationMessage,
+          });
+        })
+      );
+      console.log("Notifications sent successfully!");
+    } catch (error) {
+      console.error("Error sending notifications:", error);
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -126,14 +159,10 @@ const RecipePostComponent = ({ userId }) => {
       console.log("Recipe posted:", response.data);
       setAlert({ type: "success", message: "Recipe posted successfully!" });
       setTimeout(() => setAlert(null), 2000);
+
       const notificationMessage = `${userData.name} posted ${recipeData.title}`;
-      await axios.post(
-        "https://recipe-backend-1e02.onrender.com/api/sendNotificationToFollowers",
-        {
-          userId,
-          message: notificationMessage,
-        }
-      );
+      await sendNotificationsToFollowers(notificationMessage);
+
     } catch (error) {
       console.error("Error posting recipe:", error);
     } finally {
@@ -280,6 +309,7 @@ const RecipePostComponent = ({ userId }) => {
             {loading ? "Posting..." : "Post Recipe"}
           </button>
         </form>
+        <PushNotification />
       </div>
     </div>
   );

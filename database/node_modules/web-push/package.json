@@ -1,0 +1,55 @@
+{
+  "name": "web-push",
+  "version": "3.6.7",
+  "description": "Web Push library for Node.js",
+  "main": "src/index.js",
+  "bin": {
+    "web-push": "src/cli.js"
+  },
+  "scripts": {
+    "download-browser": "node --harmony ./test/helpers/download-test-browsers.js",
+    "lint": "node ./node_modules/eslint/bin/eslint --ignore-path .gitignore '.'",
+    "pretest": "npm run lint && npm run download-browser",
+    "test": "nyc --reporter=lcov --reporter=text mocha -- --ui tdd test/test*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web-push-libs/web-push.git"
+  },
+  "keywords": [
+    "web push",
+    "push",
+    "notifications",
+    "push notifications"
+  ],
+  "author": "Marco Castelluccio",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/web-push-libs/web-push/issues"
+  },
+  "homepage": "https://github.com/web-push-libs/web-push#readme",
+  "dependencies": {
+    "asn1.js": "^5.3.0",
+    "http_ece": "1.2.0",
+    "https-proxy-agent": "^7.0.0",
+    "jws": "^4.0.0",
+    "minimist": "^1.2.5"
+  },
+  "devDependencies": {
+    "chromedriver": "120.0.1",
+    "del": "6.0.0",
+    "eslint": "8.56.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-plugin-import": "2.29.1",
+    "geckodriver": "4.3.0",
+    "nyc": "15.1.0",
+    "mkdirp": "3.0.1",
+    "mocha": "10.2.0",
+    "portfinder": "1.0.32",
+    "selenium-assistant": "5.4.0",
+    "sinon": "17.0.1"
+  },
+  "engines": {
+    "node": ">= 16"
+  }
+}
