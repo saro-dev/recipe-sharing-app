@@ -130,6 +130,7 @@ const sendNotificationsToFollowers = (notificationMessage) => {
   followers.forEach((followerId) => {
     sendBrowserNotification(followerId.name, notificationMessage);
   });
+  console.log("Notifications sent to all followers successfully.");
 };
 
 
