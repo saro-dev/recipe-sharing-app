@@ -32,27 +32,15 @@ const RecipePostComponent = ({ userId }) => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/followers/${userId}`);
         setFollowers(response.data.followers);
-        console.log(response.data.followers)
+        console.log(followers)
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
     };
 
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `https://recipe-backend-1e02.onrender.com/api/userName/${userId}`
-        );
-        setUserData(response.data.name);
-        console.log(userData);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
+    
     fetchFollowers();
-    fetchUserData();
-  }, [userId]);
+  }, [userId,followers]);
 
 
   const handleInputChange = (event) => {
