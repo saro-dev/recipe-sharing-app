@@ -108,25 +108,29 @@ const RecipePostComponent = ({ userId }) => {
     const { value } = event.target;
     setCookingTime(value);
   };
-  const sendNotificationsToFollowers = async (notificationMessage) => {
-    try {
-      await Promise.all(
-        followers.map(async (followerId) => {
-          await axios.post(
-            `https://recipe-backend-1e02.onrender.com/api/sendNotification`,
-            { userId: followerId, message: notificationMessage }
-          );
-          // Trigger browser notification for each follower
-          PushNotification.create("New Recipe Posted", {
-            body: notificationMessage,
+  // Function to send browser notifications
+  const sendBrowserNotification = (message) => {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("New Recipe Posted", {
+        body: message,
+      });
+    } else if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification("New Recipe Posted", {
+            body: message,
           });
-        })
-      );
-      console.log("Notifications sent successfully!");
-    } catch (error) {
-      console.error("Error sending notifications:", error);
+        }
+      });
     }
   };
+
+  const sendNotificationsToFollowers = (notificationMessage) => {
+    followers.forEach((followerId) => {
+      sendBrowserNotification(notificationMessage);
+    });
+  };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -161,7 +165,7 @@ const RecipePostComponent = ({ userId }) => {
       setTimeout(() => setAlert(null), 2000);
 
       const notificationMessage = `${userData.name} posted ${recipeData.title}`;
-      await sendNotificationsToFollowers(notificationMessage);
+      sendNotificationsToFollowers(notificationMessage);
 
     } catch (error) {
       console.error("Error posting recipe:", error);
