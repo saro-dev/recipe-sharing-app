@@ -33,8 +33,12 @@ const ProfileComponent = ({ userId }) => {
   const fetchData = async () => {
     try {
       const storedUserData = sessionStorage.getItem("userData");
+      const storedfollowerscount = sessionStorage.getItem("followersCount");
+      const storedrecipecount = sessionStorage.getItem("recipeCount");
       if (storedUserData) {
         setUserData(JSON.parse(storedUserData));
+        setFollowersCount(JSON.parse(storedfollowerscount));
+        setRecipeCount(JSON.parse(storedrecipecount));
       } else {
         const [userDataResponse, followersCountResponse, recipeCountResponse] =
           await Promise.all([
@@ -49,8 +53,8 @@ const ProfileComponent = ({ userId }) => {
   
         // Store user data, followers count, and recipe count in session storage
         sessionStorage.setItem("userData", JSON.stringify(userData));
-        sessionStorage.setItem("followersCount", followersCount);
-        sessionStorage.setItem("recipeCount", recipeCount);
+        sessionStorage.setItem("followersCount", JSON.stringify(followersCount));
+        sessionStorage.setItem("recipeCount", JSON.stringify(recipeCount));
   
         // Set state values
         setUserData(userData);
