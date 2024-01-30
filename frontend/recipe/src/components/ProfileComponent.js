@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Modal from "./Modal";
-import { FaInfoCircle, FaStar } from "react-icons/fa";
+import { FaInfoCircle, FaStar,FaBell, FaBellSlash } from "react-icons/fa";
 import BadgeDescriptionModal from "./BadgeDescriptionModal";
 import EditProfileModal from "./EditProfileModal";
 import two from "./two.jpg";
@@ -26,27 +26,53 @@ const ProfileComponent = ({ userId }) => {
   const [profileImage, setProfileImage] = useState(null); // State to store the profile image
   const [uploadingProfileImage, setUploadingProfileImage] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState(false);
+
+
 
   const fetchData = async () => {
     try {
-      const [userDataResponse, followersCountResponse, recipeCountResponse] =
-        await Promise.all([
-          axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
-          axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
-          axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
-        ]);
+      const storedUserData = sessionStorage.getItem("userData");
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+      } else {
+        const [userDataResponse, followersCountResponse, recipeCountResponse] =
+          await Promise.all([
+            axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
+            axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
+            axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
+          ]);
 
-      setUserData(userDataResponse.data);
-      setRecipeCount(recipeCountResponse.data.count);
-      setFollowersCount(followersCountResponse.data.count);
+        setUserData(userDataResponse.data);
+        sessionStorage.setItem("userData", JSON.stringify(userDataResponse.data));
+        setRecipeCount(recipeCountResponse.data.count);
+        setFollowersCount(followersCountResponse.data.count);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
     fetchData();
+    checkNotificationPermission();
   }, [userId]);
+
+  // Function to check if the user has granted notification permissions
+  const checkNotificationPermission = () => {
+    if (Notification.permission === "granted") {
+      setNotificationPermission(true);
+    }
+  };
+
+  // Function to request notification permissions
+  const requestNotificationPermission = () => {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        setNotificationPermission(true);
+      }
+    });
+  };
 
   // Function to open the info modal
   const openInfoModal = () => {
@@ -105,6 +131,10 @@ const ProfileComponent = ({ userId }) => {
 
   //logout
   const handleLogout = () => {
+    // Clear localStorage
+  localStorage.clear();
+  // Clear sessionStorage
+  sessionStorage.clear();
     setConfirmLogout(true);
   };
   const confirmLogoutAction = () => {
@@ -171,8 +201,17 @@ const ProfileComponent = ({ userId }) => {
         </div>
         {userData ? (
           <div>
-            <h2 className="text-xl font-semibold mb-4 text-underline">
+            <h2 className="text-xl font-semibold mb-4 text-underline flex  items-center">
               Profile
+              {notificationPermission ? (
+                <FaBell className="text-blue-500 cursor-pointer ml-2" size={20} />
+              ) : (
+                <FaBellSlash
+                  className="text-red-500 cursor-pointer ml-2"
+                  size={20}
+                  onClick={requestNotificationPermission}
+                />
+              )}
             </h2>
             <div className="bg-blue-100 p-2 rounded">
               <div className="flex items-center justify-center">

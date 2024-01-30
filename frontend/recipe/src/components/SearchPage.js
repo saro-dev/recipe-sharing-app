@@ -83,16 +83,27 @@ const SearchPage = ({ loggedInUser }) => {
     const fetchRecommendedPosts = async () => {
       try {
         setRecommendedPostsLoading(true);
-        // Assuming you have a list of posts available
-        const allPosts = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
-        
-        // Get a random subset of posts (adjust the count based on your preference)
-        const recommendedPostsSubset = getRandomSubset(allPosts.data, 5);
+        let recommendedPostsData = sessionStorage.getItem('recommendedPosts');
     
-        setRecommendedPosts(recommendedPostsSubset);
+        // Check if recommended posts data exists in sessionStorage
+        if (recommendedPostsData) {
+          recommendedPostsData = JSON.parse(recommendedPostsData);
+          setRecommendedPosts(recommendedPostsData);
+        } else {
+          // If not found in sessionStorage, fetch from localhost:5000
+          const response = await axios.get('https://recipe-backend-1e02.onrender.com/api/posts');
+    
+          // Get a random subset of posts (adjust the count based on your preference)
+          const recommendedPostsSubset = getRandomSubset(response.data, 5);
+    
+          setRecommendedPosts(recommendedPostsSubset);
+    
+          // Store the fetched recommended posts in sessionStorage
+          sessionStorage.setItem('recommendedPosts', JSON.stringify(recommendedPostsSubset));
+        }
       } catch (error) {
         console.error('Error fetching recommended posts:', error);
-      }finally {
+      } finally {
         setRecommendedPostsLoading(false);
       }
     };
@@ -206,9 +217,9 @@ const SearchPage = ({ loggedInUser }) => {
       />
 
       
-      
+<h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
 <div className="mb-4 overflow-x-auto p-2 scrollbar-hidden">
-  <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
+  
   {recommendedPostsLoading ? (
     // Show loading spinner while fetching recommended posts
     <div className="loading-container">

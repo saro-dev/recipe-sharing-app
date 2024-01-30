@@ -500,6 +500,35 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Error creating recipe' });
   }
 });
+// GET endpoint to get followers of a user
+app.get('/api/user/:userId/followers', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    // Retrieve followers of the user with userId from the database
+    const followers = await User.find({ following: userId });
+    res.json({ followers });
+  } catch (error) {
+    console.error('Error fetching followers:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// POST endpoint to send notification to a follower
+app.post('/api/sendNotification/:followerId', async (req, res) => {
+  const followerId = req.params.followerId;
+  const { message } = req.body;
+
+  try {
+    // Logic to send a notification to the follower with followerId
+    // You can use a notification service or implement your own logic here
+    console.log(`Notification sent to follower ${followerId}: ${message}`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 const recipeImageCacheStrategy = (res) => {
   res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
@@ -535,6 +564,15 @@ app.get('/api/user/:userId', async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching user data' });
+  }
+});
+app.get('/api/userName/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findById(req.params.userId)
+  if (user) {
+    res.json({ name: user.name }); // Sending only the name for simplicity
+  } else {
+    res.status(404).json({ error: 'User not found' });
   }
 });
 

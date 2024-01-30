@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Alert from './Alert';
@@ -23,7 +23,37 @@ const RecipePostComponent = ({ userId }) => {
   const [cookingTime, setCookingTime] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const categories = ['Breakfast', 'Lunch', 'Dinner','Dessert','Snacks'];
+  const [userData, setUserData] = useState(null);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/userName/${userId}`);
+        setUserData(response.data.name);
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
+
+  const sendNotificationToFollowers = async (followers, recipeTitle, userName) => {
+    try {
+      const notifications = followers.map(async followerId => {
+        const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/sendNotification/${followerId}`, {
+          message: `${userName} posted a new recipe: ${recipeTitle}`,
+        });
+        return response.data;
+      });
+      await Promise.all(notifications);
+      console.log('Notifications sent successfully.');
+    } catch (error) {
+      console.error('Error sending notifications:', error);
+    }
+  };
+  
   const handleInputChange = event => {
     const { name, value } = event.target;
     setRecipeData(prevData => ({ ...prevData, [name]: value }));
@@ -100,7 +130,11 @@ const RecipePostComponent = ({ userId }) => {
       console.log('Recipe posted:', response.data);
       setAlert({ type: 'success', message: 'Recipe posted successfully!' });
       setTimeout(() => setAlert(null), 2000);
-      setTimeout(() => navigate('/'), 2000);
+
+      const followerResponse = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/followers`);
+    const followers = followerResponse.data.followers;
+
+    await sendNotificationToFollowers(followers, recipeData.title, userData.name);
     } catch (error) {
       console.error('Error posting recipe:', error);
     } finally {

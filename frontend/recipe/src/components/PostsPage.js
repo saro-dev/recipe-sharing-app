@@ -28,27 +28,50 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
  
 
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts?page=${currentPage}&limit=${postsPerPage}`);
-        const newPosts = response.data;
+  const fetchPostsFromApi = async (page, limit) => {
+    try {
+      const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/posts?page=${page}&limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      throw error;
+    }
+  };
+
+  const fetchAndCachePosts = async () => {
+    try {
+      const cachedPosts = JSON.parse(sessionStorage.getItem('cachedPosts')) || [];
+      const startIdx = (currentPage - 1) * postsPerPage;
+
+      // Check if cached posts are available for the current page
+      if (startIdx < cachedPosts.length) {
+        const newPosts = cachedPosts.slice(startIdx, startIdx + postsPerPage);
+        setPosts([...posts, ...newPosts]);
+        setCurrentPage(currentPage + 1);
+      } else {
+        // Fetch new posts from the API
+        const newPosts = await fetchPostsFromApi(currentPage, postsPerPage);
 
         if (newPosts.length === 0) {
           setHasMorePosts(false);
         } else {
           setPosts([...posts, ...newPosts]);
           setCurrentPage(currentPage + 1);
+
+          // Cache the new posts
+          sessionStorage.setItem('cachedPosts', JSON.stringify([...cachedPosts, ...newPosts]));
         }
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
       }
-    };
 
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching and caching posts:', error);
+    }
+  };
+
+  useEffect(() => {
     if (hasMorePosts) {
-      fetchPosts();
+      fetchAndCachePosts();
     }
   }, [currentPage, hasMorePosts]);
 
@@ -71,14 +94,9 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
     }
   }, [setCurrentPage]);
   
+  
 
-  useEffect(() => {
-    const storedLikedPosts = localStorage.getItem('likedPosts');
-    if (storedLikedPosts) {
-      const likedPostIds = JSON.parse(storedLikedPosts);
-      setLikedPosts(likedPostIds);
-    }
-  }, []);
+ 
 
   useEffect(() => {
     const checkIsFavorite = async (postId) => {

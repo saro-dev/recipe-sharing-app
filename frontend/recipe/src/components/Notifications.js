@@ -16,9 +16,18 @@ const Notifications = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
-        setUserData(response.data);
-        setLoading(false);
+        // Check if notifications exist in session storage
+        const storedNotifications = sessionStorage.getItem('notifications');
+        if (storedNotifications) {
+          setUserData({ notifications: JSON.parse(storedNotifications) });
+          setLoading(false);
+        } else {
+          const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`);
+          setUserData(response.data);
+          setLoading(false);
+          // Cache notifications in session storage
+          sessionStorage.setItem('notifications', JSON.stringify(response.data.notifications));
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
         setLoading(false);
