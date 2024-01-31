@@ -37,9 +37,14 @@ const ProfileComponent = ({ userId }) => {
       const storedrecipecount = sessionStorage.getItem("recipeCount");
       if (storedUserData) {
         setUserData(JSON.parse(storedUserData));
+      } 
+      else if (storedfollowerscount){
         setFollowersCount(JSON.parse(storedfollowerscount));
+      }
+      else if (storedrecipecount){
         setRecipeCount(JSON.parse(storedrecipecount));
-      } else {
+      }
+      else {
         const [userDataResponse, followersCountResponse, recipeCountResponse] =
           await Promise.all([
             axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
