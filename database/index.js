@@ -510,18 +510,41 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
 });
 // GET endpoint to get followers of a user
 app.get('/api/user/:userId/followers', async (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
 
   try {
-    // Retrieve followers of the user with userId from the database
-    const followers = await User.find({ following: userId });
+    // Fetch the user by userId from the database
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const followers = user.followers;
+
     res.json({ followers });
   } catch (error) {
     console.error('Error fetching followers:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Error fetching followers' });
   }
 });
+app.get('/api/followers/:userId', async (req, res) => {
+  const { userId } = req.params;
 
+  try {
+    // Find the user by ID and populate the followers field to get follower details
+    const user = await User.findById(userId).populate('followers', 'username email');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ followers: user.followers });
+  } catch (error) {
+    console.error('Error fetching followers:', error);
+    res.status(500).json({ error: 'Error fetching followers' });
+  }
+});
 app.post('/api/sendNotificationToFollowers', async (req, res) => {
   try {
     const { userId, message } = req.body;

@@ -32,15 +32,14 @@ const RecipePostComponent = ({ userId }) => {
       try {
         const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/followers/${userId}`);
         setFollowers(response.data.followers);
-        console.log(followers)
+        console.log(followers);
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
     };
 
-    
     fetchFollowers();
-  }, [userId,followers]);
+  }, [userId]);
 
 
   const handleInputChange = (event) => {
@@ -115,8 +114,10 @@ const RecipePostComponent = ({ userId }) => {
 };
 
 const sendNotificationsToFollowers = (notificationMessage) => {
-  followers.forEach((followerId) => {
-    sendBrowserNotification(followerId.name, notificationMessage);
+  followers.forEach((follower) => {
+    const { email } = follower;
+    sendBrowserNotification(email, notificationMessage);
+    console.log(`notification sent to ${follower._id}`)
   });
   console.log("Notifications sent to all followers successfully.");
 };
@@ -303,7 +304,6 @@ const sendNotificationsToFollowers = (notificationMessage) => {
             {loading ? "Posting..." : "Post Recipe"}
           </button>
         </form>
-        <PushNotification />
       </div>
     </div>
   );
