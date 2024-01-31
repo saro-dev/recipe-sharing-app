@@ -5,7 +5,7 @@ import Alert from "./Alert";
 import PostingModal from "./PostingModal";
 
 
-const RecipePostComponent = ({ userId }) => {
+const RecipePostComponent = ({ userId,email }) => {
   const [recipeData, setRecipeData] = useState({
     title: "",
     ingredients: [""],
@@ -96,27 +96,46 @@ const RecipePostComponent = ({ userId }) => {
   };
   // Function to send browser notifications
  // Function to send browser notification
- const sendBrowserNotification = (followerName, recipeTitle) => {
+ const sendBrowserNotification = (followerEmail, recipeTitle, postId) => {
   if ("Notification" in window && Notification.permission === "granted") {
-    new Notification(`New Recipe Posted by ${followerName}`, {
+    const notification = new Notification(`New Recipe Posted`, {
       body: `Check out the new recipe: ${recipeTitle}`,
+      icon: '../../public/logo192.png',
     });
+
+    notification.onclick = () => {
+      // Navigate to the post-details/_id page when the notification is clicked
+      window.location.href = `/post-details/${postId}`;
+    };
+    
   } else if ("Notification" in window && Notification.permission !== "denied") {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
-        new Notification(`New Recipe Posted by ${followerName}`, {
+        const notification = new Notification(`New Recipe Posted`, {
           body: `Check out the new recipe: ${recipeTitle}`,
+          icon: '../../public/logo192.png',
         });
+
+        notification.onclick = () => {
+          // Navigate to the post-details/_id page when the notification is clicked
+          window.location.href = `/post-details/${postId}`;
+        };
+
+        
       }
     });
   }
 };
 
-const sendNotificationsToFollowers = (notificationMessage) => {
+
+
+const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEmail) => {
   followers.forEach((follower) => {
     const { email } = follower;
-    sendBrowserNotification(email, notificationMessage);
-    console.log(`notification sent to ${follower._id}`);
+    if (email !== currentUserEmail) {
+      sendBrowserNotification(email, notificationMessage, postId);
+      console.log(`Notification sent to ${email}`);
+    }
   });
   console.log("Notifications sent to all followers successfully.");
 };
@@ -150,12 +169,18 @@ const sendNotificationsToFollowers = (notificationMessage) => {
           },
         }
       );
-      console.log("Recipe posted:", response.data);
-      setAlert({ type: "success", message: "Recipe posted successfully!" });
-      setTimeout(() => setAlert(null), 2000);
+      const { _id, authorName, title } = response.data;
 
-      const notificationMessage = `${response.data.authorName} posted ${response.data.title}`;
-      sendNotificationsToFollowers(notificationMessage);
+    console.log("Recipe posted:", response.data);
+
+    setAlert({ type: "success", message: "Recipe posted successfully!" });
+    setTimeout(() => setAlert(null), 2000);
+
+    const notificationMessage = `${authorName} posted ${title}`;
+    const loggedInUserEmail = email; // Replace loggedInUser with your actual variable
+
+    // Call sendNotificationsToFollowers, passing loggedInUserEmail
+    sendNotificationsToFollowers(notificationMessage, _id, loggedInUserEmail);
 
     } catch (error) {
       console.error("Error posting recipe:", error);
@@ -297,7 +322,7 @@ const sendNotificationsToFollowers = (notificationMessage) => {
           />
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 px-4 font-bold rounded hover:bg-blue-600"
+            className="w-full bg-green-500 text-white py-2 px-4 font-bold rounded hover:bg-green-600"
             disabled={loading}
           >
             {loading ? "Posting..." : "Post Recipe"}

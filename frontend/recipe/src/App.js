@@ -105,7 +105,7 @@ const App = () => {
             <>
             <Route path="/" element={<PostsPage loggedInUser={loggedInUser}  favoritePosts={favoritePosts} setFavoritePosts={setFavoritePosts}/>} />
               <Route path="/profile" element={<ProfileComponent userId={loggedInUser._id} />} />
-              <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} />} />
+              <Route path="/post" element={<RecipePostComponent userId={loggedInUser._id} email={loggedInUser.email}/>} />
               <Route path="/myposts" element={<MyPostsPage userId={loggedInUser._id} />} />
               
               <Route path="/search" element={<SearchPage loggedInUser={loggedInUser} />} />
