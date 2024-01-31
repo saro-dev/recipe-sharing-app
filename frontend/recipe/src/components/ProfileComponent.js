@@ -92,14 +92,6 @@ const ProfileComponent = ({ userId }) => {
       }
     });
   };
-  
-  // Function to handle bell button click
-  const handleBellButtonClick = () => {
-    // Reset notification permission state
-    setNotificationPermission(false);
-    // Request notification permission
-    requestNotificationPermission();
-  };
 
   // Function to open the info modal
   const openInfoModal = () => {
@@ -236,7 +228,7 @@ const ProfileComponent = ({ userId }) => {
               <FaBellSlash
                 className="text-red-500 cursor-pointer ml-2"
                 size={20}
-                onClick={handleBellButtonClick}
+                onClick={requestNotificationPermission} // Call requestNotificationPermission when bell is clicked
               />
             )}
             </h2>
