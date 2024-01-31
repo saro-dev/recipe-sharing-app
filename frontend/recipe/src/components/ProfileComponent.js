@@ -33,24 +33,28 @@ const ProfileComponent = ({ userId }) => {
   const fetchData = async () => {
     try {
       const storedUserData = sessionStorage.getItem("userData");
-      const storedfollowerscount = sessionStorage.getItem("followersCount");
-      const storedrecipecount = sessionStorage.getItem("recipeCount");
+      const storedFollowersCount = sessionStorage.getItem("followersCount");
+      const storedRecipeCount = sessionStorage.getItem("recipeCount");
+  
       if (storedUserData) {
         setUserData(JSON.parse(storedUserData));
-      } 
-      else if (storedfollowerscount){
-        setFollowersCount(JSON.parse(storedfollowerscount));
       }
-      else if (storedrecipecount){
-        setRecipeCount(JSON.parse(storedrecipecount));
+  
+      if (storedFollowersCount) {
+        setFollowersCount(JSON.parse(storedFollowersCount));
       }
-      else {
-        const [userDataResponse, followersCountResponse, recipeCountResponse] =
-          await Promise.all([
-            axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
-            axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
-            axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
-          ]);
+  
+      if (storedRecipeCount) {
+        setRecipeCount(JSON.parse(storedRecipeCount));
+      }
+  
+      // If any of the data is missing, fetch it from the API
+      if (!storedUserData || !storedFollowersCount || !storedRecipeCount) {
+        const [userDataResponse, followersCountResponse, recipeCountResponse] = await Promise.all([
+          axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}`),
+          axios.get(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follower-count`),
+          axios.get(`https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`),
+        ]);
   
         const userData = userDataResponse.data;
         const followersCount = followersCountResponse.data.count;
@@ -70,6 +74,7 @@ const ProfileComponent = ({ userId }) => {
       console.error("Error fetching data:", error);
     }
   };
+  
   
 
  useEffect(() => {
