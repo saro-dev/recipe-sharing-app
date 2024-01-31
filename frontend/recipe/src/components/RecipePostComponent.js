@@ -130,15 +130,19 @@ const RecipePostComponent = ({ userId,email }) => {
 
 
 const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEmail) => {
+  const sentEmails = new Set(); // Set to track already sent emails
+  
   followers.forEach((follower) => {
     const { email } = follower;
-    if (email !== currentUserEmail) {
+    if (email !== currentUserEmail && !sentEmails.has(email)) {
       sendBrowserNotification(email, notificationMessage, postId);
       console.log(`Notification sent to ${email}`);
+      sentEmails.add(email); // Add email to set to indicate that notification has been sent
     }
   });
   console.log("Notifications sent to all followers successfully.");
 };
+
 
 
   const handleSubmit = async (event) => {
