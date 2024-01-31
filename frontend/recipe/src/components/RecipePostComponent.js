@@ -116,7 +116,7 @@ const sendNotificationsToFollowers = (notificationMessage) => {
   followers.forEach((follower) => {
     const { email } = follower;
     sendBrowserNotification(email, notificationMessage);
-    console.log(`notification sent to ${follower._id}`)
+    console.log(`notification sent to ${follower._id}`);
   });
   console.log("Notifications sent to all followers successfully.");
 };
