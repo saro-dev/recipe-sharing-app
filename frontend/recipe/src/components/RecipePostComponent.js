@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Alert from "./Alert";
 import PostingModal from "./PostingModal";
-import PushNotification from "react-push-notification";
 
 
 const RecipePostComponent = ({ userId }) => {
