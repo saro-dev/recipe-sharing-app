@@ -19,6 +19,7 @@ const UserProfile = ({ loggedInUser }) => {
   const [userFollowers, setUserFollowers] = useState([]);
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
   const [bio, setBio] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false); // New state to manage follow status
 
   const navigate = useNavigate();
 
@@ -34,9 +35,14 @@ const UserProfile = ({ loggedInUser }) => {
         );
         setUserData(response.data);
         setFollowerCount(response.data.followers.length);
-        setRecipeCount(response.data.recipeCount); // Assuming you have a field for recipe count
+        setRecipeCount(response.data.recipeCount);
         setBio(response.data.bio);
-        // Move the fetchRecipeCount logic here
+
+        // Check if the logged-in user is among the followers
+        setIsFollowing(response.data.followers.some(
+          (follower) => follower._id === loggedInUser._id
+        ));
+
         try {
           const countResponse = await axios.get(
             `https://recipe-backend-1e02.onrender.com/api/recipe/count/${userId}`
@@ -51,7 +57,7 @@ const UserProfile = ({ loggedInUser }) => {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [userId, loggedInUser]);
 
   useEffect(() => {
     const fetchFollowers = async () => {
@@ -76,8 +82,9 @@ const UserProfile = ({ loggedInUser }) => {
       await axios.post(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`, {
         followerId: loggedInUser._id,
       });
-      setUserFollowers((prevFollowers) => [...prevFollowers, loggedInUser]); // Add logged-in user to followers list
+      setUserFollowers((prevFollowers) => [...prevFollowers, loggedInUser]);
       setFollowerCount((prevCount) => prevCount + 1);
+      setIsFollowing(true); // Update follow state
     } catch (error) {
       console.error("Error following user:", error);
     } finally {
@@ -95,20 +102,20 @@ const UserProfile = ({ loggedInUser }) => {
       });
       setUserFollowers((prevFollowers) =>
         prevFollowers.filter((follower) => follower._id !== loggedInUser._id)
-      ); // Remove logged-in user from followers list
+      );
       setFollowerCount((prevCount) => prevCount - 1);
+      setIsFollowing(false); // Update follow state
     } catch (error) {
       console.error("Error unfollowing user:", error);
     } finally {
       setLoadingUnfollow(false);
     }
   };
-  // Function to open the badge description modal
+
   const openBadgeModal = () => {
     setIsBadgeModalOpen(true);
   };
 
-  // Function to close the badge description modal
   const closeBadgeModal = () => {
     setIsBadgeModalOpen(false);
   };
@@ -137,7 +144,7 @@ const UserProfile = ({ loggedInUser }) => {
                       borderRadius: "50%",
                     }}
                     onError={(e) => {
-                      e.target.src = defaultimg; // Replace with the URL of your default image
+                      e.target.src = defaultimg;
                     }}
                   />
                   <p className="text-lg font-semibold mr-2 mt-2">
@@ -145,7 +152,7 @@ const UserProfile = ({ loggedInUser }) => {
                   </p>
                   <button
                     className="text-blue-600  block hover:underline"
-                    onClick={openBadgeModal} // Open the badge description modal
+                    onClick={openBadgeModal}
                   >
                     {recipeCount >= 0 && recipeCount <= 25 && (
                       <img
@@ -185,7 +192,7 @@ const UserProfile = ({ loggedInUser }) => {
                 <BadgeDescriptionModal
                   isOpen={isBadgeModalOpen}
                   onClose={closeBadgeModal}
-                  recipeCount={recipeCount} // Pass recipeCount as needed
+                  recipeCount={recipeCount}
                 />
 
                 <div className="flex ">
@@ -208,9 +215,7 @@ const UserProfile = ({ loggedInUser }) => {
                 >
                   View Posts
                 </Link>
-                {userFollowers.some(
-                  (follower) => follower._id === loggedInUser._id
-                ) ? (
+                {isFollowing ? (
                   <button
                     onClick={handleUnfollow}
                     className={`ml-2 mt-2 bg-red-500 text-white px-4 py-2 rounded ${
