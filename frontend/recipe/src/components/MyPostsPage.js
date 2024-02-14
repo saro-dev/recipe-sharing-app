@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaTrash, FaPlus } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import Alert from './Alert';
-import ConfirmDeleteModal from './ConfirmDeleteModal'; // Import the ConfirmDeleteModal component
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaTrash, FaPlus, FaEdit } from "react-icons/fa";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import ConfirmDeleteModal from "./ConfirmDeleteModal"; // Import the ConfirmDeleteModal component
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyPostsPage = ({ userId }) => {
   const [myPosts, setMyPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [alert, setAlert] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // New state for modal visibility
   const [postToDelete, setPostToDelete] = useState(null); // New state for post to delete
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchMyPosts = async () => {
       try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/myposts/${userId}`);
+        const response = await axios.get(
+          `https://recipe-backend-1e02.onrender.com/api/myposts/${userId}`
+        );
         setMyPosts(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching my posts:', error);
+        console.error("Error fetching my posts:", error);
       }
     };
 
@@ -29,17 +33,19 @@ const MyPostsPage = ({ userId }) => {
   const handleDeletePost = async (postId) => {
     try {
       await axios.delete(`https://recipe-backend-1e02.onrender.com/api/post/${postId}`);
-      const updatedPosts = myPosts.filter(post => post._id !== postId);
+      const updatedPosts = myPosts.filter((post) => post._id !== postId);
       setMyPosts(updatedPosts);
-      setAlert({ type: 'success', message: 'Post deleted successfully' });
-      setTimeout(() => {
-        setAlert(null);
-      }, 3000);
+      toast.success("Post deleted successfully!", {
+        position: "top-right",
+        autoClose: 1000, // Close after 2 seconds
+      });
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
     }
   };
-
+  const handleEditPost = (postId) => {
+    navigate(`/edit-post/${postId}`);
+  };
   const openDeleteModal = (postId) => {
     setPostToDelete(postId);
     setDeleteModalOpen(true);
@@ -51,10 +57,12 @@ const MyPostsPage = ({ userId }) => {
 
   return (
     <div className="p-4">
-      {alert && <Alert type={alert.type} message={alert.message} />}
       <div className="flex justify-between mb-4">
         <h2 className="text-xl font-semibold">My Posts</h2>
-        <Link to="/post" className="flex items-center text-blue-500 hover:underline">
+        <Link
+          to="/post"
+          className="flex items-center text-blue-500 hover:underline"
+        >
           <FaPlus size={20} className="mr-1" /> Create Post
         </Link>
       </div>
@@ -66,12 +74,22 @@ const MyPostsPage = ({ userId }) => {
         <p>No posts found.</p>
       ) : (
         <div className="space-y-4">
-          {myPosts.map(post => (
-            <div key={post._id} className="border p-4 rounded-lg shadow-md cursor-pointer">
+          {myPosts.map((post) => (
+            <div
+              key={post._id}
+              className="border p-4 rounded-lg shadow-md cursor-pointer"
+            >
               <div className="flex justify-between">
                 <Link to={`/post-details/${post._id}`}>
-                  <h3 className="text-xl text-blue-800 font-bold ">{post.title}</h3>
+                  <h3 className="text-xl text-blue-800 font-bold ">
+                    {post.title}
+                  </h3>
                 </Link>
+                <FaEdit
+                  size={20}
+                  className="text-blue-500 cursor-pointer mr-2"
+                  onClick={() => handleEditPost(post._id)}
+                />
                 <FaTrash
                   size={20}
                   className="text-red-500 cursor-pointer"

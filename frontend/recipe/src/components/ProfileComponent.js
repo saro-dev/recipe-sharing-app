@@ -237,8 +237,8 @@ const ProfileComponent = ({ userId }) => {
               />
             )}
             </h2>
-            <div className="bg-blue-100 p-2 rounded">
-              <div className="flex items-center justify-center">
+            <div className="bg-blue-100 p-2 rounded" >
+              <div className="flex items-center justify-around" >
                 <img
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
@@ -248,7 +248,7 @@ const ProfileComponent = ({ userId }) => {
                     e.target.src = defaultimg; // Replace with the URL of your default image
                   }}
                 />
-              </div>
+                <div>
               <label
                 htmlFor="profile-image-upload"
                 className="text-blue-500 font-bold cursor-pointer block mt-2 text-center"
@@ -271,6 +271,10 @@ const ProfileComponent = ({ userId }) => {
                   Remove Profile
                 </button>
               )}
+              </div>
+                
+              </div>
+             
             </div>
             {uploadingProfileImage && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

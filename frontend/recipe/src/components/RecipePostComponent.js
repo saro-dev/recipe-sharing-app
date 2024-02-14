@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Alert from "./Alert";
 import PostingModal from "./PostingModal";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const RecipePostComponent = ({ userId,email }) => {
@@ -18,27 +20,13 @@ const RecipePostComponent = ({ userId,email }) => {
     timestamp: new Date().toISOString(),
   });
   const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
   const [category, setCategory] = useState(""); // State for selected category
   const [loading, setLoading] = useState(false);
   const [cookingTime, setCookingTime] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const categories = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks"];
   const [userData, setUserData] = useState(null);
-  const [followers, setFollowers] = useState([]);
-  useEffect(() => {
-    const fetchFollowers = async () => {
-      try {
-        const response = await axios.get(`https://recipe-backend-1e02.onrender.com/api/followers/${userId}`);
-        setFollowers(response.data.followers);
-        console.log(followers);
-      } catch (error) {
-        console.error("Error fetching followers:", error);
-      }
-    };
-
-    fetchFollowers();
-  }, [userId]);
+ 
 
 
   const handleInputChange = (event) => {
@@ -94,60 +82,8 @@ const RecipePostComponent = ({ userId,email }) => {
     const { value } = event.target;
     setCookingTime(value);
   };
-  // Function to send browser notifications
- // Function to send browser notification
- const sendBrowserNotification = (followerEmail, recipeTitle, postId) => {
-  if ("Notification" in window && Notification.permission === "granted") {
-    const notification = new Notification(`New Recipe Posted`, {
-      body: `Check out the new recipe: ${recipeTitle}`,
-      icon: '../../public/logo192.png',
-    });
-
-    notification.onclick = () => {
-      // Navigate to the post-details/_id page when the notification is clicked
-      window.location.href = `/post-details/${postId}`;
-    };
-    
-  } else if ("Notification" in window && Notification.permission !== "denied") {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        const notification = new Notification(`New Recipe Posted`, {
-          body: `Check out the new recipe: ${recipeTitle}`,
-          icon: '../../public/logo192.png',
-        });
-
-        notification.onclick = () => {
-          // Navigate to the post-details/_id page when the notification is clicked
-          window.location.href = `/post-details/${postId}`;
-        };
-
-        
-      }
-    });
-  }
-};
 
 
-
-const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEmail) => {
-  const sentEmails = new Set(); // Set to track already sent emails
-  
-  // Filter out the current user's email and add remaining followers' emails to the set
-  followers.forEach((follower) => {
-    const { email } = follower;
-    if (email !== currentUserEmail) {
-      sentEmails.add(email);
-    }
-  });
-  
-  // Send notifications to all unique followers' emails
-  sentEmails.forEach((email) => {
-    sendBrowserNotification(email, notificationMessage, postId);
-    console.log(`Notification sent to ${email}`);
-  });
-
-  console.log("Notifications sent to all followers successfully.");
-};
 
 
 
@@ -184,14 +120,12 @@ const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEm
 
     console.log("Recipe posted:", response.data);
 
-    setAlert({ type: "success", message: "Recipe posted successfully!" });
-    setTimeout(() => setAlert(null), 2000);
+    toast.success('Recipe posted successfully!', {
+      position: 'top-right',
+      autoClose: 1000, // Close after 2 seconds
+    });
+    setTimeout(() => navigate('/myposts'), 2000);
 
-    const notificationMessage = `${authorName} posted ${title}`;
-    const loggedInUserEmail = email; // Replace loggedInUser with your actual variable
-
-    // Call sendNotificationsToFollowers, passing loggedInUserEmail
-    sendNotificationsToFollowers(notificationMessage, _id, loggedInUserEmail);
 
     } catch (error) {
       console.error("Error posting recipe:", error);
@@ -204,7 +138,6 @@ const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEm
   return (
     <div className="flex justify-center">
       <div className="p-4 w-full sm:w-96">
-        {alert && <Alert type={alert.type} message={alert.message} />}
         {isPosting && <PostingModal />}
         <h2 className="text-xl font-semibold mb-4">Post a Recipe</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -242,6 +175,7 @@ const sendNotificationsToFollowers = (notificationMessage, postId, currentUserEm
                 value={ingredient}
                 onChange={(e) => handleIngredientChange(index, e.target.value)}
                 className="flex-1 border rounded p-2"
+                required
               />
               {index > 0 && (
                 <button

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import axios from 'axios';
+import defaultimg from "./defaultimg.jpg";
+
+
 
 const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, setPost }) => {
   const [replyText, setReplyText] = useState('');
@@ -64,22 +67,33 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
           ? 'bg-blue-100'
           : 'bg-gray-100'
       }`}
-      style={{ overflowX: 'auto', maxHeight: '200px', width:'400px' }}
+      style={{ overflowX: 'auto', maxHeight: '200px', width:'350px' }}
     >
-      <div className="comment-text mb-3 " style={{ wordWrap: 'break-word' }}>
-        <strong>{comment.name}:</strong> {comment.text}
+      <div className="comment-text mb-3 flex" style={{ wordWrap: 'break-word',flexDirection:"column" }}>
+      <div className='flex items-center my-2'>
+      <img
+            src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${comment.user}`}
+            alt=""
+            className="max-w-full max-h-full object-cover mr-2"
+            style={{ height: "30px", width: "30px", borderRadius: "50%" }}
+            onError={(e) => {
+              e.target.src = defaultimg; // Replace with the URL of your default image
+            }}
+          /><strong className='mb-2'>{comment.name}</strong> 
       </div>
-      {loggedInUser && comment.user === loggedInUser._id && (
-        <button onClick={() => handleDelete(comment._id)} className="delete-button text-red-700 mr-5">
-          <FaTrash />
-        </button>
-      )}
+         {comment.text}
+      </div>
       <button
         onClick={() => setShowReplyInput(!showReplyInput)}
         className="reply-button-small text-blue-900 font-bold"
       >
         Reply
       </button>
+      {loggedInUser && comment.user === loggedInUser._id && (
+        <button onClick={() => handleDelete(comment._id)} className="delete-button text-white ml-8 bg-red-700 rounded-lg p-1">
+          Delete <i className='fa fa-trash'></i>
+        </button>
+      )}
       {showReplyInput && (
         <div className="reply-input">
           <input
