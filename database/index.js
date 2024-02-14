@@ -162,14 +162,6 @@ const recipeSchema = new mongoose.Schema({
   },
   comments: [commentSchema]
 });
-const mainnotificationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the user who receives the notification
-  message: { type: String, required: true }, // Notification message
-  timestamp: { type: Date, default: Date.now } // Timestamp of the notification
-});
-
-// 2. Create Notification Model
-const Notification = mongoose.model('Notification', mainnotificationSchema)
 const User = mongoose.model('User', userSchema);
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
@@ -219,7 +211,44 @@ app.post('/api/comment/:postId', async (req, res) => {
     res.status(500).json({ error: 'Error adding comment' });
   }
 });
+app.get('/api/user/liked-posts/:userId', async (req, res) => {
+  const userId = req.params.userId;
 
+  try {
+    const likedPosts = await Like.find({ userId }).select('postId').exec();
+    res.json(likedPosts.map(like => like.postId));
+  } catch (error) {
+    console.error('Error fetching liked posts:', error);
+    res.status(500).json({ message: 'Error fetching liked posts' });
+  }
+});
+app.get('/api/post/:id', async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Recipe.findById(postId);
+    res.json(post);
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the post' });
+  }
+});
+
+app.put('/api/post/:id', async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const { title, content } = req.body;
+
+    const updatedPost = await Recipe.findByIdAndUpdate(postId, {
+      title,
+      content
+    }, { new: true }); // Returns the updated document
+
+    res.json(updatedPost);
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ error: 'An error occurred while updating the post' });
+  }
+});
 app.post('/api/comment/:postId/addReply/:commentId', async (req, res) => {
   const { userId, text, name } = req.body;
   const postId = req.params.postId;
