@@ -63,7 +63,7 @@ const UserProfile = ({ loggedInUser }) => {
     const fetchFollowers = async () => {
       try {
         const response = await axios.get(
-          `https://recipe-backend-1e02.onrender.com/api/user/${userId}/followers`
+          `https://recipe-backend-1e02.onrender.comm/api/user/${userId}/followers`
         );
         setUserFollowers(response.data.followers);
       } catch (error) {
@@ -237,7 +237,17 @@ const UserProfile = ({ loggedInUser }) => {
               </div>
             </div>
           ) : (
-            <p>Loading user data...</p>
+            <div style={{width:"100%"}}>
+          {Array.from({ length: 1 }).map((_, index) => (
+            <div key={index} className="post-item skeleton-loading" style={{width:"290px"}}>
+              <div className="w-full h-40 mb-4 bg-gray-300 rounded-lg text-center flex justify-center items-center text-xl text-gray-500" >loading..</div> {/* Placeholder image */}
+              <h3 className="text-lg font-semibold mb-2 bg-gray-300 h-8 rounded"></h3> {/* Placeholder heading */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+              <div className="bg-gray-200 h-4 rounded mb-2"></div> {/* Placeholder detail */}
+            </div>
+          ))}
+        </div>
           )}
         </div>
       </div>

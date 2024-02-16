@@ -243,7 +243,7 @@ const ProfileComponent = ({ userId }) => {
                   src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${userData._id}`}
                   alt=""
                   className="max-w-full max-h-full object-cover mr-2"
-                  style={{ height: "60px", width: "60px", borderRadius: "50%" }}
+                  style={{ height: "100px", width: "100px", borderRadius: "50%" }}
                   onError={(e) => {
                     e.target.src = defaultimg; // Replace with the URL of your default image
                   }}

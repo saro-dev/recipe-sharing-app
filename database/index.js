@@ -236,12 +236,18 @@ app.get('/api/post/:id', async (req, res) => {
 app.put('/api/post/:id', async (req, res) => {
   try {
     const postId = req.params.id;
-    const { title, content } = req.body;
+    const { title, ingredients, steps, notes, cookingTime, category } = req.body;
 
-    const updatedPost = await Recipe.findByIdAndUpdate(postId, {
+    const updatedFields = {
       title,
-      content
-    }, { new: true }); // Returns the updated document
+      ingredients,
+      steps,
+      notes,
+      cookingTime,
+      category
+    };
+
+    const updatedPost = await Recipe.findByIdAndUpdate(postId, updatedFields, { new: true });
 
     res.json(updatedPost);
   } catch (error) {
@@ -249,6 +255,7 @@ app.put('/api/post/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating the post' });
   }
 });
+
 app.post('/api/comment/:postId/addReply/:commentId', async (req, res) => {
   const { userId, text, name } = req.body;
   const postId = req.params.postId;

@@ -12,6 +12,12 @@
 body{
   background-color: #ECF8F9;
 }
+div{
+  user-select: none;
+}
+h1,h2,h3,h4,h5,h6,p,a{
+  user-select: none;
+}
 .custom-shadow{
     box-shadow: 1px 1px 5px black;
 }

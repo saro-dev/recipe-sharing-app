@@ -57,7 +57,7 @@ const SearchResults = ({ loading, searchType, searchQuery, userSearchResults, se
       </div>
     ) : searchType === 'users' ? (
       searchQuery.trim() === '' ? (
-        <p>Enter a search query to find users.</p>
+        <p></p>
       ) : userSearchResults.length === 0 ? (
         <p>No results found for users.</p>
       ) : (
@@ -67,7 +67,7 @@ const SearchResults = ({ loading, searchType, searchQuery, userSearchResults, se
       )
     ) : (
       searchQuery.trim() === '' ? (
-        <p className='text-l mt-2 ml-2'>Enter a search query to find recipes.</p>
+        <p className='text-l mt-2 ml-2'></p>
       ) : searchResults.length === 0 ? (
         <p>No results found for recipes.</p>
       ) : (
@@ -77,6 +77,7 @@ const SearchResults = ({ loading, searchType, searchQuery, userSearchResults, se
         ))
       )
     )}
+    
   </div>
 );
 

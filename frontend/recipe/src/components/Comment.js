@@ -101,11 +101,30 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Reply to this comment"
-            className="border rounded p-2 flex-grow m-3"
+            className="border rounded-xl p-2 flex-grow m-3"
             style={{ wordWrap: 'break-word' }}
           />
-          <button onClick={handleAddReply} className="reply-button">
-            Reply
+          <button onClick={handleAddReply} className="reply-button stroke-slate-300 bg-slate-700 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300">
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20px"
+              height="20px"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M7.39999 6.32003L15.89 3.49003C19.7 2.22003 21.77 4.30003 20.51 8.11003L17.68 16.6C15.78 22.31 12.66 22.31 10.76 16.6L9.91999 14.08L7.39999 13.24C1.68999 11.34 1.68999 8.23003 7.39999 6.32003Z"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M10.11 13.6501L13.69 10.0601"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+            </svg>
           </button>
         </div>
       )}
@@ -128,8 +147,9 @@ const Comment = ({ comment, onAddReply, onDeleteReply, loggedInUser, postId, set
                 <button
                   onClick={() => handleDeleteReply(reply._id)}
                   className="delete-button text-red-700 mt-2"
+                  style={{color:"snow",backgroundColor:"red", paddingLeft:"2px", paddingRight:"2px", borderRadius:"5px", textDecoration:"none"}}
                 >
-                  <FaTrash className='text-red-700'/>
+                   Delete <i className='fa fa-trash'></i>
                 </button>
               )}
             </div>

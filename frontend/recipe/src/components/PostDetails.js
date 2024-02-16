@@ -350,7 +350,7 @@ const PostDetails = ({ loggedInUser }) => {
   }
 
   return (
-    <div className="p-4 page-container mb-10 max-w-4xl mx-auto">
+    <div className="p-4 page-container mb-20 max-w-4xl mx-auto">
       {!loggedInUser && (
         <div className="z-999 bg-red-100 p-4 rounded text-red-600 mb-4">
           You are not logged in! <br></br> Please{" "}
@@ -460,6 +460,7 @@ const PostDetails = ({ loggedInUser }) => {
             {post.cookingTime} Minutes
           </div>
         </div>
+        
       </div>
       <hr className="m-1"></hr>
       <div className="mt-2">
@@ -538,7 +539,7 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
       <div className="mt-4 mb-4">
         <h3 className="font-semibold">Comments:</h3>
-        <div className="bg-slate-800 border border-slate-700 grid grid-cols-6 gap-2 rounded-xl p-2 text-sm my-2">
+        <div className="bg-slate-800 border border-slate-700 flex flex-col rounded-xl p-2 text-sm my-2">
           <h1 className="text-center text-slate-600 text-xl font-bold col-span-6">
             Post a comment
           </h1>
@@ -546,13 +547,16 @@ const PostDetails = ({ loggedInUser }) => {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Your thoughts..."
-            className="bg-slate-700 text-slate-300 h-28 placeholder:text-slate-300 placeholder:opacity-50 border border-slate-600 col-span-6 resize-none outline-none rounded-lg p-2 duration-300 focus:border-slate-300"
+            className="bg-slate-700 text-slate-300 h-28 placeholder:text-slate-300 placeholder:opacity-50 border border-slate-600  resize-none outline-none rounded-lg p-2 duration-300 focus:border-slate-300"
+            style={{width:"100%"}}
           ></textarea>
-          <span className="col-span-2"></span>
+          
+          <div className="flex justify-end mt-2" style={{width:"100%"}}>
           <button
             onClick={() => handleAddComment(post._id)}
             disabled={!commentText.trim()}
-            className="col-span-2 stroke-slate-300 bg-slate-700 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300 flex justify-center items-center"
+            className=" stroke-slate-300 bg-slate-700 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300 flex justify-center items-center "
+            style={{width:"100px"}}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -575,6 +579,7 @@ const PostDetails = ({ loggedInUser }) => {
               ></path>
             </svg>
           </button>
+          </div>
         </div>
         <hr/>
           <h3 className="my-2 text-white bg-blue-600 p-1 rounded-lg" style={{width:'250px'}}>{post.comments.length} comments on this post</h3>

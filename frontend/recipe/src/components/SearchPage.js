@@ -195,6 +195,7 @@ const SearchPage = ({ loggedInUser }) => {
           id="categoryFilter"
           value={selectedCategory}
           onChange={handleCategoryChange}
+          className='px-2 py-1 bg-gray-200 ml-2 rounded-xl'
         >
           <option value="">All</option>
           <option value="Breakfast">Breakfast</option>
@@ -204,6 +205,7 @@ const SearchPage = ({ loggedInUser }) => {
           <option value="Snacks">Snacks</option>
         </select>
       </div>
+      <hr />
 
       {/* Render search results using the SearchResults component */}
       <SearchResults
@@ -216,7 +218,6 @@ const SearchPage = ({ loggedInUser }) => {
         recipeCounts={recipeCounts}
       />
 
-      
 <h2 className="text-xl font-semibold mb-2">Recommended Posts</h2>
 <div className="mb-4 overflow-x-auto p-2 scrollbar-hidden">
   

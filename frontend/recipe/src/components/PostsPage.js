@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CustomToast from './CustomToast';
 import veg from '../veg.webp';
 import { debounce } from 'lodash';
-
+import logo from "../splash.png";
 
 const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   const [posts, setPosts] = useState([]);
@@ -128,7 +128,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
     return (
       <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
         <div className='flex items-left mb-4'>
-          <h2 className="text-2xl font-semibold mr-8">Posts</h2>
+        <h2 className="text-2xl font-semibold mr-8 flex items-center justify-center"> <img src={logo} alt="logo" className='w-7 h-7 mx-2 rounded'/> Recipeeze</h2>
           <div className="filter-bar">
             <input type="radio" name="toggle" value="nonveg" id="toggle-nonveg" checked={selectedMode === 'nonveg'} onChange={() => handleModeChange('nonveg')} />
             <label className={`toggle toggle-nonveg mr-10 ${selectedMode === 'nonveg' ? 'active' : ''}`} htmlFor="toggle-nonveg"> <img src={nonveg} className='h-5 w-auto mt-3' /> </label>
@@ -137,7 +137,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
             <label className={`toggle toggle-all mr-10${selectedMode === 'all' ? 'active' : ''}`} htmlFor="toggle-all">All</label>
 
             <input type="radio" name="toggle" value="veg" id="toggle-veg" checked={selectedMode === 'veg'} onChange={() => handleModeChange('veg')} />
-            <label className={`toggle toggle-veg ${selectedMode === 'veg' ? 'active' : ''}`} htmlFor="toggle-veg"><img src={veg} className='h-5 w-auto mt-3' /></label>
+            <label className={`toggle toggle-veg ${selectedMode === 'veg' ? 'active' : ''}`} htmlFor="toggle-veg"><img src={veg} className='h-5 w-auto mt-3' alt='veg' /></label>
 
             <span></span>
           </div>
@@ -352,16 +352,16 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   return (
     <div className="p-4 scrollable-container h-full" ref={containerRef} style={{ overflowY: 'scroll', maxHeight: '100%' }}>
       <div className='flex items-left mb-4'>
-        <h2 className="text-2xl font-semibold mr-8">Posts</h2>
+        <h2 className="text-2xl font-semibold mr-8 flex items-center justify-center"> <img src={logo} alt="logo" className='w-7 h-7 mx-2 rounded'/> Recipeeze</h2>
         <div className="filter-bar">
           <input type="radio" name="toggle" value="nonveg" id="toggle-nonveg" checked={selectedMode === 'nonveg'} onChange={() => handleModeChange('nonveg')} />
-          <label className={`toggle toggle-nonveg mr-10 ${selectedMode === 'nonveg' ? 'active' : ''}`} htmlFor="toggle-nonveg"> <img src={nonveg} className='h-5 w-auto mt-3' /> </label>
+          <label className={`toggle toggle-nonveg mr-10 ${selectedMode === 'nonveg' ? 'active' : ''}`} htmlFor="toggle-nonveg"> <img src={nonveg} className='h-5 w-auto mt-3' alt='non-veg'/> </label>
 
           <input type="radio" name="toggle" value="all" id="toggle-all" checked={selectedMode === 'all'} onChange={() => handleModeChange('all')} />
           <label className={`toggle toggle-all mr-10${selectedMode === 'all' ? 'active' : ''}`} htmlFor="toggle-all">All</label>
 
           <input type="radio" name="toggle" value="veg" id="toggle-veg" checked={selectedMode === 'veg'} onChange={() => handleModeChange('veg')} />
-          <label className={`toggle toggle-veg ${selectedMode === 'veg' ? 'active' : ''}`} htmlFor="toggle-veg"><img src={veg} className='h-5 w-auto mt-3' /></label>
+          <label className={`toggle toggle-veg ${selectedMode === 'veg' ? 'active' : ''}`} htmlFor="toggle-veg"><img src={veg} className='h-5 w-auto mt-3' alt='veg'/></label>
 
           <span></span>
         </div>
@@ -446,20 +446,39 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
                 <p className="text-gray-600">{post.likes.length} likes</p>
                 <hr />
                 <div className="flex mt-2">
-                  <div className="flex mt-2">
+                  <div className="flex mt-2 bg-gray-300 px-2 py-1 w-full rounded-lg">
                     <input
                       type="text"
                       value={commentTexts[post._id] || ''}
                       onChange={(event) => handleCommentChange(post._id, event)}
                       placeholder="Enter your comment"
-                      className="border rounded p-2 flex-grow mr-2 w-9/12"
+                      className="border rounded-xl p-2 flex-grow mr-2 w-9/12"
                     />
                     <button
-                      className="text-blue-600 hover:text-blue-700"
+                      className="stroke-slate-300 bg-slate-500 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300"
                       onClick={() => handleAddComment(post._id)}
                       disabled={!commentTexts[post._id]}
                     >
-                      <i className="fas fa-paper-plane"></i> Post
+                      <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="30px"
+              height="30px"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M7.39999 6.32003L15.89 3.49003C19.7 2.22003 21.77 4.30003 20.51 8.11003L17.68 16.6C15.78 22.31 12.66 22.31 10.76 16.6L9.91999 14.08L7.39999 13.24C1.68999 11.34 1.68999 8.23003 7.39999 6.32003Z"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M10.11 13.6501L13.69 10.0601"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+            </svg>
                     </button>
                   </div>
                 </div>

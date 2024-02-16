@@ -116,7 +116,8 @@ const Notifications = ({ userId }) => {
             <ul className="notifications-list">
               {reversedNotifications.map((notification, index) => (
                 <li key={notification._id} className="notification-item">
-                  <Link
+                 <div className="w-full flex items-center justify-between" style={{width:"100%"}}>
+                 <Link
                     to={`/user/${notification.UserId}`}
                     className="notification-link"
                   >
@@ -139,9 +140,6 @@ const Notifications = ({ userId }) => {
                       }}
                     />
                     {notification.message}
-                    <span className="timestamp">
-                      {formatTimestamp(notification.createdAt)}
-                    </span>
                   </Link>
                   <Link
                     to={`/post-details/${notification.postId}`}
@@ -154,12 +152,18 @@ const Notifications = ({ userId }) => {
                     style={{ width: "50px", height: "30px" }}
                   />
                   </Link>
+                 </div>
+                  <div className="w-full flex justify-evenly items-center mt-1">
+                  <span className="timestamp">
+                      {formatTimestamp(notification.createdAt)}
+                    </span>
                   <button
-                    className="delete-button flex items-center text-white ml-8 bg-red-700 rounded-lg p-1"
+                    className="delete-button flex items-center text-white ml-8 bg-red-700 rounded-lg px-1"
                     onClick={() => handleDeleteNotification(notification._id)}
                   >
                     Delete <i className="fas fa-trash ml-1"></i>
                   </button>
+                  </div>
                 </li>
               ))}
             </ul>
