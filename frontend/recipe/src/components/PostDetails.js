@@ -218,7 +218,12 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
     );
   }
-  
+
+  let embedLink = ""; // Define embedLink variable outside the conditional block
+
+  if (post && post.ytlink) {
+    embedLink = post.ytlink.replace("watch?v=", "embed/");
+  }
 
   const ingredientList = post.ingredients
     .split("\n")
@@ -461,7 +466,7 @@ const PostDetails = ({ loggedInUser }) => {
             {post.cookingTime} Minutes
           </div>
         </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+      </div>
       <hr className="m-1"></hr>
       <div className="mt-2">
         <h3 className="font-semibold">Ingredients:</h3>
@@ -489,7 +494,7 @@ const PostDetails = ({ loggedInUser }) => {
           <h3 className="font-semibold">Reference Video:</h3>
           <div className="embed-responsive rounded">
             <iframe
-              src={post.ytlink.replace("watch?v=", "embed/")}
+              src={embedLink}
               title="YouTube Video"
               className="ytvideo"
               allowFullScreen
