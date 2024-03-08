@@ -218,7 +218,7 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
     );
   }
-  const embedLink = post.ytlink.replace("watch?v=", "embed/");
+  
 
   const ingredientList = post.ingredients
     .split("\n")
@@ -489,7 +489,7 @@ const PostDetails = ({ loggedInUser }) => {
           <h3 className="font-semibold">Reference Video:</h3>
           <div className="embed-responsive rounded">
             <iframe
-              src={embedLink}
+              src={post.ytlink.replace("watch?v=", "embed/")}
               title="YouTube Video"
               className="ytvideo"
               allowFullScreen
