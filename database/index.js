@@ -23,7 +23,7 @@ const password = process.env.DB_PASSWORD;
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 const corsOptions = {
-  origin: 'http://localhost:3000', 
+  origin: 'https://recipeeze.vercel.app', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
