@@ -485,7 +485,7 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
 
       {post.ytlink && (
-        <div className="mt-4">
+        <div className="mt-4 ytvideo">
           <h3 className="font-semibold">Reference Video:</h3>
           <div className="embed-responsive rounded">
             <iframe

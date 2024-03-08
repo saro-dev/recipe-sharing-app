@@ -190,6 +190,12 @@ h1,h2,h3,h4,h5,h6,p,a{
     background-position: -200% 0;
   }
 }
+@media (max-width: 767px){
+  .ytlink {
+    width: 95%;
+    height: 350px; /* Set height for mobile devices */
+  }
+}
 
 /* Add this CSS to your stylesheet */
 .scrollable-container {
