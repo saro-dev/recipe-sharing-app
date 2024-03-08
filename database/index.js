@@ -517,6 +517,53 @@ app.post('/api/signup', async (req, res) => {
     });
 
     res.status(201).json(newUser);
+    // Compose the welcome email
+    const mailOptions = {
+      from: 'Recipeeze <your-email@example.com>',
+      to: email,
+      subject: 'Welcome to Recipeeze!',
+      html: `
+        <html>
+          <head>
+            <style>
+              /* Add your custom styles here */
+              body {
+                background-color: #f2f2f2;
+                font-family: Arial, sans-serif;
+              }
+              .container {
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+              }
+              h1 {
+                color: #3498db;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>Welcome to Recipeeze, ${name}!</h1>
+              <p>Thank you for signing up. We're excited to have you on board.</p>
+              <!-- Add any other welcome message or instructions here -->
+            </div>
+          </body>
+        </html>
+      `,
+    };
+
+    // Send the welcome email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending welcome email: ', error);
+        // Handle the error if the welcome email fails to send
+      } else {
+        console.log('Welcome email sent: ' + info.response);
+        // Respond to the client indicating successful signup
+        res.status(201).json(newUser);
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });
   }

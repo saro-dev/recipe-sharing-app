@@ -47,6 +47,7 @@ const SignupComponent = ({ onSignupSuccess }) => {
       );
       console.log("User created:", response.data);
       onSignupSuccess(response.data);
+      
       navigate("/profile");
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {

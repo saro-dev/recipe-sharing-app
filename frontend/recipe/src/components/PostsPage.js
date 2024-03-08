@@ -264,7 +264,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
         console.log('Notification:', notification);
 
         const notificationResponse = await axios.post(
-          `https://recipe-backend-1e02.onrender.com/api/addNotification/${postOwner._id}`, // Use postOwner._id to access the user's ID
+          `https://recipe-backend-1e02.onrender.com/api/addNotification/${postOwner}`, // Use postOwner._id to access the user's ID
           {
             notification,
           }

@@ -92,12 +92,35 @@ const PostDetails = ({ loggedInUser }) => {
 
       // Update the number of likes based on the response
       setLikes(updatedPost.likes.length);
+      const notificationMessage = `${loggedInUser.name} likes your post`;
+        const notification = {
+          type: 'like',
+          postId: updatedPost._id,
+          message: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+          UserId: loggedInUser._id,
+        };
+
+        // Send notification to the post owner, excluding self
+        if (updatedPost.userId !== loggedInUser._id) {
+          const notificationResponse = await axios.post(
+            `https://recipe-backend-1e02.onrender.com/api/addNotification/${updatedPost.userId}`,
+            {
+              notification,
+            }
+          );
+
+          console.log(`Notification sent to post owner ${updatedPost.userId}:`, notificationResponse.data);
+          
+        }
 
       // ... (other logic for updating isFavorite, local storage, and notifications)
     } catch (error) {
       console.error("Error toggling like:", error);
     }
   }, [postId, loggedInUser]);
+  
   const handleAddToFavorites = async () => {
     try {
       if (!loggedInUser) {
@@ -154,6 +177,27 @@ const PostDetails = ({ loggedInUser }) => {
 
       // Clear the comment text
       setCommentText("");
+      const notificationMessage = `${loggedInUser.name} commented on your post`;
+        const notification = {
+          type: 'comment',
+          postId: post._id,
+          message: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+          UserId: loggedInUser._id,
+        };
+
+        // Send notification to the post owner, excluding self
+        if (post.userId !== loggedInUser._id) {
+          const notificationResponse = await axios.post(
+            `https://recipe-backend-1e02.onrender.com/api/addNotification/${post.userId._id}`,
+            {
+              notification,
+            }
+          );
+
+          console.log(`Notification sent to post owner ${post.userId._id}:`, notificationResponse.data);
+        }
     } catch (error) {
       console.error("Error adding comment:", error);
     }
