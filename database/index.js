@@ -150,7 +150,6 @@ const recipeSchema = new mongoose.Schema({
   cookingTime: Number,
   notesAndTips: String,
   category: String,
-  ytlink:String,
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -188,26 +187,16 @@ app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
     const binaryImageString = compressedImageBuffer.toString('hex');
 
 
-    let { ytlink, ...recipeData } = req.body;
-
-    if (ytlink.includes('youtube.com/watch?v=')) {
-      // Extract video ID from the URL
-      const videoId = ytlink.split('v=')[1].split('&')[0];
-      // Construct the embed URL
-      ytlink = `https://www.youtube.com/embed/${videoId}`;
-    }
 
     const newRecipe = await Recipe.create({
       ...recipeData,
       userId: user._id, // Save user's ID
       authorName: user.name, // Save user's name
       image: compressedImageBuffer, // Save the compressed image as binary data
-      ytlink: ytlink // Save ytlink
     });
 
     res.status(201).json(newRecipe);
     console.log(newRecipe);
-    console.log(newRecipe.ytlink)
   } catch (error) {
     res.status(500).json({ error: 'Error creating recipe' });
   }
