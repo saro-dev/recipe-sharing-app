@@ -190,10 +190,15 @@ h1,h2,h3,h4,h5,h6,p,a{
     background-position: -200% 0;
   }
 }
+.ytvideo{
+  width: 550px;
+  height: 315px;
+}
 @media (max-width: 767px){
-  .ytlink {
+  .ytvideo {
     width: 95%;
-    height: 350px; /* Set height for mobile devices */
+    height: 250px; /* Set height for mobile devices */
+    margin: 0 auto;
   }
 }
 
