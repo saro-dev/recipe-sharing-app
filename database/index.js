@@ -23,13 +23,13 @@ const password = process.env.DB_PASSWORD;
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 const corsOptions = {
-  origin: 'https://recipeeze.vercel.app', 
+  origin: 'http://localhost:3000', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use('/uploads/', express.static('uploads'));
 
 const backendUrl = 'https://recipe-backend-1e02.onrender.com/api/posts?page=1&limi=5';
@@ -150,6 +150,7 @@ const recipeSchema = new mongoose.Schema({
   cookingTime: Number,
   notesAndTips: String,
   category: String,
+  ytlink:String,
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -164,6 +165,53 @@ const recipeSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 const Recipe = mongoose.model('Recipe', recipeSchema);
+
+// API endpoint for posting a recipe
+app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.body.userId;
+
+    // Fetch user's name using userId
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return console.log('user not found');
+    }
+
+    const imageBuffer = req.file.buffer;
+    const compressedImageBuffer = await sharp(imageBuffer)
+      .resize({ width: 800 }) // Adjust the width as needed
+      .webp({ quality: 70 }) // Adjust the quality as needed (for JPEG)
+      .toBuffer();
+
+    const binaryImageString = compressedImageBuffer.toString('hex');
+
+
+    let { ytlink, ...recipeData } = req.body;
+
+    if (ytlink.includes('youtube.com/watch?v=')) {
+      // Extract video ID from the URL
+      const videoId = ytlink.split('v=')[1].split('&')[0];
+      // Construct the embed URL
+      ytlink = `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    const newRecipe = await Recipe.create({
+      ...recipeData,
+      userId: user._id, // Save user's ID
+      authorName: user.name, // Save user's name
+      image: compressedImageBuffer, // Save the compressed image as binary data
+      ytlink: ytlink // Save ytlink
+    });
+
+    res.status(201).json(newRecipe);
+    console.log(newRecipe);
+    console.log(newRecipe.ytlink)
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating recipe' });
+  }
+});
 
 app.post('/api/comment/:postId', async (req, res) => {
   const { userId, text, parentCommentId } = req.body; // Include parentCommentId in the request body
@@ -509,41 +557,7 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Error logging in' });
   }
 });
-// API endpoint for posting a recipe
-app.post('/api/postRecipe', upload.single('image'), async (req, res) => {
-  try {
-    const userId = req.body.userId;
 
-    // Fetch user's name using userId
-    const user = await User.findById(userId);
-
-    if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return console.log('user not found');
-    }
-
-    const imageBuffer = req.file.buffer;
-    const compressedImageBuffer = await sharp(imageBuffer)
-      .resize({ width: 800 }) // Adjust the width as needed
-      .webp({ quality: 70 }) // Adjust the quality as needed (for JPEG)
-      .toBuffer();
-
-    const binaryImageString = compressedImageBuffer.toString('hex');
-
-
-    const newRecipe = await Recipe.create({
-      ...req.body,
-      userId: user._id, // Save user's ID
-      authorName: user.name, // Save user's name
-      image: compressedImageBuffer, // Save the compressed image as binary data
-    });
-
-    res.status(201).json(newRecipe);
-    console.log(newRecipe);
-  } catch (error) {
-    res.status(500).json({ error: 'Error creating recipe' });
-  }
-});
 // GET endpoint to get followers of a user
 app.get('/api/user/:userId/followers', async (req, res) => {
   const { userId } = req.params;

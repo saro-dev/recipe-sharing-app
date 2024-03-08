@@ -17,6 +17,7 @@ const RecipePostComponent = ({ userId,email }) => {
     category: "",
     cookingTime: "",
     notesAndTips: "",
+    ytlink: "",
     timestamp: new Date().toISOString(),
   });
   const navigate = useNavigate();
@@ -26,7 +27,6 @@ const RecipePostComponent = ({ userId,email }) => {
   const [isPosting, setIsPosting] = useState(false);
   const categories = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks"];
   const [userData, setUserData] = useState(null);
- 
 
 
   const handleInputChange = (event) => {
@@ -35,6 +35,24 @@ const RecipePostComponent = ({ userId,email }) => {
     if (name === "category") {
       setCategory(value);
     }
+    // Check if the input is for ytlink
+  if (name === "ytlink") {
+    // Check if the input value contains 'youtube.com/watch?v='
+    if (value.includes('youtube.com/watch?v=')) {
+      // Extract the video ID from the URL
+      const videoId = value.split('v=')[1].split('&')[0];
+      // Construct the embed URL
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      // Update the recipeData with the embed URL
+      setRecipeData((prevData) => ({ ...prevData, [name]: embedUrl }));
+    } else {
+      // If the input value doesn't contain 'youtube.com/watch?v=', update as it is
+      setRecipeData((prevData) => ({ ...prevData, [name]: value }));
+    }
+  } else {
+    // For other inputs, update normally
+    setRecipeData((prevData) => ({ ...prevData, [name]: value }));
+  }
   };
 
   const handleImageUpload = (event) => {
@@ -103,6 +121,7 @@ const RecipePostComponent = ({ userId,email }) => {
     formData.append("category", recipeData.category);
     formData.append("cookingTime", cookingTime);
     formData.append("notesAndTips", recipeData.notesAndTips);
+    formData.append("ytlink", recipeData.ytlink);
     formData.append("timestamp", currentTime); // Append the timestamp to the form data
 
     setLoading(true);
@@ -119,7 +138,6 @@ const RecipePostComponent = ({ userId,email }) => {
       const { _id, authorName, title } = response.data;
 
     console.log("Recipe posted:", response.data);
-
     toast.success('Recipe posted successfully!', {
       position: 'top-right',
       autoClose: 1000, // Close after 2 seconds
@@ -258,6 +276,18 @@ const RecipePostComponent = ({ userId,email }) => {
               rows="4"
             />
           </div>
+          <div>
+            <h2 className="text-gray-500">Reference Video (Optional)</h2>
+          <input
+            type="text"
+            name="ytlink"
+            placeholder="YouTube Link"
+            value={recipeData.ytlink}
+            onChange={handleInputChange}
+            className="w-full border rounded p-2"
+          />
+          </div>
+          
           <input
             type="text"
             name="tags"

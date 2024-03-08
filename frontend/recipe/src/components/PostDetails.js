@@ -218,6 +218,7 @@ const PostDetails = ({ loggedInUser }) => {
       </div>
     );
   }
+  const embedLink = post.ytlink.replace("watch?v=", "embed/");
 
   const ingredientList = post.ingredients
     .split("\n")
@@ -460,8 +461,7 @@ const PostDetails = ({ loggedInUser }) => {
             {post.cookingTime} Minutes
           </div>
         </div>
-        
-      </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
       <hr className="m-1"></hr>
       <div className="mt-2">
         <h3 className="font-semibold">Ingredients:</h3>
@@ -483,6 +483,21 @@ const PostDetails = ({ loggedInUser }) => {
         <h3 className="font-semibold mb-1">Notes and Tips:</h3>
         {post.notesAndTips}
       </div>
+
+      {post.ytlink && (
+        <div className="mt-4">
+          <h3 className="font-semibold">Reference Video:</h3>
+          <div className="embed-responsive rounded">
+            <iframe
+              src={embedLink}
+              title="YouTube Video"
+              width="560"
+              height="315"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
 
       <p className="mt-2">
         <span className="text-blue-600">#Tags:</span>{" "}
@@ -548,41 +563,46 @@ const PostDetails = ({ loggedInUser }) => {
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Your thoughts..."
             className="bg-slate-700 text-slate-300 h-28 placeholder:text-slate-300 placeholder:opacity-50 border border-slate-600  resize-none outline-none rounded-lg p-2 duration-300 focus:border-slate-300"
-            style={{width:"100%"}}
+            style={{ width: "100%" }}
           ></textarea>
-          
-          <div className="flex justify-end mt-2" style={{width:"100%"}}>
-          <button
-            onClick={() => handleAddComment(post._id)}
-            disabled={!commentText.trim()}
-            className=" stroke-slate-300 bg-slate-700 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300 flex justify-center items-center "
-            style={{width:"100px"}}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="30px"
-              height="30px"
-              viewBox="0 0 24 24"
-              fill="none"
+
+          <div className="flex justify-end mt-2" style={{ width: "100%" }}>
+            <button
+              onClick={() => handleAddComment(post._id)}
+              disabled={!commentText.trim()}
+              className=" stroke-slate-300 bg-slate-700 focus:stroke-blue-200 focus:bg-blue-600 border border-slate-600 hover:border-slate-300 rounded-lg p-2 duration-300 flex justify-center items-center "
+              style={{ width: "100px" }}
             >
-              <path
-                d="M7.39999 6.32003L15.89 3.49003C19.7 2.22003 21.77 4.30003 20.51 8.11003L17.68 16.6C15.78 22.31 12.66 22.31 10.76 16.6L9.91999 14.08L7.39999 13.24C1.68999 11.34 1.68999 8.23003 7.39999 6.32003Z"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              ></path>
-              <path
-                d="M10.11 13.6501L13.69 10.0601"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              ></path>
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30px"
+                height="30px"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M7.39999 6.32003L15.89 3.49003C19.7 2.22003 21.77 4.30003 20.51 8.11003L17.68 16.6C15.78 22.31 12.66 22.31 10.76 16.6L9.91999 14.08L7.39999 13.24C1.68999 11.34 1.68999 8.23003 7.39999 6.32003Z"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></path>
+                <path
+                  d="M10.11 13.6501L13.69 10.0601"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></path>
+              </svg>
+            </button>
           </div>
         </div>
-        <hr/>
-          <h3 className="my-2 text-white bg-blue-600 p-1 rounded-lg" style={{width:'250px'}}>{post.comments.length} comments on this post</h3>
+        <hr />
+        <h3
+          className="my-2 text-white bg-blue-600 p-1 rounded-lg"
+          style={{ width: "250px" }}
+        >
+          {post.comments.length} comments on this post
+        </h3>
         {post.comments.map((comment) => (
           <Comment
             key={comment._id}
@@ -594,7 +614,6 @@ const PostDetails = ({ loggedInUser }) => {
           />
         ))}
       </div>
-      
     </div>
   );
 };
