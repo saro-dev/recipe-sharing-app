@@ -93,7 +93,7 @@ const UserProfile = ({ loggedInUser }) => {
         message: notificationMessage,
         isRead: false,
         createdAt: new Date(),
-        userId: userId, // Assuming userId is the id of the user being followed
+        UserId: userId, // Assuming userId is the id of the user being followed
       };
   
       const notificationResponse = await axios.post(
