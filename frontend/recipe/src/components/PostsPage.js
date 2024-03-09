@@ -95,7 +95,17 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
   }, [setCurrentPage]);
   
   
+  useEffect(() => {
+    const checkLikedByCurrentUser = () => {
+      posts.forEach((post) => {
+        if (post.likes.includes(loggedInUser._id)) {
+          setLikedPosts((prevLikedPosts) => [...prevLikedPosts, post._id]);
+        }
+      });
+    };
 
+    checkLikedByCurrentUser();
+  }, [posts, loggedInUser]);
  
 
   useEffect(() => {
@@ -161,26 +171,30 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
 
   const handleToggleLike = async (postId) => {
     try {
+      // Update the like status immediately
+      setLikedPosts((prevLikedPosts) =>
+        likedPosts.includes(postId)
+          ? prevLikedPosts.filter((id) => id !== postId)
+          : [...prevLikedPosts, postId]
+      );
+  
       const response = await axios.post(`https://recipe-backend-1e02.onrender.com/api/like/${postId}`, {
         userId: loggedInUser._id,
       });
       const updatedPost = response.data;
-
-      setLikedPosts((prevLikedPosts) =>
-        updatedPost.isLiked
-          ? [...prevLikedPosts, postId]
-          : prevLikedPosts.filter((id) => id !== postId)
-      );
-
+  
+      // Update the post with the new like status from the server response
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post._id === postId ? updatedPost : post))
       );
-
+  
       const updatedLikedPosts = updatedPost.isLiked
         ? [...likedPosts, postId]
         : likedPosts.filter((id) => id !== postId);
-      localStorage.setItem('likedPosts', JSON.stringify(updatedLikedPosts));
+      //update the session storage after likes
+      sessionStorage.setItem('likedPosts', JSON.stringify(updatedLikedPosts));
 
+  
       if (updatedPost.isLiked && updatedPost.userId !== loggedInUser._id) {
         const notificationMessage = `${loggedInUser.name} likes your post`;
         const notification = {
@@ -191,7 +205,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
           createdAt: new Date(),
           UserId: loggedInUser._id,
         };
-
+  
         // Send notification to the post owner, excluding self
         if (updatedPost.userId !== loggedInUser._id) {
           const notificationResponse = await axios.post(
@@ -200,7 +214,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
               notification,
             }
           );
-
+  
           console.log(`Notification sent to post owner ${updatedPost.userId}:`, notificationResponse.data);
         }
       }
@@ -208,6 +222,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
       console.error('Error toggling like:', error);
     }
   };
+  
 
   const handleAddComment = async (postId) => {
     try {
