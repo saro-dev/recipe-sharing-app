@@ -77,7 +77,7 @@ const UserProfile = ({ loggedInUser }) => {
   const handleFollow = async () => {
     if (loadingFollow) return;
     setLoadingFollow(true);
-
+  
     try {
       await axios.post(`https://recipe-backend-1e02.onrender.com/api/user/${userId}/follow`, {
         followerId: loggedInUser._id,
@@ -85,12 +85,32 @@ const UserProfile = ({ loggedInUser }) => {
       setUserFollowers((prevFollowers) => [...prevFollowers, loggedInUser]);
       setFollowerCount((prevCount) => prevCount + 1);
       setIsFollowing(true); // Update follow state
+  
+      // Send notification to the user being followed
+      const notificationMessage = `${loggedInUser.name} follows you`;
+      const notification = {
+        type: 'follow',
+        message: notificationMessage,
+        isRead: false,
+        createdAt: new Date(),
+        userId: userId, // Assuming userId is the id of the user being followed
+      };
+  
+      const notificationResponse = await axios.post(
+        `https://recipe-backend-1e02.onrender.com/api/addNotification/${userId}`,
+        {
+          notification,
+        }
+      );
+  
+      console.log('Notification sent:', notificationResponse.data);
     } catch (error) {
       console.error("Error following user:", error);
     } finally {
       setLoadingFollow(false);
     }
   };
+  
 
   const handleUnfollow = async () => {
     if (loadingUnfollow) return;

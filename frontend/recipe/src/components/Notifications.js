@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import "./Notifications.css";
-import { FaHeart, FaComment } from "react-icons/fa";
+import { FaHeart, FaComment, FaUser } from "react-icons/fa";
 import defaultimg from "./defaultimg.jpg";
 import Alert from "./Alert";
 
@@ -116,53 +116,60 @@ const Notifications = ({ userId }) => {
             <ul className="notifications-list">
               {reversedNotifications.map((notification, index) => (
                 <li key={notification._id} className="notification-item">
-                 <div className="w-full flex items-center justify-between" style={{width:"100%"}}>
-                 <Link
-                    to={`/user/${notification.UserId}`}
-                    className="notification-link"
+                  <div
+                    className="w-full flex items-center justify-between"
+                    style={{ width: "100%" }}
                   >
-                    {notification.type === "like" ? (
-                      <FaHeart className="heart-icon" />
-                    ) : (
-                      <FaComment className="comment-icon" />
+                    <Link
+                      to={`/user/${notification.UserId}`}
+                      className="notification-link"
+                    >
+                      {notification.type === "follow" ? (
+                        <FaUser className="user-icon" /> // Display user icon for "follow" notification type
+                      ) : notification.type === "like" ? (
+                        <FaHeart className="heart-icon" />
+                      ) : (
+                        <FaComment className="comment-icon" />
+                      )}
+                      <img
+                        src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
+                        alt=""
+                        className="max-w-full max-h-full object-cover mr-2"
+                        style={{
+                          height: "30px",
+                          width: "30px",
+                          borderRadius: "50%",
+                        }}
+                        onError={(e) => {
+                          e.target.src = defaultimg; // Replace with the URL of your default image
+                        }}
+                      />
+                      {notification.message}
+                    </Link>
+                    {notification.type !== "follow" && (
+                      <Link
+                        to={`/post-details/${notification.postId}`}
+                        className="notification-link"
+                      >
+                        <img
+                          src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${notification.postId}`}
+                          alt={notification.postId}
+                          className="max-w-full object-cover mb-2 rounded"
+                          style={{ width: "50px", height: "30px" }}
+                        />
+                      </Link>
                     )}
-                    <img
-                      src={`https://recipe-backend-1e02.onrender.com/api/getProfileImage/${notification.UserId}`}
-                      alt=""
-                      className="max-w-full max-h-full object-cover mr-2"
-                      style={{
-                        height: "30px",
-                        width: "30px",
-                        borderRadius: "50%",
-                      }}
-                      onError={(e) => {
-                        e.target.src = defaultimg; // Replace with the URL of your default image
-                      }}
-                    />
-                    {notification.message}
-                  </Link>
-                  <Link
-                    to={`/post-details/${notification.postId}`}
-                    className="notification-link"
-                  >
-                  <img
-                    src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${notification.postId}`}
-                    alt={notification.postId}
-                    className="max-w-full object-cover mb-2 rounded"
-                    style={{ width: "50px", height: "30px" }}
-                  />
-                  </Link>
-                 </div>
+                  </div>
                   <div className="w-full flex justify-evenly items-center mt-1">
-                  <span className="timestamp">
+                    <span className="timestamp">
                       {formatTimestamp(notification.createdAt)}
                     </span>
-                  <button
-                    className="delete-button flex items-center text-white ml-8 bg-red-700 rounded-lg px-1"
-                    onClick={() => handleDeleteNotification(notification._id)}
-                  >
-                    Delete <i className="fas fa-trash ml-1"></i>
-                  </button>
+                    <button
+                      className="delete-button flex items-center text-white ml-8 bg-red-700 rounded-lg px-1"
+                      onClick={() => handleDeleteNotification(notification._id)}
+                    >
+                      Delete <i className="fas fa-trash ml-1"></i>
+                    </button>
                   </div>
                 </li>
               ))}

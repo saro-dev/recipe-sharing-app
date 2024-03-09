@@ -141,7 +141,7 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
         <h2 className="text-2xl font-semibold mr-8 flex items-center justify-center"> <img src={logo} alt="logo" className='w-7 h-7 mx-2 rounded'/> Recipeeze</h2>
           <div className="filter-bar">
             <input type="radio" name="toggle" value="nonveg" id="toggle-nonveg" checked={selectedMode === 'nonveg'} onChange={() => handleModeChange('nonveg')} />
-            <label className={`toggle toggle-nonveg mr-10 ${selectedMode === 'nonveg' ? 'active' : ''}`} htmlFor="toggle-nonveg"> <img src={nonveg} className='h-5 w-auto mt-3' /> </label>
+            <label className={`toggle toggle-nonveg mr-10 ${selectedMode === 'nonveg' ? 'active' : ''}`} htmlFor="toggle-nonveg"> <img src={nonveg} alt="non-veg" className='h-5 w-auto mt-3' /> </label>
 
             <input type="radio" name="toggle" value="all" id="toggle-all" checked={selectedMode === 'all'} onChange={() => handleModeChange('all')} />
             <label className={`toggle toggle-all mr-10${selectedMode === 'all' ? 'active' : ''}`} htmlFor="toggle-all">All</label>
@@ -412,11 +412,11 @@ const PostsPage = ({ loggedInUser, favoritePosts, setFavoritePosts }) => {
                   pathname: `/post-details/${post._id}`,
                   state: { comments: post.comments },
                 }}>
-                  <div style={{ width: '100%', height: '200px' }}>
+                  <div style={{ width: '100%', height: '200px' ,overflow:'hidden', borderRadius: '10px'}} >
                     <img
                       src={`https://recipe-backend-1e02.onrender.com/api/getRecipeImage/${post._id}`}
                       alt={post.title}
-                      className="max-w-full max-h-full object-cover rounded-lg skeleton-item recipe-image"
+                      className="max-w-full max-h-full object-cover rounded-lg skeleton-item recipe-image hover:transform hover:scale-105 transition-transform duration-300"
                       style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                     />
                   </div>
